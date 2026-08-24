@@ -318,7 +318,7 @@ int main(int argc, char **argv)
     // In summary, XDP is focused on high-performance packet processing at the driver level, while TC is focused on traffic management and control within the kernel's networking stack. The choice between XDP and TC depends on the specific requirements of your application, such as performance, latency, and traffic management needs.
     // so is xdp generic mode is equal to attaching the program to  sk_skb hook? Answer: Yes, in generic (SKB) XDP mode, the eBPF program is executed after the packet has been processed by the kernel's network stack, which is similar to attaching the program to the `sk_skb` hook. In this mode, the kernel creates a socket buffer (SKB) representation of the packet, and the eBPF program can access and manipulate this SKB representation. This allows for more complex packet processing and analysis compared to native XDP mode, which operates at the driver level before the packet traverses the network stack. However, it's important to note that while generic XDP mode provides similar functionality to attaching to the `sk_skb` hook, it is still part of the XDP framework and may have different performance characteristics and limitations compared to traditional TC or `sk_skb` hooks.
 
-    
+
     // What is socket-buffer representation? A socket buffer is a data structure 
     // used in the Linux kernel to represent network packets. It contains metadata
     // about the packet, such as its length, protocol type, and pointers to the
