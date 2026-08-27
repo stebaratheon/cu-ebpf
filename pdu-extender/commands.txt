@@ -1,0 +1,15 @@
+clang -O2 -g -target bpf \
+  -D__TARGET_ARCH_x86 \
+  -I/usr/include/x86_64-linux-gnu \
+  -c xdp_gtp_inner_parser.bpf.c \
+  -o xdp_gtp_inner_parser.bpf.o
+
+gcc -O2 -g \
+  xdp_gtp_inner_parser_user.c \
+  -o xdp_gtp_inner_parser_user \
+  -lbpf -lelf -lz
+
+
+ToDo:
+Just print and see pdu type 1 (UL traffic) also
+and what are th exact fileds in the pdu type 0

@@ -1,0 +1,64 @@
+GTP-U packet found (count: 4777)
+  Outer path:       192.168.71.134:2152 -> 192.168.71.150:2152
+  Inner path:       192.168.72.135 -> 12.1.1.2
+  Inner protocol:   6 (TCP)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       60 bytes
+  TEID:             2172138263 (0x81783317)
+  Flags:            E=1 S=0 PN=0
+  First extension:  0x85
+  Extension headers (1 total):
+    [0] type 0x85
+  PDU type:         0 (DL PDU SESSION INFORMATION)
+  QFI:              1
+
+GTP-U packet found (count: 4778)
+  Outer path:       192.168.71.171:2153 -> 192.168.71.150:2153
+  Inner IP:         unavailable/not parsable (non-IPv4, truncated, or unsupported extension chain)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       56 bytes
+  TEID:             1188720951 (0x46da7137)
+  Flags:            E=0 S=0 PN=0
+
+
+
+  1. GTPU-U on port 2153 with E=0, with no extension headers at all means the F1-U traffic is carrying a PDCP PDU.
+  Which starts with a PDCP header, not an IP header
+
+  2. can we say in this case the pdu is of type 1? (as UL)
+No, we cannot infer PDU type 0 vs 1 from this. PDU type is a filed inside the PDU session container (which is a per of
+the extension header). As E=0 here, there is no extension header at all so the PDU type is simply absent, not "1 by 
+elimination". Direction would have to come from context (port pairing, IP direction, DU vs CU role), not from this packet's
+GTP-U header.
+
+
+3. Why cannot we have PDU type 1 in this iperf3 traffic?
+>> PDU sessaion container (a part of the extension header) is mandatory on downlink, but optional on uplink (PDU type 1).
+Most implementations, including OAI' gNB/ CU-UP simply don;t insert the extension header on UL user-plane packets 
+because the UPF does not need the QFI/ PDU type there; as it already knows the flow from the TEID. 
+iperf3 traffic UE to ext-dn will show up as plain GTP-U with E=0 on the N3 uplink, exactly like we saw.
+
+4. Is there any way we can generate PDU type 1 traffic? Or is there any such dataset or pcap out there?
+>> No.
+
+5. So how we can test that our parser parses PDU type 1 traffic? How can we get those packets in the first place?
+>> We can use Scapy. Scapy is a python library that lets build network packets byte by byte, like stacking lego blocks.
+Ethernet layer, IP layer, then UDP layer, then your own custom GTP-U bytes on top. Instead of waiting for real 5G stack 
+to naturally produce a PDU type 1 packet (which, OAI does not do), we can just write a script that manually constructs
+one. We set the GTP flag byte to say extension header present, add the PDU session container extension header, and set
+it its PDU-type to 1 instead of 0. Then scapy will either write to a .pacap file or sends it live onto an interface 
+(sendp()), which the XDP program can see and parse in real time. So it will not be "capturing" traffic. It will be 
+fabricating a packet with the exact fields we want to test.
+
+6. Will it a full, realistic packet, like a real 5G packet?
+Yes, structurally it will be byte-for-byte indistinguishable from a real one. Correct ethernet/IP/UDP headers,
+correct GTPv1-U header, correct TEID, a valid PDU Session Container Extension header with PDU type =1, and a real Inner
+TCP/IP payload.
+What it will not be semantically real - the TEID won't correspond to an actual live session at our UPF/ gNB. There is
+no real UE behind it and it will not map to any real PDU session context (the receving end might just drop it if it
+checks TEID validity). It is purely for testing that my parser correctly recognizes and prints PDU type 1, not for 
+testing the actual RAN/ Core session logic.
