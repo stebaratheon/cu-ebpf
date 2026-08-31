@@ -427,3 +427,10 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+
+# Virtual environment
+venv/
+.venv/
+env/
+.env/
