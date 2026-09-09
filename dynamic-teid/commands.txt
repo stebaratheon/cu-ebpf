@@ -1,0 +1,29 @@
+apt install tshark 
+
+
+
+clang -O2 -g -target bpf \
+  -D__TARGET_ARCH_x86 \
+  -I/usr/include/x86_64-linux-gnu \
+  -c xdp_gtp_inner_parser.bpf.c \
+  -o xdp_gtp_inner_parser.bpf.o
+
+
+
+
+gcc -O2 -g xdp_gtp_inner_parser_user.c -o xdp_gtp_inner_parser_user -lbpf -lelf -lz -lpthread
+
+
+
+==============================================================
+checking MAC address of a container from inside the container:
+
+>>> cat /sys/class/net/eth0/address
+===============================================================
+
+
+==============================================================
+checking aanother containers' mac address 
+
+>>> ip neigh show | grep 192.168.71.134
+

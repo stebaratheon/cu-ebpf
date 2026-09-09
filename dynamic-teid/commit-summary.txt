@@ -1,0 +1,28 @@
+xdp: dynamic F1-U TEID/MAC learning + fast-path redirect (Step 1 complete)
+
+Replace all hardcoded TEID/IP/MAC config with values learned live:
+- MAC resolution: CU's own MAC via ioctl, DU's MAC via ARP with
+  periodic flush+reprobe (handles container restarts reusing an IP
+  with a new MAC).
+- TEID/IP pairing: background thread runs tshark filtered to F1AP
+  UEContextSetupResponse (procedureCode==5, gTP_TEID present, IP
+  matches known DU address to reject the Request's UL tunnel info),
+  extracting f1ap.gTP_TEID / f1ap.transportLayerAddressIPv4 via
+  `-T fields` and populating session_map on matching N3 downlink
+  traffic.
+- Fixed F1-U destination port (2153 in this testbed, distinct from
+  the N3-facing 2152 -- was previously reused incorrectly).
+
+Mechanically validated end-to-end: rewritten TEID confirmed
+bit-for-bit arriving at the DU via a custom raw-socket sniffer
+(sniff_udp_port.py), added since tcpdump/apt are unavailable in the
+DU container.
+
+Known limitation (not yet fixed): offloaded packets still carry
+N3-style framing (PDU Session Container/QFI extension header) into
+the F1-U slot, which crashes the DU (`Gtpv1uHandleGpdu` QFI
+assertion). Next step is stripping this extension header and adding
+proper PDCP/SDAP framing before F1-U forwarding.
+
+Adds: README.md (full problem/solution log), sniff_udp_port.py,
+send_gtpu_pdu_type1(_raw).py.
