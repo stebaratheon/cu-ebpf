@@ -1,0 +1,9 @@
+[3557] 192.168.71.150:2152 -> 192.168.71.171:2153  UDP payload 64 bytes  TEID=0xbfe3e19d msg_type=255 gtp_flags=0x30 (E=0 S=0 PN=0) -> pdcp_start_used=8
+  Framing check: E=0, S=0, PN=0 -- matches the FIXED F1-U framing (no GTP-U extension header expected). The next 4 bytes below should be [PDCP: 3 bytes][SDAP: 1 byte], then the inner IP packet should start immediately after.
+  Raw bytes from start of PDCP PDU (offset relative to PDCP PDU start):
+     0  80 0e 1f 01 45 00 00 34 54 39 40 00 3f 06 d1 54  |....E..4T9@.?..T|
+    16  c0 a8 48 87 0c 01 01 06 14 51 8f 6b 93 6a b6 d4  |..H......Q.k.j..|
+    32  10 43 df 05 80 11 01 fb d9 d0 00 00 01 01 08 0a  |.C..............|
+    48  c5 46 c4 93 70 91 ad 09                          |.F..p...|
+  Heuristic: byte 0x45 (plausible plaintext IPv4 header start, no options) found at PDCP-PDU offset(s) [4].
+     At offset 4: candidate src=192.168.72.135 dst=12.1.1.6 -- if these are real, recognizable addresses from your topology, that's strong confirmation of a genuine plaintext IPv4 header (not coincidence).

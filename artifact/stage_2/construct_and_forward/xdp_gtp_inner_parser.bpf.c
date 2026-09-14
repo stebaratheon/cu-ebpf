@@ -61,6 +61,20 @@ struct gtp_event {
     __be32 offload_new_dst_ip;   /* raw network order, same convention as outer_*_ip */
     __u16 offload_new_dst_port;  /* host order, same convention as outer_*_port */
     __u16 pad2;
+    /* Debug instrumentation: the kernel's own computed values for the
+     * F1-U reframing decision, reported for every attempted rewrite
+     * (even ones that bail out via offload_skip), to diagnose why the
+     * rewrite may not be taking effect as expected. Remove once no
+     * longer needed. */
+    __s32 debug_old_removed_bytes;
+    __s32 debug_move_len;
+    __s32 debug_delta;
+    __u32 debug_reached_rewrite; /* 1 if we got past the bail-out check */
+    __u8 debug_flags_right_after_write; /* gtp->flags read back immediately
+                                          * after `gtp->flags = 0x30;` */
+    __u8 debug_flags_right_before_redirect; /* gtp->flags read back right
+                                              * before bpf_redirect() returns */
+    __u8 pad3[2];
     __u64 gtpu_count;
     __u64 udp_non_gtpu_count;
 };
@@ -91,6 +105,11 @@ struct {
 struct session_ctx {
     __u32 peer_teid;       /* new TEID to write into the outer GTP header */
     __be32 dst_ip;         /* new outer destination IP, network byte order */
+    __be32 src_ip;         /* new outer source IP (this CU's own address), network
+                            * byte order -- without this, a rewritten packet keeps
+                            * the original N3 sender's (UPF's) source IP, which a
+                            * DU expecting a connected socket to the CU's known
+                            * address will silently drop */
     __be16 dst_port;       /* new outer destination UDP port, network byte order */
     __u16 pad0;
     __u32 egress_ifindex;  /* interface to bpf_redirect() out of */
@@ -361,17 +380,17 @@ submit:
             long move_len = (long)data_end - (long)cursor;
             long delta = (long)F1U_NEW_HDR_BYTES - old_removed_bytes;
 
+            event->debug_old_removed_bytes = (__s32)old_removed_bytes;
+            event->debug_move_len = (__s32)move_len;
+            event->debug_delta = (__s32)delta;
+
             if (old_removed_bytes < 0 || old_removed_bytes > 64 ||
                 move_len < 0 || move_len > MAX_INNER_MOVE_BYTES ||
                 delta > 0) {
-                /* Packet doesn't match our expected shape (no extension
-                 * header at all, unexpectedly large payload, or would
-                 * require growing rather than shrinking -- not
-                 * implemented in this version). Skip offloading this
-                 * packet; falls through to plain XDP_PASS below, same
-                 * as any other miss. Nothing has been mutated yet. */
                 goto offload_skip;
             }
+
+            event->debug_reached_rewrite = 1;
 
             {
                 __u8 *old_cursor = cursor;
@@ -458,10 +477,12 @@ submit:
             /* Rewrite L2/L3/L4/GTP-U fields for the F1-U destination. */
             __builtin_memcpy(eth->h_dest, sess->dst_mac, ETH_ALEN);
             __builtin_memcpy(eth->h_source, sess->src_mac, ETH_ALEN);
+            outer_ip->saddr = sess->src_ip;
             outer_ip->daddr = sess->dst_ip;
             udp->dest = sess->dst_port;
 
             gtp->flags = 0x30; /* version=1, PT=1, E=S=PN=0 */
+            event->debug_flags_right_after_write = gtp->flags;
             gtp->message_type = GTPU_G_PDU;
             gtp->teid = bpf_htonl(sess->peer_teid);
             gtp->length = bpf_htons((__u16)(F1U_NEW_HDR_BYTES + move_len));
@@ -500,6 +521,7 @@ submit:
             event->offload_new_teid = sess->peer_teid;
             event->offload_new_dst_ip = sess->dst_ip;
             event->offload_new_dst_port = bpf_ntohs(sess->dst_port);
+            event->debug_flags_right_before_redirect = gtp->flags;
 
             bpf_ringbuf_submit(event, 0);
             return bpf_redirect(sess->egress_ifindex, 0);

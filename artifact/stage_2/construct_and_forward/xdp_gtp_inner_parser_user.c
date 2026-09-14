@@ -23,6 +23,7 @@
 struct session_ctx {
     __u32 peer_teid;
     __u32 dst_ip;
+    __u32 src_ip;
     __u16 dst_port;
     __u16 pad0;
     __u32 egress_ifindex;
@@ -71,6 +72,13 @@ struct gtp_event {
     __u32 offload_new_dst_ip;
     __u16 offload_new_dst_port;
     __u16 pad2;
+    __s32 debug_old_removed_bytes;
+    __s32 debug_move_len;
+    __s32 debug_delta;
+    __u32 debug_reached_rewrite;
+    __u8 debug_flags_right_after_write;
+    __u8 debug_flags_right_before_redirect;
+    __u8 pad3[2];
     __u64 gtpu_count;
     __u64 udp_non_gtpu_count;
 };
@@ -101,6 +109,8 @@ static int g_session_map_fd = -1;
 static __u32 g_egress_ifindex;
 static __u8 g_du_mac[ETH_ALEN];   /* DU's MAC, via ARP lookup on DU_IP -- used as dst_mac */
 static __u8 g_own_mac[ETH_ALEN];  /* CU's own eth0 MAC, via ioctl -- used as src_mac */
+static __u32 g_own_ip;            /* CU's own eth0 IPv4 address, network byte order --
+                                    * via ioctl -- used as the rewritten outer source IP */
 static pthread_mutex_t g_du_mac_lock = PTHREAD_MUTEX_INITIALIZER;
 static volatile int g_du_mac_valid; /* 0 until a real (non-stale) DU MAC has been confirmed */
 
@@ -161,6 +171,34 @@ static int get_own_iface_mac(const char *iface, __u8 mac[ETH_ALEN])
         return -1;
 
     memcpy(mac, ifr.ifr_hwaddr.sa_data, ETH_ALEN);
+    return 0;
+}
+
+/* CU's own interface IPv4 address -- SIOCGIFADDR ioctl. This becomes the
+ * rewritten outer source IP for offloaded F1-U packets (see session_ctx's
+ * src_ip field): an offloaded packet arrives here as N3 traffic (source =
+ * the UPF's IP), and if that source IP is left as-is, the DU's F1-U socket
+ * -- typically connected to the CU's known address -- will silently drop
+ * every rewritten packet on arrival even though it looks fine on the wire. */
+static int get_own_iface_ip(const char *iface, __u32 *ip)
+{
+    struct ifreq ifr;
+    struct sockaddr_in *addr;
+    int fd, ret;
+
+    fd = socket(AF_INET, SOCK_DGRAM, 0);
+    if (fd < 0)
+        return -1;
+
+    memset(&ifr, 0, sizeof(ifr));
+    strncpy(ifr.ifr_name, iface, IFNAMSIZ - 1);
+    ret = ioctl(fd, SIOCGIFADDR, &ifr);
+    close(fd);
+    if (ret < 0)
+        return -1;
+
+    addr = (struct sockaddr_in *)&ifr.ifr_addr;
+    *ip = addr->sin_addr.s_addr;
     return 0;
 }
 
@@ -249,6 +287,8 @@ static int lookup_mac_by_ip(const char *ip_str, __u8 mac[ETH_ALEN])
  * thread below takes over from here. */
 static int init_own_mac(void)
 {
+    char own_ip_str[INET_ADDRSTRLEN];
+
     if (get_own_iface_mac(OFFLOAD_EGRESS_IFACE, g_own_mac) != 0) {
         fprintf(stderr, "Failed to read own MAC on %s: %s\n",
                 OFFLOAD_EGRESS_IFACE, strerror(errno));
@@ -257,6 +297,14 @@ static int init_own_mac(void)
     printf("Own MAC on %s: %02x:%02x:%02x:%02x:%02x:%02x\n",
            OFFLOAD_EGRESS_IFACE,
            g_own_mac[0], g_own_mac[1], g_own_mac[2], g_own_mac[3], g_own_mac[4], g_own_mac[5]);
+
+    if (get_own_iface_ip(OFFLOAD_EGRESS_IFACE, &g_own_ip) != 0) {
+        fprintf(stderr, "Failed to read own IP on %s: %s\n",
+                OFFLOAD_EGRESS_IFACE, strerror(errno));
+        return -1;
+    }
+    inet_ntop(AF_INET, &g_own_ip, own_ip_str, sizeof(own_ip_str));
+    printf("Own IP on %s: %s\n", OFFLOAD_EGRESS_IFACE, own_ip_str);
     return 0;
 }
 
@@ -462,12 +510,29 @@ static void *f1ap_watcher_thread(void *arg)
  * (is_gtpu && inner_ip_present). If we've learned a DL F1-U tunnel
  * endpoint and this N3 TEID isn't mapped yet, populate session_map so the
  * BPF program starts fast-pathing this flow.
+ *
+ * IMPORTANT: if this TEID is ALREADY mapped, we must not touch it again.
+ * The kernel program owns and increments session_ctx.next_dl_pdcp_sn for
+ * every offloaded packet on this flow; if we re-populate the entry from
+ * scratch (memset-zeroed) on every packet, we clobber that counter back
+ * toward 0 continuously, so the DU never sees a monotonically increasing
+ * PDCP DL sequence number and silently drops/reorders-out everything
+ * past the first packet or two -- exactly the "connection accepted but
+ * zero throughput" symptom this fixes.
  */
 static void maybe_learn_and_populate(const struct gtp_event *event)
 {
     struct session_ctx sess;
+    struct session_ctx existing;
     __u32 key;
     __u8 du_mac[ETH_ALEN];
+
+    key = event->teid;
+
+    /* Already mapped -- leave it alone so next_dl_pdcp_sn (owned by the
+     * kernel program from here on) is never reset. */
+    if (bpf_map_lookup_elem(g_session_map_fd, &key, &existing) == 0)
+        return;
 
     pthread_mutex_lock(&f1u_lock);
     if (!f1u_dl_known) {
@@ -478,6 +543,7 @@ static void maybe_learn_and_populate(const struct gtp_event *event)
     memset(&sess, 0, sizeof(sess));
     sess.peer_teid = f1u_dl_teid;
     sess.dst_ip = f1u_dl_ip;
+    sess.src_ip = g_own_ip;
     pthread_mutex_unlock(&f1u_lock);
 
     pthread_mutex_lock(&g_du_mac_lock);
@@ -492,18 +558,23 @@ static void maybe_learn_and_populate(const struct gtp_event *event)
     sess.egress_ifindex = g_egress_ifindex;
     memcpy(sess.dst_mac, du_mac, ETH_ALEN);
     memcpy(sess.src_mac, g_own_mac, ETH_ALEN);
+    /* next_dl_pdcp_sn stays 0 here -- this is the one-time initial
+     * population; the kernel program takes over incrementing it from
+     * this point on. */
 
-    key = event->teid;
-    if (bpf_map_update_elem(g_session_map_fd, &key, &sess, BPF_ANY) == 0) {
+    if (bpf_map_update_elem(g_session_map_fd, &key, &sess, BPF_NOEXIST) == 0) {
         char dst[INET_ADDRSTRLEN];
 
         inet_ntop(AF_INET, &sess.dst_ip, dst, sizeof(dst));
         printf("  [auto-learned] session_map: N3 TEID 0x%08x -> F1-U TEID 0x%08x @ %s:%u\n",
                event->teid, sess.peer_teid, dst, F1U_PORT);
-    } else {
+    } else if (errno != EEXIST) {
         fprintf(stderr, "  [auto-learned] session_map update failed: %s\n", strerror(errno));
     }
+    /* EEXIST here just means another thread/event raced us and inserted
+     * it first -- benign, nothing to do. */
 }
+
 
 static int print_event(void *ctx, void *data, size_t size)
 {
@@ -585,6 +656,13 @@ static int print_event(void *ctx, void *data, size_t size)
         } else {
             printf("  Fast-path offload: miss (no session_map entry for this TEID, or unsupported IP options)\n");
         }
+        printf("  [debug] old_removed_bytes=%d move_len=%d delta=%d reached_rewrite=%u\n",
+               event->debug_old_removed_bytes, event->debug_move_len,
+               event->debug_delta, event->debug_reached_rewrite);
+        if (event->offload_applied)
+            printf("  [debug] gtp->flags read back: right_after_write=0x%02x right_before_redirect=0x%02x\n",
+                   event->debug_flags_right_after_write,
+                   event->debug_flags_right_before_redirect);
     }
 
     if (event->is_gtpu && event->inner_ip_present)
@@ -606,6 +684,7 @@ int main(int argc, char **argv)
     pthread_t du_mac_thread;
     int interface_index, program_fd, error = 1;
     int attached = 0;
+    __u32 attached_mode = 0;
 
     interface_index = if_nametoindex(interface_name);
     if (!interface_index) {
@@ -659,12 +738,49 @@ int main(int argc, char **argv)
      * attached (e.g. from an unclean exit), XDP_FLAGS_UPDATE_IF_NOEXIST
      * below would otherwise silently keep running that OLD program
      * instead of loading this newly built one -- explicitly detach first
-     * so a rebuild always actually takes effect. */
+     * so a rebuild always actually takes effect. Try both modes since
+     * either could have been attached previously. */
+    bpf_xdp_detach(interface_index, XDP_FLAGS_DRV_MODE, NULL);
     bpf_xdp_detach(interface_index, XDP_FLAGS_SKB_MODE, NULL);
 
-    error = bpf_xdp_attach(interface_index, program_fd,
-                           XDP_FLAGS_SKB_MODE | XDP_FLAGS_UPDATE_IF_NOEXIST,
-                           NULL);
+    /*
+     * Try native (driver) mode first. Modern veth drivers support native
+     * XDP specifically for container-to-container redirect scenarios
+     * like this one, and it's a more mature code path for
+     * bpf_xdp_adjust_tail()+bpf_redirect() than generic/SKB mode. Fall
+     * back to generic mode if the driver doesn't support it.
+     *
+     * TEMPORARY DIAGNOSTIC: set FORCE_SKB_MODE=1 in the environment to
+     * skip straight to generic/SKB mode, to check whether a specific
+     * observed bug (the on-wire gtp->flags byte reverting to its
+     * pre-rewrite value despite the BPF program provably writing and
+     * retaining the correct value right up to bpf_redirect()) is
+     * specific to native-mode XDP redirect on this veth/kernel. Remove
+     * once that's resolved. */
+    if (getenv("FORCE_SKB_MODE")) {
+        error = 1; /* skip the native attempt below entirely */
+    } else {
+        error = bpf_xdp_attach(interface_index, program_fd,
+                               XDP_FLAGS_DRV_MODE | XDP_FLAGS_UPDATE_IF_NOEXIST,
+                               NULL);
+    }
+    if (error) {
+        if (getenv("FORCE_SKB_MODE"))
+            fprintf(stderr, "FORCE_SKB_MODE set; skipping native attach.\n");
+        else
+            fprintf(stderr, "Native (driver-mode) XDP attach failed (%s); "
+                    "falling back to generic/SKB mode.\n", strerror(-error));
+        error = bpf_xdp_attach(interface_index, program_fd,
+                               XDP_FLAGS_SKB_MODE | XDP_FLAGS_UPDATE_IF_NOEXIST,
+                               NULL);
+        if (!error) {
+            printf("Attached in generic (SKB) mode.\n");
+            attached_mode = XDP_FLAGS_SKB_MODE;
+        }
+    } else {
+        printf("Attached in native (driver) mode.\n");
+        attached_mode = XDP_FLAGS_DRV_MODE;
+    }
     if (error) {
         fprintf(stderr, "Failed to attach XDP to %s: %s\n",
                 interface_name, strerror(-error));
@@ -701,6 +817,51 @@ int main(int argc, char **argv)
         goto cleanup;
     }
 
+    /* TEMPORARY DIAGNOSTIC: SEED_SESSION=<n3_teid_hex>:<f1u_teid_hex> seeds
+     * session_map directly with an already-known real bearer mapping,
+     * bypassing the F1AP watcher -- useful when the bearer was already
+     * established before this process started (no fresh F1AP
+     * UEContextSetupResponse to observe). Remove once no longer needed. */
+    {
+        const char *seed = getenv("SEED_SESSION");
+
+        if (seed) {
+            unsigned int n3_teid = 0, f1u_teid = 0;
+
+            if (sscanf(seed, "%x:%x", &n3_teid, &f1u_teid) == 2) {
+                struct session_ctx sess;
+                int waited;
+
+                for (waited = 0; waited < 50 && !g_du_mac_valid; waited++)
+                    usleep(100000);
+
+                if (g_du_mac_valid) {
+                    memset(&sess, 0, sizeof(sess));
+                    sess.peer_teid = f1u_teid;
+                    inet_pton(AF_INET, DU_IP, &sess.dst_ip);
+                    sess.src_ip = g_own_ip;
+                    sess.dst_port = htons(F1U_PORT);
+                    sess.egress_ifindex = g_egress_ifindex;
+                    pthread_mutex_lock(&g_du_mac_lock);
+                    memcpy(sess.dst_mac, g_du_mac, ETH_ALEN);
+                    pthread_mutex_unlock(&g_du_mac_lock);
+                    memcpy(sess.src_mac, g_own_mac, ETH_ALEN);
+                    sess.qfi = 1;
+                    if (bpf_map_update_elem(g_session_map_fd, &n3_teid, &sess, BPF_ANY) == 0)
+                        printf("SEED_SESSION: seeded N3 TEID 0x%08x -> F1-U TEID 0x%08x\n",
+                               n3_teid, f1u_teid);
+                    else
+                        fprintf(stderr, "SEED_SESSION: bpf_map_update_elem failed: %s\n",
+                                strerror(errno));
+                } else {
+                    fprintf(stderr, "SEED_SESSION: DU MAC never resolved, skipping seed\n");
+                }
+            } else {
+                fprintf(stderr, "SEED_SESSION: expected <n3_teid_hex>:<f1u_teid_hex>\n");
+            }
+        }
+    }
+
     printf("Parsing ingress UDP and GTP-U packets on %s; press Ctrl+C to stop.\n\n",
            interface_name);
 
@@ -721,7 +882,7 @@ int main(int argc, char **argv)
 cleanup:
     ring_buffer__free(ring);
     if (attached)
-        bpf_xdp_detach(interface_index, XDP_FLAGS_SKB_MODE, NULL);
+        bpf_xdp_detach(interface_index, attached_mode, NULL);
     bpf_object__close(object);
     return error ? 1 : 0;
 }
