@@ -1,0 +1,758 @@
+#include <arpa/inet.h>
+#include <ctype.h>
+#include <errno.h>
+#include <net/if.h>
+#include <pthread.h>
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <unistd.h>
+
+#include <linux/if_ether.h>
+#include <linux/if_link.h>
+#include <bpf/bpf.h>
+#include <bpf/libbpf.h>
+
+#define MAX_EXTENSION_HEADERS 4
+
+/* Mirrors the kernel-side struct session_ctx exactly (same field order and
+ * types), since this is the raw layout written into the BPF hash map. */
+struct session_ctx {
+    __u32 peer_teid;
+    __u32 dst_ip;
+    __u16 dst_port;
+    __u16 pad0;
+    __u32 egress_ifindex;
+    __u8 dst_mac[ETH_ALEN];
+    __u8 src_mac[ETH_ALEN];
+    __u8 qfi;
+    __u8 pad1[3];
+    __u32 next_dl_pdcp_sn; /* mirrors kernel-side struct exactly; zero-initialized
+                            * via memset() before population, incremented only by
+                            * the kernel program */
+};
+
+struct gtp_event {
+    __u32 outer_src_ip;
+    __u32 outer_dst_ip;
+    __u32 inner_src_ip;
+    __u32 inner_dst_ip;
+    __u32 teid;
+    __u16 outer_src_port;
+    __u16 outer_dst_port;
+    __u16 gtp_length;
+    __u8 version;
+    __u8 protocol_type;
+    __u8 message_type;
+    __u8 flag_e;
+    __u8 flag_s;
+    __u8 flag_pn;
+    __u8 sequence_present;
+    __u8 npdu_present;
+    __u16 sequence_number;
+    __u8 npdu_number;
+    __u8 first_extension_type;
+    __u8 extension_count;
+    __u8 extension_types[MAX_EXTENSION_HEADERS];
+    __u8 pdu_type_present;
+    __u8 pdu_type;
+    __u8 qfi_present;
+    __u8 qfi;
+    __u8 inner_ip_present;
+    __u8 inner_protocol;
+    __u8 is_gtpu;
+    __u8 pad;
+    __u8 offload_attempted;
+    __u8 offload_applied;
+    __u32 offload_new_teid;
+    __u32 offload_new_dst_ip;
+    __u16 offload_new_dst_port;
+    __u16 pad2;
+    __s32 debug_old_removed_bytes;
+    __s32 debug_move_len;
+    __s32 debug_delta;
+    __u32 debug_reached_rewrite;
+    __u64 gtpu_count;
+    __u64 udp_non_gtpu_count;
+};
+
+/* --- Static config: only genuine topology facts remain hardcoded (IP
+ * addresses of known peers, capture/egress interface names). MAC
+ * addresses are now resolved dynamically at startup -- see
+ * resolve_mac_addresses() -- instead of being hardcoded. TEID/IP tunnel
+ * pairing is learned dynamically via the F1AP watcher below. */
+#define GTPU_STANDARD_PORT      2152        /* N3 (UPF<->CU) port in this setup */
+#define F1U_PORT                2153        /* F1-U (DU<->CU) port observed in this setup --
+                                              * NOT signaled by F1AP; must match your environment */
+#define OFFLOAD_EGRESS_IFACE    "eth0"              /* egress interface toward the DU */
+#define DU_IP                   "192.168.71.171"
+#define F1AP_CAPTURE_IFACE      "eth0"               /* interface F1AP/SCTP is visible on */
+
+static volatile sig_atomic_t stop;
+
+/* --- Globals shared between the main (ring-buffer) thread and the
+ * background F1AP-watcher thread. Guarded by f1u_lock. --- */
+static pthread_mutex_t f1u_lock = PTHREAD_MUTEX_INITIALIZER;
+static int f1u_dl_known;         /* 1 once we've learned a DL F1-U tunnel endpoint */
+static __u32 f1u_dl_teid;        /* host byte order */
+static __u32 f1u_dl_ip;          /* network byte order (raw, from inet_pton) */
+
+/* Resolved once at startup, read-only afterwards. */
+static int g_session_map_fd = -1;
+static __u32 g_egress_ifindex;
+static __u8 g_du_mac[ETH_ALEN];   /* DU's MAC, via ARP lookup on DU_IP -- used as dst_mac */
+static __u8 g_own_mac[ETH_ALEN];  /* CU's own eth0 MAC, via ioctl -- used as src_mac */
+static pthread_mutex_t g_du_mac_lock = PTHREAD_MUTEX_INITIALIZER;
+static volatile int g_du_mac_valid; /* 0 until a real (non-stale) DU MAC has been confirmed */
+
+static void handle_signal(int signo)
+{
+    (void)signo;
+    stop = 1;
+}
+
+static const char *ip_protocol_name(__u8 protocol)
+{
+    switch (protocol) {
+    case IPPROTO_ICMP: return "ICMP";
+    case IPPROTO_TCP:  return "TCP";
+    case IPPROTO_UDP:  return "UDP";
+    default:           return "other";
+    }
+}
+
+static const char *pdu_type_name(__u8 pdu_type)
+{
+    switch (pdu_type) {
+    case 0: return "DL PDU SESSION INFORMATION";
+    case 1: return "UL PDU SESSION INFORMATION";
+    default: return "other/reserved";
+    }
+}
+
+static int parse_mac(const char *str, __u8 mac[ETH_ALEN])
+{
+    unsigned int b[ETH_ALEN];
+    int i;
+
+    if (sscanf(str, "%x:%x:%x:%x:%x:%x",
+               &b[0], &b[1], &b[2], &b[3], &b[4], &b[5]) != ETH_ALEN)
+        return -1;
+    for (i = 0; i < ETH_ALEN; i++)
+        mac[i] = (__u8)b[i];
+    return 0;
+}
+
+/* CU's own interface MAC -- SIOCGIFHWADDR ioctl, not ARP (ARP has no
+ * entry for the host's own address). */
+static int get_own_iface_mac(const char *iface, __u8 mac[ETH_ALEN])
+{
+    struct ifreq ifr;
+    int fd, ret;
+
+    fd = socket(AF_INET, SOCK_DGRAM, 0);
+    if (fd < 0)
+        return -1;
+
+    memset(&ifr, 0, sizeof(ifr));
+    strncpy(ifr.ifr_name, iface, IFNAMSIZ - 1);
+    ret = ioctl(fd, SIOCGIFHWADDR, &ifr);
+    close(fd);
+    if (ret < 0)
+        return -1;
+
+    memcpy(mac, ifr.ifr_hwaddr.sa_data, ETH_ALEN);
+    return 0;
+}
+
+/*
+ * Sends a single empty UDP datagram toward `ip_str`. This isn't meant to
+ * be received by anything -- it just gives the kernel a reason to issue
+ * an ARP request for that IP if it hasn't already resolved it, so the
+ * subsequent /proc/net/arp read below has an entry to find.
+ */
+static void force_arp_resolve(const char *ip_str)
+{
+    struct sockaddr_in addr;
+    int fd;
+
+    fd = socket(AF_INET, SOCK_DGRAM, 0);
+    if (fd < 0)
+        return;
+
+    memset(&addr, 0, sizeof(addr));
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(9); /* discard port; no reply expected or needed */
+    inet_pton(AF_INET, ip_str, &addr.sin_addr);
+    sendto(fd, "", 0, 0, (struct sockaddr *)&addr, sizeof(addr));
+    close(fd);
+}
+
+/*
+ * Deletes any existing neighbor-table entry for `ip_str` so the next
+ * force_arp_resolve() actually triggers a fresh ARP exchange instead of
+ * silently reusing a stale (possibly wrong) cached MAC -- which is
+ * exactly what happens when a Docker container is restarted and reuses
+ * the same static IP with a new MAC. Failure is expected/harmless when
+ * there was no entry to delete.
+ */
+static void flush_arp_entry(const char *ip_str)
+{
+    char cmd[256];
+
+    snprintf(cmd, sizeof(cmd), "ip neigh del %s dev %s >/dev/null 2>&1",
+             ip_str, OFFLOAD_EGRESS_IFACE);
+    if (system(cmd) == -1) {
+        /* Non-fatal: expected when there's nothing to delete, or the
+         * shell itself couldn't be spawned. Either way, the caller's
+         * subsequent force_arp_resolve()/lookup will simply reflect
+         * whatever the ARP table already has. */
+    }
+}
+
+/* Reads /proc/net/arp looking for `ip_str`, filling in its resolved MAC.
+ * Returns 0 on success, -1 if no (complete) entry is found. */
+static int lookup_mac_by_ip(const char *ip_str, __u8 mac[ETH_ALEN])
+{
+    FILE *fp;
+    char line[256];
+    int found = -1;
+
+    fp = fopen("/proc/net/arp", "r");
+    if (!fp)
+        return -1;
+
+    if (!fgets(line, sizeof(line), fp)) { /* skip header line */
+        fclose(fp);
+        return -1;
+    }
+
+    while (fgets(line, sizeof(line), fp)) {
+        char ip[64], hwtype[16], flags[16], hwaddr[32], mask[16], dev[32];
+
+        if (sscanf(line, "%63s %15s %15s %31s %15s %31s",
+                   ip, hwtype, flags, hwaddr, mask, dev) == 6 &&
+            strcmp(ip, ip_str) == 0 &&
+            strcmp(hwaddr, "00:00:00:00:00:00") != 0) {
+            if (parse_mac(hwaddr, mac) == 0)
+                found = 0;
+            break;
+        }
+    }
+
+    fclose(fp);
+    return found;
+}
+
+/* One-time setup: resolve our own MAC (fatal if this fails -- something
+ * is very wrong with the interface), and attempt a first DU MAC probe
+ * (non-fatal; the DU may simply not be up yet). The periodic refresh
+ * thread below takes over from here. */
+static int init_own_mac(void)
+{
+    if (get_own_iface_mac(OFFLOAD_EGRESS_IFACE, g_own_mac) != 0) {
+        fprintf(stderr, "Failed to read own MAC on %s: %s\n",
+                OFFLOAD_EGRESS_IFACE, strerror(errno));
+        return -1;
+    }
+    printf("Own MAC on %s: %02x:%02x:%02x:%02x:%02x:%02x\n",
+           OFFLOAD_EGRESS_IFACE,
+           g_own_mac[0], g_own_mac[1], g_own_mac[2], g_own_mac[3], g_own_mac[4], g_own_mac[5]);
+    return 0;
+}
+
+#define DU_MAC_REFRESH_INTERVAL_SEC 3
+
+/*
+ * Background thread: periodically flushes any cached ARP entry for the
+ * DU and re-probes it, so that (a) the DU coming up after this program
+ * starts is picked up automatically, and (b) a DU container restarting
+ * with a new MAC on the same IP is detected rather than silently reusing
+ * a stale cached entry. Only logs and updates g_du_mac when the resolved
+ * value actually changes.
+ */
+static void *du_mac_refresh_thread(void *arg)
+{
+    __u8 candidate[ETH_ALEN];
+    __u8 last_logged[ETH_ALEN];
+    int have_last_logged = 0;
+
+    (void)arg;
+
+    while (!stop) {
+        flush_arp_entry(DU_IP);
+        force_arp_resolve(DU_IP);
+        usleep(300000); /* give the ARP exchange a moment to complete */
+
+        if (lookup_mac_by_ip(DU_IP, candidate) == 0) {
+            int changed = !have_last_logged ||
+                          memcmp(candidate, last_logged, ETH_ALEN) != 0;
+
+            pthread_mutex_lock(&g_du_mac_lock);
+            memcpy(g_du_mac, candidate, ETH_ALEN);
+            g_du_mac_valid = 1;
+            pthread_mutex_unlock(&g_du_mac_lock);
+
+            if (changed) {
+                printf("DU MAC (%s) resolved/updated: %02x:%02x:%02x:%02x:%02x:%02x\n",
+                       DU_IP, candidate[0], candidate[1], candidate[2],
+                       candidate[3], candidate[4], candidate[5]);
+                memcpy(last_logged, candidate, ETH_ALEN);
+                have_last_logged = 1;
+            }
+        }
+        /* No entry found: DU is presumably still down. Keep whatever was
+         * last known valid (if any) rather than flapping offload on/off
+         * on a momentary ARP miss; just try again next cycle. */
+
+        sleep(DU_MAC_REFRESH_INTERVAL_SEC);
+    }
+    return NULL;
+}
+
+
+
+/*
+ * Confirmed via `tshark -T json` on a real UEContextSetupResponse:
+ *   f1ap.gTP_TEID: "77:51:2b:d5"                      (colon-separated hex octets)
+ *   f1ap.transportLayerAddressIPv4: "192.168.71.171"  (plain dotted-decimal)
+ * We extract these directly by field name via `tshark -T fields`, which
+ * is far more reliable than scanning JSON/ek text for substrings.
+ */
+static __u32 parse_colon_hex_teid(const char *s)
+{
+    __u32 val = 0;
+
+    for (; *s; s++) {
+        int nibble;
+
+        if (*s == ':')
+            continue;
+        if (*s >= '0' && *s <= '9')
+            nibble = *s - '0';
+        else if (*s >= 'a' && *s <= 'f')
+            nibble = *s - 'a' + 10;
+        else if (*s >= 'A' && *s <= 'F')
+            nibble = *s - 'A' + 10;
+        else
+            break; /* stop at whitespace/newline/anything unexpected */
+
+        val = (val << 4) | (__u32)nibble;
+    }
+    return val;
+}
+
+/*
+ * Background thread: runs tshark filtered specifically to F1AP messages
+ * that carry the DL F1-U tunnel endpoint (f1ap.procedureCode==5 is
+ * id-UEContextSetup; requiring f1ap.gTP_TEID to be present selects only
+ * the Response, which carries the IE, not the Request, which doesn't).
+ * Extracts the TEID and DU IP directly by field name -- no text-scraping.
+ *
+ * Simplification: tracks only the single most recently announced DL F1-U
+ * tunnel endpoint (fine for a one-UE/one-bearer testbed). Handling
+ * multiple concurrent bearers/DRBs needs correlating F1AP messages to
+ * specific UEs/PDU sessions, which this does not attempt yet.
+ */
+static void *f1ap_watcher_thread(void *arg)
+{
+    char cmd[512];
+    char line[512];
+    FILE *fp;
+    int seen_first_packet = 0;
+
+    (void)arg;
+
+    snprintf(cmd, sizeof(cmd),
+             "tshark -i %s -f \"sctp\" "
+             "-Y \"f1ap.procedureCode==5 && f1ap.gTP_TEID\" "
+             "-T fields -e f1ap.gTP_TEID -e f1ap.transportLayerAddressIPv4 "
+             "-E separator=/t -E occurrence=f -l 2>/dev/null",
+             F1AP_CAPTURE_IFACE);
+
+    fp = popen(cmd, "r");
+    if (!fp) {
+        fprintf(stderr, "F1AP watcher: failed to start tshark: %s\n", strerror(errno));
+        return NULL;
+    }
+
+    printf("F1AP watcher started (%s)\n", cmd);
+    printf("F1AP watcher: waiting for first matching packet to confirm capture is live...\n");
+
+    while (!stop && fgets(line, sizeof(line), fp)) {
+        char *tab, *newline;
+        char teid_field[64];
+        char ip_field[64];
+        __u32 teid_val;
+        struct in_addr addr;
+
+        if (!seen_first_packet) {
+            printf("F1AP watcher: capture is live (first matching packet seen) -- "
+                   "safe to bring up DU/UE from here on\n");
+            seen_first_packet = 1;
+        }
+
+        newline = strchr(line, '\n');
+        if (newline)
+            *newline = '\0';
+
+        tab = strchr(line, '\t');
+        if (!tab || tab == line) {
+            /* No TEID field on this line (shouldn't happen given the
+             * display filter, but be defensive) or line is otherwise
+             * malformed -- skip it. */
+            continue;
+        }
+
+        {
+            size_t teid_len = (size_t)(tab - line);
+            if (teid_len >= sizeof(teid_field))
+                teid_len = sizeof(teid_field) - 1;
+            memcpy(teid_field, line, teid_len);
+            teid_field[teid_len] = '\0';
+        }
+        snprintf(ip_field, sizeof(ip_field), "%s", tab + 1);
+
+        if (ip_field[0] == '\0') {
+            fprintf(stderr,
+                    "F1AP watcher: TEID field '%s' present but no IP on the same "
+                    "line -- ignoring\n", teid_field);
+            continue;
+        }
+
+        teid_val = parse_colon_hex_teid(teid_field);
+        if (teid_val == 0) {
+            fprintf(stderr, "F1AP watcher: parsed TEID as 0 from '%s' -- ignoring\n", teid_field);
+            continue;
+        }
+
+        if (inet_pton(AF_INET, ip_field, &addr) != 1) {
+            fprintf(stderr, "F1AP watcher: could not parse IP '%s' -- ignoring\n", ip_field);
+            continue;
+        }
+
+        if (strcmp(ip_field, DU_IP) != 0) {
+            /* procedureCode==5 matches both UEContextSetupRequest (CU -> DU,
+             * carries UL tunnel info: the CU's OWN address) and
+             * UEContextSetupResponse (DU -> CU, carries the DL tunnel info
+             * we actually want: the DU's address). Since both apparently
+             * expose a gTP_TEID field, our filter can't distinguish them by
+             * procedure code alone -- so explicitly require the address to
+             * be the DU's, which only the Response's DL info will match. */
+            printf("F1AP watcher: ignoring TEID 0x%08x @ %s (not the DU's IP -- "
+                   "likely UL tunnel info from UEContextSetupRequest, not DL)\n",
+                   teid_val, ip_field);
+            continue;
+        }
+
+        pthread_mutex_lock(&f1u_lock);
+        f1u_dl_teid = teid_val;
+        f1u_dl_ip = addr.s_addr;
+        f1u_dl_known = 1;
+        pthread_mutex_unlock(&f1u_lock);
+
+        printf("F1AP watcher: learned DL F1-U TEID 0x%08x @ %s\n", teid_val, ip_field);
+    }
+
+    pclose(fp);
+    return NULL;
+}
+
+/*
+ * Called from the main thread for every N3-looking downlink GTP-U event
+ * (is_gtpu && inner_ip_present). If we've learned a DL F1-U tunnel
+ * endpoint and this N3 TEID isn't mapped yet, populate session_map so the
+ * BPF program starts fast-pathing this flow.
+ */
+static void maybe_learn_and_populate(const struct gtp_event *event)
+{
+    struct session_ctx sess;
+    __u32 key;
+    __u8 du_mac[ETH_ALEN];
+
+    pthread_mutex_lock(&f1u_lock);
+    if (!f1u_dl_known) {
+        pthread_mutex_unlock(&f1u_lock);
+        return;
+    }
+
+    memset(&sess, 0, sizeof(sess));
+    sess.peer_teid = f1u_dl_teid;
+    sess.dst_ip = f1u_dl_ip;
+    pthread_mutex_unlock(&f1u_lock);
+
+    pthread_mutex_lock(&g_du_mac_lock);
+    if (!g_du_mac_valid) {
+        pthread_mutex_unlock(&g_du_mac_lock);
+        return; /* DU not resolved yet (e.g. not up) -- try again next packet */
+    }
+    memcpy(du_mac, g_du_mac, ETH_ALEN);
+    pthread_mutex_unlock(&g_du_mac_lock);
+
+    sess.dst_port = htons(F1U_PORT);
+    sess.egress_ifindex = g_egress_ifindex;
+    memcpy(sess.dst_mac, du_mac, ETH_ALEN);
+    memcpy(sess.src_mac, g_own_mac, ETH_ALEN);
+
+    key = event->teid;
+    if (bpf_map_update_elem(g_session_map_fd, &key, &sess, BPF_ANY) == 0) {
+        char dst[INET_ADDRSTRLEN];
+
+        inet_ntop(AF_INET, &sess.dst_ip, dst, sizeof(dst));
+        printf("  [auto-learned] session_map: N3 TEID 0x%08x -> F1-U TEID 0x%08x @ %s:%u\n",
+               event->teid, sess.peer_teid, dst, F1U_PORT);
+    } else {
+        fprintf(stderr, "  [auto-learned] session_map update failed: %s\n", strerror(errno));
+    }
+}
+
+static int print_event(void *ctx, void *data, size_t size)
+{
+    const struct gtp_event *event = data;
+    char outer_src[INET_ADDRSTRLEN], outer_dst[INET_ADDRSTRLEN];
+    char inner_src[INET_ADDRSTRLEN], inner_dst[INET_ADDRSTRLEN];
+
+    (void)ctx;
+    if (size < sizeof(*event))
+        return 0;
+
+    inet_ntop(AF_INET, &event->outer_src_ip, outer_src, sizeof(outer_src));
+    inet_ntop(AF_INET, &event->outer_dst_ip, outer_dst, sizeof(outer_dst));
+
+    if (!event->is_gtpu) {
+        printf("UDP packet without recognized GTP-U header\n");
+        printf("  Outer path:       %s:%u -> %s:%u\n",
+               outer_src, event->outer_src_port,
+               outer_dst, event->outer_dst_port);
+        printf("  UDP non-GTP count: %llu\n\n",
+               (unsigned long long)event->udp_non_gtpu_count);
+        return 0;
+    }
+
+    printf("GTP-U packet found (count: %llu)\n",
+           (unsigned long long)event->gtpu_count);
+    printf("  Outer path:       %s:%u -> %s:%u\n",
+           outer_src, event->outer_src_port,
+           outer_dst, event->outer_dst_port);
+
+    if (event->inner_ip_present) {
+        inet_ntop(AF_INET, &event->inner_src_ip, inner_src, sizeof(inner_src));
+        inet_ntop(AF_INET, &event->inner_dst_ip, inner_dst, sizeof(inner_dst));
+        printf("  Inner path:       %s -> %s\n", inner_src, inner_dst);
+        printf("  Inner protocol:   %u (%s)\n", event->inner_protocol,
+               ip_protocol_name(event->inner_protocol));
+    } else {
+        printf("  Inner IP:         unavailable/not parsable (non-IPv4, truncated, or unsupported extension chain)\n");
+    }
+
+    printf("  Version:          %u\n", event->version);
+    printf("  Protocol type:    %u (%s)\n", event->protocol_type,
+           event->protocol_type ? "GTP" : "not GTP");
+    printf("  Message type:     %u%s\n", event->message_type,
+           event->message_type == 255 ? " (G-PDU (user data))" : "");
+    printf("  GTP length:       %u bytes\n", event->gtp_length);
+    printf("  TEID:             %u (0x%08x)\n", event->teid, event->teid);
+    printf("  Flags:            E=%u S=%u PN=%u\n",
+           event->flag_e, event->flag_s, event->flag_pn);
+
+    if (event->sequence_present)
+        printf("  Sequence number:  %u\n", event->sequence_number);
+    if (event->npdu_present)
+        printf("  N-PDU number:     %u\n", event->npdu_number);
+    if (event->flag_e)
+        printf("  First extension:  0x%02x\n", event->first_extension_type);
+    if (event->extension_count > 0) {
+        int count = event->extension_count;
+        if (count > MAX_EXTENSION_HEADERS)
+            count = MAX_EXTENSION_HEADERS;
+        printf("  Extension headers (%u total):\n", event->extension_count);
+        for (int i = 0; i < count; i++)
+            printf("    [%d] type 0x%02x\n", i, event->extension_types[i]);
+    }
+    if (event->pdu_type_present)
+        printf("  PDU type:         %u (%s)\n", event->pdu_type,
+               pdu_type_name(event->pdu_type));
+    if (event->qfi_present)
+        printf("  QFI:              %u\n", event->qfi);
+
+    if (event->offload_attempted) {
+        if (event->offload_applied) {
+            char new_dst[INET_ADDRSTRLEN];
+
+            inet_ntop(AF_INET, &event->offload_new_dst_ip, new_dst, sizeof(new_dst));
+            printf("  Fast-path offload: HIT -> new TEID %u (0x%08x), redirected to %s:%u\n",
+                   event->offload_new_teid, event->offload_new_teid,
+                   new_dst, event->offload_new_dst_port);
+        } else {
+            printf("  Fast-path offload: miss (no session_map entry for this TEID, or unsupported IP options)\n");
+        }
+        printf("  [debug] old_removed_bytes=%d move_len=%d delta=%d reached_rewrite=%u\n",
+               event->debug_old_removed_bytes, event->debug_move_len,
+               event->debug_delta, event->debug_reached_rewrite);
+    }
+
+    if (event->is_gtpu && event->inner_ip_present)
+        maybe_learn_and_populate(event);
+
+    putchar('\n');
+    return 0;
+}
+
+int main(int argc, char **argv)
+{
+    const char *interface_name = argc > 1 ? argv[1] : "eth0";
+    const char *object_file = "xdp_gtp_inner_parser.bpf.o";
+    struct bpf_object *object = NULL;
+    struct bpf_program *program;
+    struct bpf_map *events_map, *session_map;
+    struct ring_buffer *ring = NULL;
+    pthread_t f1ap_thread;
+    pthread_t du_mac_thread;
+    int interface_index, program_fd, error = 1;
+    int attached = 0;
+    __u32 attached_mode = 0;
+
+    interface_index = if_nametoindex(interface_name);
+    if (!interface_index) {
+        fprintf(stderr, "Cannot find interface %s: %s\n",
+                interface_name, strerror(errno));
+        return 1;
+    }
+
+    g_egress_ifindex = if_nametoindex(OFFLOAD_EGRESS_IFACE);
+    if (!g_egress_ifindex) {
+        fprintf(stderr, "Cannot find egress interface %s: %s\n",
+                OFFLOAD_EGRESS_IFACE, strerror(errno));
+        return 1;
+    }
+
+    if (init_own_mac() != 0) {
+        fprintf(stderr, "Failed to determine own MAC address\n");
+        return 1;
+    }
+
+    object = bpf_object__open_file(object_file, NULL);
+    if (libbpf_get_error(object)) {
+        fprintf(stderr, "Failed to open %s\n", object_file);
+        object = NULL;
+        goto cleanup;
+    }
+
+    error = bpf_object__load(object);
+    if (error) {
+        fprintf(stderr, "Failed to load eBPF object: %s\n", strerror(-error));
+        goto cleanup;
+    }
+
+    program = bpf_object__find_program_by_name(object, "parse_gtpu");
+    if (!program) {
+        fprintf(stderr, "Cannot find eBPF program parse_gtpu\n");
+        error = 1;
+        goto cleanup;
+    }
+    program_fd = bpf_program__fd(program);
+
+    session_map = bpf_object__find_map_by_name(object, "session_map");
+    if (!session_map) {
+        fprintf(stderr, "Cannot find session_map\n");
+        error = 1;
+        goto cleanup;
+    }
+    g_session_map_fd = bpf_map__fd(session_map);
+
+    /* Force a clean slate: if a previous run's XDP program is still
+     * attached (e.g. from an unclean exit), XDP_FLAGS_UPDATE_IF_NOEXIST
+     * below would otherwise silently keep running that OLD program
+     * instead of loading this newly built one -- explicitly detach first
+     * so a rebuild always actually takes effect. Try both modes since
+     * either could have been attached previously. */
+    bpf_xdp_detach(interface_index, XDP_FLAGS_DRV_MODE, NULL);
+    bpf_xdp_detach(interface_index, XDP_FLAGS_SKB_MODE, NULL);
+
+    /*
+     * Try native (driver) mode first. Modern veth drivers support native
+     * XDP specifically for container-to-container redirect scenarios
+     * like this one, and it's a more mature code path for
+     * bpf_xdp_adjust_tail()+bpf_redirect() than generic/SKB mode. Fall
+     * back to generic mode if the driver doesn't support it.
+     */
+    error = bpf_xdp_attach(interface_index, program_fd,
+                           XDP_FLAGS_DRV_MODE | XDP_FLAGS_UPDATE_IF_NOEXIST,
+                           NULL);
+    if (error) {
+        fprintf(stderr, "Native (driver-mode) XDP attach failed (%s); "
+                "falling back to generic/SKB mode.\n", strerror(-error));
+        error = bpf_xdp_attach(interface_index, program_fd,
+                               XDP_FLAGS_SKB_MODE | XDP_FLAGS_UPDATE_IF_NOEXIST,
+                               NULL);
+        if (!error) {
+            printf("Attached in generic (SKB) mode.\n");
+            attached_mode = XDP_FLAGS_SKB_MODE;
+        }
+    } else {
+        printf("Attached in native (driver) mode.\n");
+        attached_mode = XDP_FLAGS_DRV_MODE;
+    }
+    if (error) {
+        fprintf(stderr, "Failed to attach XDP to %s: %s\n",
+                interface_name, strerror(-error));
+        goto cleanup;
+    }
+    attached = 1;
+
+    events_map = bpf_object__find_map_by_name(object, "events");
+    if (!events_map) {
+        fprintf(stderr, "Cannot find events ring buffer\n");
+        error = 1;
+        goto cleanup;
+    }
+
+    ring = ring_buffer__new(bpf_map__fd(events_map), print_event, NULL, NULL);
+    if (!ring) {
+        fprintf(stderr, "Failed to create ring-buffer reader\n");
+        error = 1;
+        goto cleanup;
+    }
+
+    signal(SIGINT, handle_signal);
+    signal(SIGTERM, handle_signal);
+
+    if (pthread_create(&du_mac_thread, NULL, du_mac_refresh_thread, NULL) != 0) {
+        fprintf(stderr, "Failed to start DU MAC refresh thread: %s\n", strerror(errno));
+        error = 1;
+        goto cleanup;
+    }
+
+    if (pthread_create(&f1ap_thread, NULL, f1ap_watcher_thread, NULL) != 0) {
+        fprintf(stderr, "Failed to start F1AP watcher thread: %s\n", strerror(errno));
+        error = 1;
+        goto cleanup;
+    }
+
+    printf("Parsing ingress UDP and GTP-U packets on %s; press Ctrl+C to stop.\n\n",
+           interface_name);
+
+    while (!stop) {
+        error = ring_buffer__poll(ring, 250);
+        if (error == -EINTR)
+            continue;
+        if (error < 0) {
+            fprintf(stderr, "Ring-buffer polling failed: %s\n", strerror(-error));
+            break;
+        }
+    }
+    error = 0;
+
+    pthread_join(f1ap_thread, NULL);
+    pthread_join(du_mac_thread, NULL);
+
+cleanup:
+    ring_buffer__free(ring);
+    if (attached)
+        bpf_xdp_detach(interface_index, attached_mode, NULL);
+    bpf_object__close(object);
+    return error ? 1 : 0;
+}

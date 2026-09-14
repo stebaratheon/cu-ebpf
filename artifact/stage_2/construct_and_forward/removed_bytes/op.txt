@@ -1,0 +1,723 @@
+Own MAC on eth0: 92:8a:14:56:2b:54
+Parsing ingress UDP and GTP-U packets on eth0; press Ctrl+C to stop.
+
+F1AP watcher started (tshark -i eth0 -f "sctp" -Y "f1ap.procedureCode==5 && f1ap.gTP_TEID" -T fields -e f1ap.gTP_TEID -e f1ap.transportLayerAddressIPv4 -E separator=/t -E occurrence=f -l 2>/dev/null)
+F1AP watcher: waiting for first matching packet to confirm capture is live...
+DU MAC (192.168.71.171) resolved/updated: 72:c8:c7:78:ca:9a
+UDP packet without recognized GTP-U header
+  Outer path:       192.168.71.129:44376 -> 239.255.255.250:1900
+  UDP non-GTP count: 1
+
+UDP packet without recognized GTP-U header
+  Outer path:       192.168.71.129:44376 -> 239.255.255.250:1900
+  UDP non-GTP count: 2
+
+UDP packet without recognized GTP-U header
+  Outer path:       192.168.71.129:44376 -> 239.255.255.250:1900
+  UDP non-GTP count: 3
+
+UDP packet without recognized GTP-U header
+  Outer path:       192.168.71.129:5353 -> 224.0.0.251:5353
+  UDP non-GTP count: 4
+
+UDP packet without recognized GTP-U header
+  Outer path:       192.168.71.129:5353 -> 224.0.0.251:5353
+  UDP non-GTP count: 5
+
+UDP packet without recognized GTP-U header
+  Outer path:       192.168.71.129:44376 -> 239.255.255.250:1900
+  UDP non-GTP count: 6
+
+UDP packet without recognized GTP-U header
+  Outer path:       192.168.71.129:5353 -> 224.0.0.251:5353
+  UDP non-GTP count: 7
+
+UDP packet without recognized GTP-U header
+  Outer path:       192.168.71.129:5353 -> 224.0.0.251:5353
+  UDP non-GTP count: 8
+
+UDP packet without recognized GTP-U header
+  Outer path:       192.168.71.129:5353 -> 224.0.0.251:5353
+  UDP non-GTP count: 9
+
+UDP packet without recognized GTP-U header
+  Outer path:       192.168.71.129:5353 -> 224.0.0.251:5353
+  UDP non-GTP count: 10
+
+F1AP watcher: capture is live (first matching packet seen) -- safe to bring up DU/UE from here on
+F1AP watcher: ignoring TEID 0x29eb23aa @ 192.168.71.150 (not the DU's IP -- likely UL tunnel info from UEContextSetupRequest, not DL)
+F1AP watcher: learned DL F1-U TEID 0x8f1cf21f @ 192.168.71.171
+GTP-U packet found (count: 1)
+  Outer path:       192.168.71.171:2153 -> 192.168.71.150:2153
+  Inner IP:         unavailable/not parsable (non-IPv4, truncated, or unsupported extension chain)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       52 bytes
+  TEID:             703275946 (0x29eb23aa)
+  Flags:            E=0 S=0 PN=0
+  Fast-path offload: miss (no session_map entry for this TEID, or unsupported IP options)
+  [debug] old_removed_bytes=0 move_len=0 delta=0 reached_rewrite=0
+
+GTP-U packet found (count: 2)
+  Outer path:       192.168.71.171:2153 -> 192.168.71.150:2153
+  Inner IP:         unavailable/not parsable (non-IPv4, truncated, or unsupported extension chain)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       52 bytes
+  TEID:             703275946 (0x29eb23aa)
+  Flags:            E=0 S=0 PN=0
+  Fast-path offload: miss (no session_map entry for this TEID, or unsupported IP options)
+  [debug] old_removed_bytes=0 move_len=0 delta=0 reached_rewrite=0
+
+GTP-U packet found (count: 3)
+  Outer path:       192.168.71.171:2153 -> 192.168.71.150:2153
+  Inner IP:         unavailable/not parsable (non-IPv4, truncated, or unsupported extension chain)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       52 bytes
+  TEID:             703275946 (0x29eb23aa)
+  Flags:            E=0 S=0 PN=0
+  Fast-path offload: miss (no session_map entry for this TEID, or unsupported IP options)
+  [debug] old_removed_bytes=0 move_len=0 delta=0 reached_rewrite=0
+
+GTP-U packet found (count: 4)
+  Outer path:       192.168.71.171:2153 -> 192.168.71.150:2153
+  Inner IP:         unavailable/not parsable (non-IPv4, truncated, or unsupported extension chain)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       52 bytes
+  TEID:             703275946 (0x29eb23aa)
+  Flags:            E=0 S=0 PN=0
+  Fast-path offload: miss (no session_map entry for this TEID, or unsupported IP options)
+  [debug] old_removed_bytes=0 move_len=0 delta=0 reached_rewrite=0
+
+GTP-U packet found (count: 5)
+  Outer path:       192.168.71.171:2153 -> 192.168.71.150:2153
+  Inner IP:         unavailable/not parsable (non-IPv4, truncated, or unsupported extension chain)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       64 bytes
+  TEID:             703275946 (0x29eb23aa)
+  Flags:            E=0 S=0 PN=0
+  Fast-path offload: miss (no session_map entry for this TEID, or unsupported IP options)
+  [debug] old_removed_bytes=0 move_len=0 delta=0 reached_rewrite=0
+
+GTP-U packet found (count: 6)
+  Outer path:       192.168.71.134:2152 -> 192.168.71.150:2152
+  Inner path:       192.168.72.135 -> 12.1.1.13
+  Inner protocol:   6 (TCP)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       68 bytes
+  TEID:             2052408322 (0x7a554402)
+  Flags:            E=1 S=0 PN=0
+  First extension:  0x85
+  Extension headers (1 total):
+    [0] type 0x85
+  PDU type:         0 (DL PDU SESSION INFORMATION)
+  QFI:              1
+  Fast-path offload: miss (no session_map entry for this TEID, or unsupported IP options)
+  [debug] old_removed_bytes=0 move_len=0 delta=0 reached_rewrite=0
+  [auto-learned] session_map: N3 TEID 0x7a554402 -> F1-U TEID 0x8f1cf21f @ 192.168.71.171:2153
+
+GTP-U packet found (count: 7)
+  Outer path:       192.168.71.171:2153 -> 192.168.71.150:2153
+  Inner IP:         unavailable/not parsable (non-IPv4, truncated, or unsupported extension chain)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       56 bytes
+  TEID:             703275946 (0x29eb23aa)
+  Flags:            E=0 S=0 PN=0
+  Fast-path offload: miss (no session_map entry for this TEID, or unsupported IP options)
+  [debug] old_removed_bytes=0 move_len=0 delta=0 reached_rewrite=0
+
+GTP-U packet found (count: 8)
+  Outer path:       192.168.71.171:2153 -> 192.168.71.150:2153
+  Inner IP:         unavailable/not parsable (non-IPv4, truncated, or unsupported extension chain)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       93 bytes
+  TEID:             703275946 (0x29eb23aa)
+  Flags:            E=0 S=0 PN=0
+  Fast-path offload: miss (no session_map entry for this TEID, or unsupported IP options)
+  [debug] old_removed_bytes=0 move_len=0 delta=0 reached_rewrite=0
+
+GTP-U packet found (count: 9)
+  Outer path:       192.168.71.134:2152 -> 192.168.71.150:2152
+  Inner path:       192.168.72.135 -> 12.1.1.13
+  Inner protocol:   6 (TCP)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       60 bytes
+  TEID:             2052408322 (0x7a554402)
+  Flags:            E=1 S=0 PN=0
+  First extension:  0x85
+  Extension headers (1 total):
+    [0] type 0x85
+  PDU type:         0 (DL PDU SESSION INFORMATION)
+  QFI:              1
+  Fast-path offload: HIT -> new TEID 2401038879 (0x8f1cf21f), redirected to 192.168.71.171:2153
+  [debug] old_removed_bytes=8 move_len=52 delta=-4 reached_rewrite=1
+  [auto-learned] session_map: N3 TEID 0x7a554402 -> F1-U TEID 0x8f1cf21f @ 192.168.71.171:2153
+
+GTP-U packet found (count: 10)
+  Outer path:       192.168.71.134:2152 -> 192.168.71.150:2152
+  Inner path:       192.168.72.135 -> 12.1.1.13
+  Inner protocol:   6 (TCP)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       61 bytes
+  TEID:             2052408322 (0x7a554402)
+  Flags:            E=1 S=0 PN=0
+  First extension:  0x85
+  Extension headers (1 total):
+    [0] type 0x85
+  PDU type:         0 (DL PDU SESSION INFORMATION)
+  QFI:              1
+  Fast-path offload: HIT -> new TEID 2401038879 (0x8f1cf21f), redirected to 192.168.71.171:2153
+  [debug] old_removed_bytes=8 move_len=53 delta=-4 reached_rewrite=1
+  [auto-learned] session_map: N3 TEID 0x7a554402 -> F1-U TEID 0x8f1cf21f @ 192.168.71.171:2153
+
+GTP-U packet found (count: 11)
+  Outer path:       192.168.71.171:2153 -> 192.168.71.150:2153
+  Inner IP:         unavailable/not parsable (non-IPv4, truncated, or unsupported extension chain)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       56 bytes
+  TEID:             703275946 (0x29eb23aa)
+  Flags:            E=0 S=0 PN=0
+  Fast-path offload: miss (no session_map entry for this TEID, or unsupported IP options)
+  [debug] old_removed_bytes=0 move_len=0 delta=0 reached_rewrite=0
+
+GTP-U packet found (count: 12)
+  Outer path:       192.168.71.171:2153 -> 192.168.71.150:2153
+  Inner IP:         unavailable/not parsable (non-IPv4, truncated, or unsupported extension chain)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       60 bytes
+  TEID:             703275946 (0x29eb23aa)
+  Flags:            E=0 S=0 PN=0
+  Fast-path offload: miss (no session_map entry for this TEID, or unsupported IP options)
+  [debug] old_removed_bytes=0 move_len=0 delta=0 reached_rewrite=0
+
+GTP-U packet found (count: 13)
+  Outer path:       192.168.71.171:2153 -> 192.168.71.150:2153
+  Inner IP:         unavailable/not parsable (non-IPv4, truncated, or unsupported extension chain)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       195 bytes
+  TEID:             703275946 (0x29eb23aa)
+  Flags:            E=0 S=0 PN=0
+  Fast-path offload: miss (no session_map entry for this TEID, or unsupported IP options)
+  [debug] old_removed_bytes=0 move_len=0 delta=0 reached_rewrite=0
+
+GTP-U packet found (count: 14)
+  Outer path:       192.168.71.134:2152 -> 192.168.71.150:2152
+  Inner path:       192.168.72.135 -> 12.1.1.13
+  Inner protocol:   6 (TCP)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       60 bytes
+  TEID:             2052408322 (0x7a554402)
+  Flags:            E=1 S=0 PN=0
+  First extension:  0x85
+  Extension headers (1 total):
+    [0] type 0x85
+  PDU type:         0 (DL PDU SESSION INFORMATION)
+  QFI:              1
+  Fast-path offload: HIT -> new TEID 2401038879 (0x8f1cf21f), redirected to 192.168.71.171:2153
+  [debug] old_removed_bytes=8 move_len=52 delta=-4 reached_rewrite=1
+  [auto-learned] session_map: N3 TEID 0x7a554402 -> F1-U TEID 0x8f1cf21f @ 192.168.71.171:2153
+
+GTP-U packet found (count: 15)
+  Outer path:       192.168.71.134:2152 -> 192.168.71.150:2152
+  Inner path:       192.168.72.135 -> 12.1.1.13
+  Inner protocol:   6 (TCP)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       61 bytes
+  TEID:             2052408322 (0x7a554402)
+  Flags:            E=1 S=0 PN=0
+  First extension:  0x85
+  Extension headers (1 total):
+    [0] type 0x85
+  PDU type:         0 (DL PDU SESSION INFORMATION)
+  QFI:              1
+  Fast-path offload: HIT -> new TEID 2401038879 (0x8f1cf21f), redirected to 192.168.71.171:2153
+  [debug] old_removed_bytes=8 move_len=53 delta=-4 reached_rewrite=1
+  [auto-learned] session_map: N3 TEID 0x7a554402 -> F1-U TEID 0x8f1cf21f @ 192.168.71.171:2153
+
+GTP-U packet found (count: 16)
+  Outer path:       192.168.71.171:2153 -> 192.168.71.150:2153
+  Inner IP:         unavailable/not parsable (non-IPv4, truncated, or unsupported extension chain)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       195 bytes
+  TEID:             703275946 (0x29eb23aa)
+  Flags:            E=0 S=0 PN=0
+  Fast-path offload: miss (no session_map entry for this TEID, or unsupported IP options)
+  [debug] old_removed_bytes=0 move_len=0 delta=0 reached_rewrite=0
+
+GTP-U packet found (count: 17)
+  Outer path:       192.168.71.134:2152 -> 192.168.71.150:2152
+  Inner path:       192.168.72.135 -> 12.1.1.13
+  Inner protocol:   6 (TCP)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       72 bytes
+  TEID:             2052408322 (0x7a554402)
+  Flags:            E=1 S=0 PN=0
+  First extension:  0x85
+  Extension headers (1 total):
+    [0] type 0x85
+  PDU type:         0 (DL PDU SESSION INFORMATION)
+  QFI:              1
+  Fast-path offload: HIT -> new TEID 2401038879 (0x8f1cf21f), redirected to 192.168.71.171:2153
+  [debug] old_removed_bytes=8 move_len=64 delta=-4 reached_rewrite=1
+  [auto-learned] session_map: N3 TEID 0x7a554402 -> F1-U TEID 0x8f1cf21f @ 192.168.71.171:2153
+
+GTP-U packet found (count: 18)
+  Outer path:       192.168.71.134:2152 -> 192.168.71.150:2152
+  Inner path:       192.168.72.135 -> 12.1.1.13
+  Inner protocol:   6 (TCP)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       61 bytes
+  TEID:             2052408322 (0x7a554402)
+  Flags:            E=1 S=0 PN=0
+  First extension:  0x85
+  Extension headers (1 total):
+    [0] type 0x85
+  PDU type:         0 (DL PDU SESSION INFORMATION)
+  QFI:              1
+  Fast-path offload: HIT -> new TEID 2401038879 (0x8f1cf21f), redirected to 192.168.71.171:2153
+  [debug] old_removed_bytes=8 move_len=53 delta=-4 reached_rewrite=1
+  [auto-learned] session_map: N3 TEID 0x7a554402 -> F1-U TEID 0x8f1cf21f @ 192.168.71.171:2153
+
+GTP-U packet found (count: 19)
+  Outer path:       192.168.71.134:2152 -> 192.168.71.150:2152
+  Inner path:       192.168.72.135 -> 12.1.1.13
+  Inner protocol:   6 (TCP)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       61 bytes
+  TEID:             2052408322 (0x7a554402)
+  Flags:            E=1 S=0 PN=0
+  First extension:  0x85
+  Extension headers (1 total):
+    [0] type 0x85
+  PDU type:         0 (DL PDU SESSION INFORMATION)
+  QFI:              1
+  Fast-path offload: HIT -> new TEID 2401038879 (0x8f1cf21f), redirected to 192.168.71.171:2153
+  [debug] old_removed_bytes=8 move_len=53 delta=-4 reached_rewrite=1
+  [auto-learned] session_map: N3 TEID 0x7a554402 -> F1-U TEID 0x8f1cf21f @ 192.168.71.171:2153
+
+GTP-U packet found (count: 20)
+  Outer path:       192.168.71.171:2153 -> 192.168.71.150:2153
+  Inner IP:         unavailable/not parsable (non-IPv4, truncated, or unsupported extension chain)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       199 bytes
+  TEID:             703275946 (0x29eb23aa)
+  Flags:            E=0 S=0 PN=0
+  Fast-path offload: miss (no session_map entry for this TEID, or unsupported IP options)
+  [debug] old_removed_bytes=0 move_len=0 delta=0 reached_rewrite=0
+
+GTP-U packet found (count: 21)
+  Outer path:       192.168.71.134:2152 -> 192.168.71.150:2152
+  Inner path:       192.168.72.135 -> 12.1.1.13
+  Inner protocol:   6 (TCP)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       72 bytes
+  TEID:             2052408322 (0x7a554402)
+  Flags:            E=1 S=0 PN=0
+  First extension:  0x85
+  Extension headers (1 total):
+    [0] type 0x85
+  PDU type:         0 (DL PDU SESSION INFORMATION)
+  QFI:              1
+  Fast-path offload: HIT -> new TEID 2401038879 (0x8f1cf21f), redirected to 192.168.71.171:2153
+  [debug] old_removed_bytes=8 move_len=64 delta=-4 reached_rewrite=1
+  [auto-learned] session_map: N3 TEID 0x7a554402 -> F1-U TEID 0x8f1cf21f @ 192.168.71.171:2153
+
+GTP-U packet found (count: 22)
+  Outer path:       192.168.71.134:2152 -> 192.168.71.150:2152
+  Inner path:       192.168.72.135 -> 12.1.1.13
+  Inner protocol:   6 (TCP)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       61 bytes
+  TEID:             2052408322 (0x7a554402)
+  Flags:            E=1 S=0 PN=0
+  First extension:  0x85
+  Extension headers (1 total):
+    [0] type 0x85
+  PDU type:         0 (DL PDU SESSION INFORMATION)
+  QFI:              1
+  Fast-path offload: HIT -> new TEID 2401038879 (0x8f1cf21f), redirected to 192.168.71.171:2153
+  [debug] old_removed_bytes=8 move_len=53 delta=-4 reached_rewrite=1
+  [auto-learned] session_map: N3 TEID 0x7a554402 -> F1-U TEID 0x8f1cf21f @ 192.168.71.171:2153
+
+GTP-U packet found (count: 23)
+  Outer path:       192.168.71.171:2153 -> 192.168.71.150:2153
+  Inner IP:         unavailable/not parsable (non-IPv4, truncated, or unsupported extension chain)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       199 bytes
+  TEID:             703275946 (0x29eb23aa)
+  Flags:            E=0 S=0 PN=0
+  Fast-path offload: miss (no session_map entry for this TEID, or unsupported IP options)
+  [debug] old_removed_bytes=0 move_len=0 delta=0 reached_rewrite=0
+
+GTP-U packet found (count: 24)
+  Outer path:       192.168.71.134:2152 -> 192.168.71.150:2152
+  Inner path:       192.168.72.135 -> 12.1.1.13
+  Inner protocol:   6 (TCP)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       72 bytes
+  TEID:             2052408322 (0x7a554402)
+  Flags:            E=1 S=0 PN=0
+  First extension:  0x85
+  Extension headers (1 total):
+    [0] type 0x85
+  PDU type:         0 (DL PDU SESSION INFORMATION)
+  QFI:              1
+  Fast-path offload: HIT -> new TEID 2401038879 (0x8f1cf21f), redirected to 192.168.71.171:2153
+  [debug] old_removed_bytes=8 move_len=64 delta=-4 reached_rewrite=1
+  [auto-learned] session_map: N3 TEID 0x7a554402 -> F1-U TEID 0x8f1cf21f @ 192.168.71.171:2153
+
+GTP-U packet found (count: 25)
+  Outer path:       192.168.71.134:2152 -> 192.168.71.150:2152
+  Inner path:       192.168.72.135 -> 12.1.1.13
+  Inner protocol:   6 (TCP)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       61 bytes
+  TEID:             2052408322 (0x7a554402)
+  Flags:            E=1 S=0 PN=0
+  First extension:  0x85
+  Extension headers (1 total):
+    [0] type 0x85
+  PDU type:         0 (DL PDU SESSION INFORMATION)
+  QFI:              1
+  Fast-path offload: HIT -> new TEID 2401038879 (0x8f1cf21f), redirected to 192.168.71.171:2153
+  [debug] old_removed_bytes=8 move_len=53 delta=-4 reached_rewrite=1
+  [auto-learned] session_map: N3 TEID 0x7a554402 -> F1-U TEID 0x8f1cf21f @ 192.168.71.171:2153
+
+GTP-U packet found (count: 26)
+  Outer path:       192.168.71.171:2153 -> 192.168.71.150:2153
+  Inner IP:         unavailable/not parsable (non-IPv4, truncated, or unsupported extension chain)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       199 bytes
+  TEID:             703275946 (0x29eb23aa)
+  Flags:            E=0 S=0 PN=0
+  Fast-path offload: miss (no session_map entry for this TEID, or unsupported IP options)
+  [debug] old_removed_bytes=0 move_len=0 delta=0 reached_rewrite=0
+
+GTP-U packet found (count: 27)
+  Outer path:       192.168.71.134:2152 -> 192.168.71.150:2152
+  Inner path:       192.168.72.135 -> 12.1.1.13
+  Inner protocol:   6 (TCP)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       72 bytes
+  TEID:             2052408322 (0x7a554402)
+  Flags:            E=1 S=0 PN=0
+  First extension:  0x85
+  Extension headers (1 total):
+    [0] type 0x85
+  PDU type:         0 (DL PDU SESSION INFORMATION)
+  QFI:              1
+  Fast-path offload: HIT -> new TEID 2401038879 (0x8f1cf21f), redirected to 192.168.71.171:2153
+  [debug] old_removed_bytes=8 move_len=64 delta=-4 reached_rewrite=1
+  [auto-learned] session_map: N3 TEID 0x7a554402 -> F1-U TEID 0x8f1cf21f @ 192.168.71.171:2153
+
+GTP-U packet found (count: 28)
+  Outer path:       192.168.71.134:2152 -> 192.168.71.150:2152
+  Inner path:       192.168.72.135 -> 12.1.1.13
+  Inner protocol:   6 (TCP)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       61 bytes
+  TEID:             2052408322 (0x7a554402)
+  Flags:            E=1 S=0 PN=0
+  First extension:  0x85
+  Extension headers (1 total):
+    [0] type 0x85
+  PDU type:         0 (DL PDU SESSION INFORMATION)
+  QFI:              1
+  Fast-path offload: HIT -> new TEID 2401038879 (0x8f1cf21f), redirected to 192.168.71.171:2153
+  [debug] old_removed_bytes=8 move_len=53 delta=-4 reached_rewrite=1
+  [auto-learned] session_map: N3 TEID 0x7a554402 -> F1-U TEID 0x8f1cf21f @ 192.168.71.171:2153
+
+GTP-U packet found (count: 29)
+  Outer path:       192.168.71.171:2153 -> 192.168.71.150:2153
+  Inner IP:         unavailable/not parsable (non-IPv4, truncated, or unsupported extension chain)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       199 bytes
+  TEID:             703275946 (0x29eb23aa)
+  Flags:            E=0 S=0 PN=0
+  Fast-path offload: miss (no session_map entry for this TEID, or unsupported IP options)
+  [debug] old_removed_bytes=0 move_len=0 delta=0 reached_rewrite=0
+
+GTP-U packet found (count: 30)
+  Outer path:       192.168.71.134:2152 -> 192.168.71.150:2152
+  Inner path:       192.168.72.135 -> 12.1.1.13
+  Inner protocol:   6 (TCP)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       72 bytes
+  TEID:             2052408322 (0x7a554402)
+  Flags:            E=1 S=0 PN=0
+  First extension:  0x85
+  Extension headers (1 total):
+    [0] type 0x85
+  PDU type:         0 (DL PDU SESSION INFORMATION)
+  QFI:              1
+  Fast-path offload: HIT -> new TEID 2401038879 (0x8f1cf21f), redirected to 192.168.71.171:2153
+  [debug] old_removed_bytes=8 move_len=64 delta=-4 reached_rewrite=1
+  [auto-learned] session_map: N3 TEID 0x7a554402 -> F1-U TEID 0x8f1cf21f @ 192.168.71.171:2153
+
+GTP-U packet found (count: 31)
+  Outer path:       192.168.71.134:2152 -> 192.168.71.150:2152
+  Inner path:       192.168.72.135 -> 12.1.1.13
+  Inner protocol:   6 (TCP)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       61 bytes
+  TEID:             2052408322 (0x7a554402)
+  Flags:            E=1 S=0 PN=0
+  First extension:  0x85
+  Extension headers (1 total):
+    [0] type 0x85
+  PDU type:         0 (DL PDU SESSION INFORMATION)
+  QFI:              1
+  Fast-path offload: HIT -> new TEID 2401038879 (0x8f1cf21f), redirected to 192.168.71.171:2153
+  [debug] old_removed_bytes=8 move_len=53 delta=-4 reached_rewrite=1
+  [auto-learned] session_map: N3 TEID 0x7a554402 -> F1-U TEID 0x8f1cf21f @ 192.168.71.171:2153
+
+GTP-U packet found (count: 32)
+  Outer path:       192.168.71.171:2153 -> 192.168.71.150:2153
+  Inner IP:         unavailable/not parsable (non-IPv4, truncated, or unsupported extension chain)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       199 bytes
+  TEID:             703275946 (0x29eb23aa)
+  Flags:            E=0 S=0 PN=0
+  Fast-path offload: miss (no session_map entry for this TEID, or unsupported IP options)
+  [debug] old_removed_bytes=0 move_len=0 delta=0 reached_rewrite=0
+
+GTP-U packet found (count: 33)
+  Outer path:       192.168.71.134:2152 -> 192.168.71.150:2152
+  Inner path:       192.168.72.135 -> 12.1.1.13
+  Inner protocol:   6 (TCP)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       72 bytes
+  TEID:             2052408322 (0x7a554402)
+  Flags:            E=1 S=0 PN=0
+  First extension:  0x85
+  Extension headers (1 total):
+    [0] type 0x85
+  PDU type:         0 (DL PDU SESSION INFORMATION)
+  QFI:              1
+  Fast-path offload: HIT -> new TEID 2401038879 (0x8f1cf21f), redirected to 192.168.71.171:2153
+  [debug] old_removed_bytes=8 move_len=64 delta=-4 reached_rewrite=1
+  [auto-learned] session_map: N3 TEID 0x7a554402 -> F1-U TEID 0x8f1cf21f @ 192.168.71.171:2153
+
+GTP-U packet found (count: 34)
+  Outer path:       192.168.71.134:2152 -> 192.168.71.150:2152
+  Inner path:       192.168.72.135 -> 12.1.1.13
+  Inner protocol:   6 (TCP)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       61 bytes
+  TEID:             2052408322 (0x7a554402)
+  Flags:            E=1 S=0 PN=0
+  First extension:  0x85
+  Extension headers (1 total):
+    [0] type 0x85
+  PDU type:         0 (DL PDU SESSION INFORMATION)
+  QFI:              1
+  Fast-path offload: HIT -> new TEID 2401038879 (0x8f1cf21f), redirected to 192.168.71.171:2153
+  [debug] old_removed_bytes=8 move_len=53 delta=-4 reached_rewrite=1
+  [auto-learned] session_map: N3 TEID 0x7a554402 -> F1-U TEID 0x8f1cf21f @ 192.168.71.171:2153
+
+GTP-U packet found (count: 35)
+  Outer path:       192.168.71.171:2153 -> 192.168.71.150:2153
+  Inner IP:         unavailable/not parsable (non-IPv4, truncated, or unsupported extension chain)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       52 bytes
+  TEID:             703275946 (0x29eb23aa)
+  Flags:            E=0 S=0 PN=0
+  Fast-path offload: miss (no session_map entry for this TEID, or unsupported IP options)
+  [debug] old_removed_bytes=0 move_len=0 delta=0 reached_rewrite=0
+
+GTP-U packet found (count: 36)
+  Outer path:       192.168.71.171:2153 -> 192.168.71.150:2153
+  Inner IP:         unavailable/not parsable (non-IPv4, truncated, or unsupported extension chain)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       199 bytes
+  TEID:             703275946 (0x29eb23aa)
+  Flags:            E=0 S=0 PN=0
+  Fast-path offload: miss (no session_map entry for this TEID, or unsupported IP options)
+  [debug] old_removed_bytes=0 move_len=0 delta=0 reached_rewrite=0
+
+GTP-U packet found (count: 37)
+  Outer path:       192.168.71.134:2152 -> 192.168.71.150:2152
+  Inner path:       192.168.72.135 -> 12.1.1.13
+  Inner protocol:   6 (TCP)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       72 bytes
+  TEID:             2052408322 (0x7a554402)
+  Flags:            E=1 S=0 PN=0
+  First extension:  0x85
+  Extension headers (1 total):
+    [0] type 0x85
+  PDU type:         0 (DL PDU SESSION INFORMATION)
+  QFI:              1
+  Fast-path offload: HIT -> new TEID 2401038879 (0x8f1cf21f), redirected to 192.168.71.171:2153
+  [debug] old_removed_bytes=8 move_len=64 delta=-4 reached_rewrite=1
+  [auto-learned] session_map: N3 TEID 0x7a554402 -> F1-U TEID 0x8f1cf21f @ 192.168.71.171:2153
+
+GTP-U packet found (count: 38)
+  Outer path:       192.168.71.134:2152 -> 192.168.71.150:2152
+  Inner path:       192.168.72.135 -> 12.1.1.13
+  Inner protocol:   6 (TCP)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       61 bytes
+  TEID:             2052408322 (0x7a554402)
+  Flags:            E=1 S=0 PN=0
+  First extension:  0x85
+  Extension headers (1 total):
+    [0] type 0x85
+  PDU type:         0 (DL PDU SESSION INFORMATION)
+  QFI:              1
+  Fast-path offload: HIT -> new TEID 2401038879 (0x8f1cf21f), redirected to 192.168.71.171:2153
+  [debug] old_removed_bytes=8 move_len=53 delta=-4 reached_rewrite=1
+  [auto-learned] session_map: N3 TEID 0x7a554402 -> F1-U TEID 0x8f1cf21f @ 192.168.71.171:2153
+
+GTP-U packet found (count: 39)
+  Outer path:       192.168.71.171:2153 -> 192.168.71.150:2153
+  Inner IP:         unavailable/not parsable (non-IPv4, truncated, or unsupported extension chain)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       199 bytes
+  TEID:             703275946 (0x29eb23aa)
+  Flags:            E=0 S=0 PN=0
+  Fast-path offload: miss (no session_map entry for this TEID, or unsupported IP options)
+  [debug] old_removed_bytes=0 move_len=0 delta=0 reached_rewrite=0
+
+GTP-U packet found (count: 40)
+  Outer path:       192.168.71.134:2152 -> 192.168.71.150:2152
+  Inner path:       192.168.72.135 -> 12.1.1.13
+  Inner protocol:   6 (TCP)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       72 bytes
+  TEID:             2052408322 (0x7a554402)
+  Flags:            E=1 S=0 PN=0
+  First extension:  0x85
+  Extension headers (1 total):
+    [0] type 0x85
+  PDU type:         0 (DL PDU SESSION INFORMATION)
+  QFI:              1
+  Fast-path offload: HIT -> new TEID 2401038879 (0x8f1cf21f), redirected to 192.168.71.171:2153
+  [debug] old_removed_bytes=8 move_len=64 delta=-4 reached_rewrite=1
+  [auto-learned] session_map: N3 TEID 0x7a554402 -> F1-U TEID 0x8f1cf21f @ 192.168.71.171:2153
+
+GTP-U packet found (count: 41)
+  Outer path:       192.168.71.134:2152 -> 192.168.71.150:2152
+  Inner path:       192.168.72.135 -> 12.1.1.13
+  Inner protocol:   6 (TCP)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       61 bytes
+  TEID:             2052408322 (0x7a554402)
+  Flags:            E=1 S=0 PN=0
+  First extension:  0x85
+  Extension headers (1 total):
+    [0] type 0x85
+  PDU type:         0 (DL PDU SESSION INFORMATION)
+  QFI:              1
+  Fast-path offload: HIT -> new TEID 2401038879 (0x8f1cf21f), redirected to 192.168.71.171:2153
+  [debug] old_removed_bytes=8 move_len=53 delta=-4 reached_rewrite=1
+  [auto-learned] session_map: N3 TEID 0x7a554402 -> F1-U TEID 0x8f1cf21f @ 192.168.71.171:2153
+
+UDP packet without recognized GTP-U header
+  Outer path:       192.168.71.129:41071 -> 239.255.255.250:1900
+  UDP non-GTP count: 11
+
+UDP packet without recognized GTP-U header
+  Outer path:       192.168.71.129:41071 -> 239.255.255.250:1900
+  UDP non-GTP count: 12
+
+UDP packet without recognized GTP-U header
+  Outer path:       192.168.71.129:41071 -> 239.255.255.250:1900
+  UDP non-GTP count: 13
+
+UDP packet without recognized GTP-U header
+  Outer path:       192.168.71.129:41071 -> 239.255.255.250:1900
+  UDP non-GTP count: 14
+
+GTP-U packet found (count: 42)
+  Outer path:       192.168.71.171:2153 -> 192.168.71.150:2153
+  Inner IP:         unavailable/not parsable (non-IPv4, truncated, or unsupported extension chain)
+  Version:          1
+  Protocol type:    1 (GTP)
+  Message type:     255 (G-PDU (user data))
+  GTP length:       52 bytes
+  TEID:             703275946 (0x29eb23aa)
+  Flags:            E=0 S=0 PN=0
+  Fast-path offload: miss (no session_map entry for this TEID, or unsupported IP options)
+  [debug] old_removed_bytes=0 move_len=0 delta=0 reached_rewrite=0
+
