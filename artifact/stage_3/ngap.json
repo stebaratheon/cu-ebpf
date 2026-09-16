@@ -1,0 +1,3885 @@
+[
+  {
+    "_index": "packets-2026-09-16",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.section_number": "1",
+          "frame.interface_id": "0",
+          "frame.interface_id_tree": {
+            "frame.interface_name": "eth0"
+          },
+          "frame.encap_type": "1",
+          "frame.time": "Sep 16, 2026 20:35:00.458955693 CEST",
+          "frame.time_utc": "Sep 16, 2026 18:35:00.458955693 UTC",
+          "frame.time_epoch": "1789583700.458955693",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.000159286",
+          "frame.time_delta_displayed": "0.000000000",
+          "frame.time_relative": "0.000159286",
+          "frame.number": "2",
+          "frame.len": "130",
+          "frame.cap_len": "130",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.protocols": "eth:ethertype:ip:sctp:ngap:ngap:nas-5gs"
+        },
+        "eth": {
+          "eth.dst": "8a:5f:36:c4:54:e4",
+          "eth.dst_tree": {
+            "eth.dst_resolved": "8a:5f:36:c4:54:e4",
+            "eth.dst.oui": "9068342",
+            "eth.addr": "8a:5f:36:c4:54:e4",
+            "eth.addr_resolved": "8a:5f:36:c4:54:e4",
+            "eth.addr.oui": "9068342",
+            "eth.dst.lg": "1",
+            "eth.lg": "1",
+            "eth.dst.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.src": "82:24:fc:bb:8a:96",
+          "eth.src_tree": {
+            "eth.src_resolved": "82:24:fc:bb:8a:96",
+            "eth.src.oui": "8529148",
+            "eth.addr": "82:24:fc:bb:8a:96",
+            "eth.addr_resolved": "82:24:fc:bb:8a:96",
+            "eth.addr.oui": "8529148",
+            "eth.src.lg": "1",
+            "eth.lg": "1",
+            "eth.src.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.type": "0x0800"
+        },
+        "ip": {
+          "ip.version": "4",
+          "ip.hdr_len": "20",
+          "ip.dsfield": "0x02",
+          "ip.dsfield_tree": {
+            "ip.dsfield.dscp": "0",
+            "ip.dsfield.ecn": "2"
+          },
+          "ip.len": "116",
+          "ip.id": "0x1189",
+          "ip.flags": "0x02",
+          "ip.flags_tree": {
+            "ip.flags.rb": "0",
+            "ip.flags.df": "1",
+            "ip.flags.mf": "0"
+          },
+          "ip.frag_offset": "0",
+          "ip.ttl": "64",
+          "ip.proto": "132",
+          "ip.checksum": "0x1810",
+          "ip.checksum.status": "2",
+          "ip.src": "192.168.71.150",
+          "ip.addr": "192.168.71.150",
+          "ip.src_host": "192.168.71.150",
+          "ip.host": "192.168.71.150",
+          "ip.dst": "192.168.71.132",
+          "ip.addr": "192.168.71.132",
+          "ip.dst_host": "192.168.71.132",
+          "ip.host": "192.168.71.132"
+        },
+        "sctp": {
+          "sctp.srcport": "39691",
+          "sctp.dstport": "38412",
+          "sctp.verification_tag": "0xf2c8f0e5",
+          "sctp.assoc_index": "65535",
+          "sctp.port": "39691",
+          "sctp.port": "38412",
+          "sctp.checksum": "0x00000000",
+          "sctp.checksum.status": "2",
+          "DATA chunk (ordered, complete segment, TSN: 0, SID: 1, SSN: 166, PPID: 60, payload length: 67 bytes)": {
+            "sctp.chunk_type": "0",
+            "sctp.chunk_type_tree": {
+              "sctp.chunk_bit_1": "0",
+              "sctp.chunk_bit_2": "0"
+            },
+            "sctp.chunk_flags": "0x03",
+            "sctp.chunk_flags_tree": {
+              "sctp.data_i_bit": "0",
+              "sctp.data_u_bit": "0",
+              "sctp.data_b_bit": "1",
+              "sctp.data_e_bit": "1"
+            },
+            "sctp.chunk_length": "83",
+            "sctp.data_tsn": "0",
+            "sctp.data_tsn_raw": "2882918601",
+            "sctp.data_sid": "0x0001",
+            "sctp.data_ssn": "166",
+            "sctp.data_payload_proto_id": "60",
+            "sctp.chunk_padding": "00"
+          }
+        },
+        "ngap": {
+          "per.extension_bit": "0",
+          "per.choice_index": "0",
+          "ngap.NGAP_PDU": "0",
+          "ngap.NGAP_PDU_tree": {
+            "ngap.initiatingMessage_element": {
+              "ngap.procedureCode": "46",
+              "per.enum_index": "1",
+              "ngap.criticality": "1",
+              "per.open_type_length": "63",
+              "ngap.value_element": {
+                "ngap.UplinkNASTransport_element": {
+                  "per.extension_bit": "0",
+                  "per.sequence_of_length": "4",
+                  "ngap.protocolIEs": "4",
+                  "ngap.protocolIEs_tree": {
+                    "Item 0: id-AMF-UE-NGAP-ID": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "10",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "2",
+                        "ngap.value_element": {
+                          "ngap.AMF_UE_NGAP_ID": "17"
+                        }
+                      }
+                    },
+                    "Item 1: id-RAN-UE-NGAP-ID": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "85",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "2",
+                        "ngap.value_element": {
+                          "ngap.RAN_UE_NGAP_ID": "1"
+                        }
+                      }
+                    },
+                    "Item 2: id-NAS-PDU": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "38",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "25",
+                        "ngap.value_element": {
+                          "per.octet_string_length": "24",
+                          "ngap.NAS_PDU": "7e:02:95:c1:ba:b9:03:7e:04:45:10:00:0b:f2:02:f8:99:01:00:41:88:58:35:96",
+                          "ngap.NAS_PDU_tree": {
+                            "nas-5gs": {
+                              "Security protected NAS 5GS message": {
+                                "nas-5gs.epd": "126",
+                                "nas-5gs.spare_half_octet": "0",
+                                "nas-5gs.security_header_type": "2",
+                                "nas-5gs.msg_auth_code": "0x95c1bab9",
+                                "nas-5gs.seq_no": "3"
+                              },
+                              "Encrypted data": ""
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "Item 3: id-UserLocationInformation": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "121",
+                        "per.enum_index": "1",
+                        "ngap.criticality": "1",
+                        "per.open_type_length": "15",
+                        "ngap.value_element": {
+                          "per.choice_index": "1",
+                          "ngap.UserLocationInformation": "1",
+                          "ngap.UserLocationInformation_tree": {
+                            "ngap.userLocationInformationNR_element": {
+                              "per.extension_bit": "0",
+                              "per.optional_field_bit": "0",
+                              "per.optional_field_bit": "0",
+                              "ngap.nR_CGI_element": {
+                                "per.extension_bit": "0",
+                                "per.optional_field_bit": "0",
+                                "ngap.pLMNIdentity": "02:f8:99",
+                                "ngap.pLMNIdentity_tree": {
+                                  "e212.nrcgi.mcc": "208",
+                                  "e212.nrcgi.mnc": "99"
+                                },
+                                "ngap.NRCellIdentity": "0x00000000000e014e"
+                              },
+                              "ngap.tAI_element": {
+                                "per.extension_bit": "0",
+                                "per.optional_field_bit": "0",
+                                "ngap.pLMNIdentity": "02:f8:99",
+                                "ngap.pLMNIdentity_tree": {
+                                  "e212.5gstai.mcc": "208",
+                                  "e212.5gstai.mnc": "99"
+                                },
+                                "ngap.tAC": "1"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2026-09-16",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.section_number": "1",
+          "frame.interface_id": "0",
+          "frame.interface_id_tree": {
+            "frame.interface_name": "eth0"
+          },
+          "frame.encap_type": "1",
+          "frame.time": "Sep 16, 2026 20:35:00.460610219 CEST",
+          "frame.time_utc": "Sep 16, 2026 18:35:00.460610219 UTC",
+          "frame.time_epoch": "1789583700.460610219",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.001654526",
+          "frame.time_delta_displayed": "0.001654526",
+          "frame.time_relative": "0.001813812",
+          "frame.number": "3",
+          "frame.len": "106",
+          "frame.cap_len": "106",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.protocols": "eth:ethertype:ip:sctp:ngap:ngap:nas-5gs"
+        },
+        "eth": {
+          "eth.dst": "82:24:fc:bb:8a:96",
+          "eth.dst_tree": {
+            "eth.dst_resolved": "82:24:fc:bb:8a:96",
+            "eth.dst.oui": "8529148",
+            "eth.addr": "82:24:fc:bb:8a:96",
+            "eth.addr_resolved": "82:24:fc:bb:8a:96",
+            "eth.addr.oui": "8529148",
+            "eth.dst.lg": "1",
+            "eth.lg": "1",
+            "eth.dst.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.src": "8a:5f:36:c4:54:e4",
+          "eth.src_tree": {
+            "eth.src_resolved": "8a:5f:36:c4:54:e4",
+            "eth.src.oui": "9068342",
+            "eth.addr": "8a:5f:36:c4:54:e4",
+            "eth.addr_resolved": "8a:5f:36:c4:54:e4",
+            "eth.addr.oui": "9068342",
+            "eth.src.lg": "1",
+            "eth.lg": "1",
+            "eth.src.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.type": "0x0800"
+        },
+        "ip": {
+          "ip.version": "4",
+          "ip.hdr_len": "20",
+          "ip.dsfield": "0x02",
+          "ip.dsfield_tree": {
+            "ip.dsfield.dscp": "0",
+            "ip.dsfield.ecn": "2"
+          },
+          "ip.len": "92",
+          "ip.id": "0x58e5",
+          "ip.flags": "0x02",
+          "ip.flags_tree": {
+            "ip.flags.rb": "0",
+            "ip.flags.df": "1",
+            "ip.flags.mf": "0"
+          },
+          "ip.frag_offset": "0",
+          "ip.ttl": "64",
+          "ip.proto": "132",
+          "ip.checksum": "0xd0cb",
+          "ip.checksum.status": "2",
+          "ip.src": "192.168.71.132",
+          "ip.addr": "192.168.71.132",
+          "ip.src_host": "192.168.71.132",
+          "ip.host": "192.168.71.132",
+          "ip.dst": "192.168.71.150",
+          "ip.addr": "192.168.71.150",
+          "ip.dst_host": "192.168.71.150",
+          "ip.host": "192.168.71.150"
+        },
+        "sctp": {
+          "sctp.srcport": "38412",
+          "sctp.dstport": "39691",
+          "sctp.verification_tag": "0xe4ccd8f8",
+          "sctp.assoc_index": "65535",
+          "sctp.port": "38412",
+          "sctp.port": "39691",
+          "sctp.checksum": "0x00000000",
+          "sctp.checksum.status": "2",
+          "SACK chunk (Cumulative TSN: 2882918601, a_rwnd: 106496, gaps: 0, duplicate TSNs: 0)": {
+            "sctp.chunk_type": "3",
+            "sctp.chunk_type_tree": {
+              "sctp.chunk_bit_1": "0",
+              "sctp.chunk_bit_2": "0"
+            },
+            "sctp.chunk_flags": "0x00",
+            "sctp.chunk_flags_tree": {
+              "sctp.sack_nonce_sum": "0"
+            },
+            "sctp.chunk_length": "16",
+            "sctp.sack_cumulative_tsn_ack": "0",
+            "sctp.sack_cumulative_tsn_ack_raw": "2882918601",
+            "sctp.sack_a_rwnd": "106496",
+            "sctp.sack_number_of_gap_blocks": "0",
+            "sctp.sack_number_of_duplicated_tsns": "0"
+          },
+          "DATA chunk (ordered, complete segment, TSN: 0, SID: 1, SSN: 95, PPID: 60, payload length: 27 bytes)": {
+            "sctp.chunk_type": "0",
+            "sctp.chunk_type_tree": {
+              "sctp.chunk_bit_1": "0",
+              "sctp.chunk_bit_2": "0"
+            },
+            "sctp.chunk_flags": "0x03",
+            "sctp.chunk_flags_tree": {
+              "sctp.data_i_bit": "0",
+              "sctp.data_u_bit": "0",
+              "sctp.data_b_bit": "1",
+              "sctp.data_e_bit": "1"
+            },
+            "sctp.chunk_length": "43",
+            "sctp.data_tsn": "0",
+            "sctp.data_tsn_raw": "4194998704",
+            "sctp.data_sid": "0x0001",
+            "sctp.data_ssn": "95",
+            "sctp.data_payload_proto_id": "60",
+            "sctp.chunk_padding": "00"
+          }
+        },
+        "ngap": {
+          "per.extension_bit": "0",
+          "per.choice_index": "0",
+          "ngap.NGAP_PDU": "0",
+          "ngap.NGAP_PDU_tree": {
+            "ngap.initiatingMessage_element": {
+              "ngap.procedureCode": "4",
+              "per.enum_index": "1",
+              "ngap.criticality": "1",
+              "per.open_type_length": "23",
+              "ngap.value_element": {
+                "ngap.DownlinkNASTransport_element": {
+                  "per.extension_bit": "0",
+                  "per.sequence_of_length": "3",
+                  "ngap.protocolIEs": "3",
+                  "ngap.protocolIEs_tree": {
+                    "Item 0: id-AMF-UE-NGAP-ID": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "10",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "2",
+                        "ngap.value_element": {
+                          "ngap.AMF_UE_NGAP_ID": "17"
+                        }
+                      }
+                    },
+                    "Item 1: id-RAN-UE-NGAP-ID": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "85",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "2",
+                        "ngap.value_element": {
+                          "ngap.RAN_UE_NGAP_ID": "1"
+                        }
+                      }
+                    },
+                    "Item 2: id-NAS-PDU": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "38",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "4",
+                        "ngap.value_element": {
+                          "per.octet_string_length": "3",
+                          "ngap.NAS_PDU": "7e:00:46",
+                          "ngap.NAS_PDU_tree": {
+                            "nas-5gs": {
+                              "Plain NAS 5GS Message": {
+                                "nas-5gs.epd": "126",
+                                "nas-5gs.spare_half_octet": "0",
+                                "nas-5gs.security_header_type": "0",
+                                "nas-5gs.mm.message_type": "0x46"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2026-09-16",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.section_number": "1",
+          "frame.interface_id": "0",
+          "frame.interface_id_tree": {
+            "frame.interface_name": "eth0"
+          },
+          "frame.encap_type": "1",
+          "frame.time": "Sep 16, 2026 20:35:00.660805628 CEST",
+          "frame.time_utc": "Sep 16, 2026 18:35:00.660805628 UTC",
+          "frame.time_epoch": "1789583700.660805628",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.200040843",
+          "frame.time_delta_displayed": "0.200195409",
+          "frame.time_relative": "0.202009221",
+          "frame.number": "5",
+          "frame.len": "82",
+          "frame.cap_len": "82",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.protocols": "eth:ethertype:ip:sctp:ngap:ngap"
+        },
+        "eth": {
+          "eth.dst": "82:24:fc:bb:8a:96",
+          "eth.dst_tree": {
+            "eth.dst_resolved": "82:24:fc:bb:8a:96",
+            "eth.dst.oui": "8529148",
+            "eth.addr": "82:24:fc:bb:8a:96",
+            "eth.addr_resolved": "82:24:fc:bb:8a:96",
+            "eth.addr.oui": "8529148",
+            "eth.dst.lg": "1",
+            "eth.lg": "1",
+            "eth.dst.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.src": "8a:5f:36:c4:54:e4",
+          "eth.src_tree": {
+            "eth.src_resolved": "8a:5f:36:c4:54:e4",
+            "eth.src.oui": "9068342",
+            "eth.addr": "8a:5f:36:c4:54:e4",
+            "eth.addr_resolved": "8a:5f:36:c4:54:e4",
+            "eth.addr.oui": "9068342",
+            "eth.src.lg": "1",
+            "eth.lg": "1",
+            "eth.src.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.type": "0x0800"
+        },
+        "ip": {
+          "ip.version": "4",
+          "ip.hdr_len": "20",
+          "ip.dsfield": "0x02",
+          "ip.dsfield_tree": {
+            "ip.dsfield.dscp": "0",
+            "ip.dsfield.ecn": "2"
+          },
+          "ip.len": "68",
+          "ip.id": "0x58e6",
+          "ip.flags": "0x02",
+          "ip.flags_tree": {
+            "ip.flags.rb": "0",
+            "ip.flags.df": "1",
+            "ip.flags.mf": "0"
+          },
+          "ip.frag_offset": "0",
+          "ip.ttl": "64",
+          "ip.proto": "132",
+          "ip.checksum": "0xd0e2",
+          "ip.checksum.status": "2",
+          "ip.src": "192.168.71.132",
+          "ip.addr": "192.168.71.132",
+          "ip.src_host": "192.168.71.132",
+          "ip.host": "192.168.71.132",
+          "ip.dst": "192.168.71.150",
+          "ip.addr": "192.168.71.150",
+          "ip.dst_host": "192.168.71.150",
+          "ip.host": "192.168.71.150"
+        },
+        "sctp": {
+          "sctp.srcport": "38412",
+          "sctp.dstport": "39691",
+          "sctp.verification_tag": "0xe4ccd8f8",
+          "sctp.assoc_index": "65535",
+          "sctp.port": "38412",
+          "sctp.port": "39691",
+          "sctp.checksum": "0x00000000",
+          "sctp.checksum.status": "2",
+          "DATA chunk (ordered, complete segment, TSN: 1, SID: 1, SSN: 96, PPID: 60, payload length: 20 bytes)": {
+            "sctp.chunk_type": "0",
+            "sctp.chunk_type_tree": {
+              "sctp.chunk_bit_1": "0",
+              "sctp.chunk_bit_2": "0"
+            },
+            "sctp.chunk_flags": "0x03",
+            "sctp.chunk_flags_tree": {
+              "sctp.data_i_bit": "0",
+              "sctp.data_u_bit": "0",
+              "sctp.data_b_bit": "1",
+              "sctp.data_e_bit": "1"
+            },
+            "sctp.chunk_length": "36",
+            "sctp.data_tsn": "1",
+            "sctp.data_tsn_raw": "4194998705",
+            "sctp.data_sid": "0x0001",
+            "sctp.data_ssn": "96",
+            "sctp.data_payload_proto_id": "60"
+          }
+        },
+        "ngap": {
+          "per.extension_bit": "0",
+          "per.choice_index": "0",
+          "ngap.NGAP_PDU": "0",
+          "ngap.NGAP_PDU_tree": {
+            "ngap.initiatingMessage_element": {
+              "ngap.procedureCode": "41",
+              "per.enum_index": "0",
+              "ngap.criticality": "0",
+              "per.open_type_length": "16",
+              "ngap.value_element": {
+                "ngap.UEContextReleaseCommand_element": {
+                  "per.extension_bit": "0",
+                  "per.sequence_of_length": "2",
+                  "ngap.protocolIEs": "2",
+                  "ngap.protocolIEs_tree": {
+                    "Item 0: id-UE-NGAP-IDs": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "114",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "4",
+                        "ngap.value_element": {
+                          "per.choice_index": "0",
+                          "ngap.UE_NGAP_IDs": "0",
+                          "ngap.UE_NGAP_IDs_tree": {
+                            "ngap.uE_NGAP_ID_pair_element": {
+                              "per.extension_bit": "0",
+                              "per.optional_field_bit": "0",
+                              "ngap.AMF_UE_NGAP_ID": "17",
+                              "ngap.RAN_UE_NGAP_ID": "1"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "Item 1: id-Cause": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "15",
+                        "per.enum_index": "1",
+                        "ngap.criticality": "1",
+                        "per.open_type_length": "1",
+                        "ngap.value_element": {
+                          "per.choice_index": "2",
+                          "ngap.Cause": "2",
+                          "ngap.Cause_tree": {
+                            "per.extension_present_bit": "0",
+                            "per.enum_index": "2",
+                            "ngap.nas": "2"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2026-09-16",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.section_number": "1",
+          "frame.interface_id": "0",
+          "frame.interface_id_tree": {
+            "frame.interface_name": "eth0"
+          },
+          "frame.encap_type": "1",
+          "frame.time": "Sep 16, 2026 20:35:00.831189988 CEST",
+          "frame.time_utc": "Sep 16, 2026 18:35:00.831189988 UTC",
+          "frame.time_epoch": "1789583700.831189988",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.000121078",
+          "frame.time_delta_displayed": "0.170384360",
+          "frame.time_relative": "0.372393581",
+          "frame.number": "10",
+          "frame.len": "90",
+          "frame.cap_len": "90",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.protocols": "eth:ethertype:ip:sctp:ngap:ngap"
+        },
+        "eth": {
+          "eth.dst": "8a:5f:36:c4:54:e4",
+          "eth.dst_tree": {
+            "eth.dst_resolved": "8a:5f:36:c4:54:e4",
+            "eth.dst.oui": "9068342",
+            "eth.addr": "8a:5f:36:c4:54:e4",
+            "eth.addr_resolved": "8a:5f:36:c4:54:e4",
+            "eth.addr.oui": "9068342",
+            "eth.dst.lg": "1",
+            "eth.lg": "1",
+            "eth.dst.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.src": "82:24:fc:bb:8a:96",
+          "eth.src_tree": {
+            "eth.src_resolved": "82:24:fc:bb:8a:96",
+            "eth.src.oui": "8529148",
+            "eth.addr": "82:24:fc:bb:8a:96",
+            "eth.addr_resolved": "82:24:fc:bb:8a:96",
+            "eth.addr.oui": "8529148",
+            "eth.src.lg": "1",
+            "eth.lg": "1",
+            "eth.src.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.type": "0x0800"
+        },
+        "ip": {
+          "ip.version": "4",
+          "ip.hdr_len": "20",
+          "ip.dsfield": "0x02",
+          "ip.dsfield_tree": {
+            "ip.dsfield.dscp": "0",
+            "ip.dsfield.ecn": "2"
+          },
+          "ip.len": "76",
+          "ip.id": "0x118b",
+          "ip.flags": "0x02",
+          "ip.flags_tree": {
+            "ip.flags.rb": "0",
+            "ip.flags.df": "1",
+            "ip.flags.mf": "0"
+          },
+          "ip.frag_offset": "0",
+          "ip.ttl": "64",
+          "ip.proto": "132",
+          "ip.checksum": "0x1836",
+          "ip.checksum.status": "2",
+          "ip.src": "192.168.71.150",
+          "ip.addr": "192.168.71.150",
+          "ip.src_host": "192.168.71.150",
+          "ip.host": "192.168.71.150",
+          "ip.dst": "192.168.71.132",
+          "ip.addr": "192.168.71.132",
+          "ip.dst_host": "192.168.71.132",
+          "ip.host": "192.168.71.132"
+        },
+        "sctp": {
+          "sctp.srcport": "39691",
+          "sctp.dstport": "38412",
+          "sctp.verification_tag": "0xf2c8f0e5",
+          "sctp.assoc_index": "65535",
+          "sctp.port": "39691",
+          "sctp.port": "38412",
+          "sctp.checksum": "0x00000000",
+          "sctp.checksum.status": "2",
+          "DATA chunk (ordered, complete segment, TSN: 1, SID: 1, SSN: 167, PPID: 60, payload length: 26 bytes)": {
+            "sctp.chunk_type": "0",
+            "sctp.chunk_type_tree": {
+              "sctp.chunk_bit_1": "0",
+              "sctp.chunk_bit_2": "0"
+            },
+            "sctp.chunk_flags": "0x03",
+            "sctp.chunk_flags_tree": {
+              "sctp.data_i_bit": "0",
+              "sctp.data_u_bit": "0",
+              "sctp.data_b_bit": "1",
+              "sctp.data_e_bit": "1"
+            },
+            "sctp.chunk_length": "42",
+            "sctp.data_tsn": "1",
+            "sctp.data_tsn_raw": "2882918602",
+            "sctp.data_sid": "0x0001",
+            "sctp.data_ssn": "167",
+            "sctp.data_payload_proto_id": "60",
+            "sctp.chunk_padding": "00:00"
+          }
+        },
+        "ngap": {
+          "per.extension_bit": "0",
+          "per.choice_index": "1",
+          "ngap.NGAP_PDU": "1",
+          "ngap.NGAP_PDU_tree": {
+            "ngap.successfulOutcome_element": {
+              "ngap.procedureCode": "41",
+              "per.enum_index": "0",
+              "ngap.criticality": "0",
+              "per.open_type_length": "22",
+              "ngap.value_element": {
+                "ngap.UEContextReleaseComplete_element": {
+                  "per.extension_bit": "0",
+                  "per.sequence_of_length": "3",
+                  "ngap.protocolIEs": "3",
+                  "ngap.protocolIEs_tree": {
+                    "Item 0: id-AMF-UE-NGAP-ID": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "10",
+                        "per.enum_index": "1",
+                        "ngap.criticality": "1",
+                        "per.open_type_length": "2",
+                        "ngap.value_element": {
+                          "ngap.AMF_UE_NGAP_ID": "17"
+                        }
+                      }
+                    },
+                    "Item 1: id-RAN-UE-NGAP-ID": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "85",
+                        "per.enum_index": "1",
+                        "ngap.criticality": "1",
+                        "per.open_type_length": "2",
+                        "ngap.value_element": {
+                          "ngap.RAN_UE_NGAP_ID": "1"
+                        }
+                      }
+                    },
+                    "Item 2: id-PDUSessionResourceListCxtRelCpl": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "60",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "3",
+                        "ngap.value_element": {
+                          "per.sequence_of_length": "1",
+                          "ngap.PDUSessionResourceListCxtRelCpl": "1",
+                          "ngap.PDUSessionResourceListCxtRelCpl_tree": {
+                            "Item 0": {
+                              "ngap.PDUSessionResourceItemCxtRelCpl_element": {
+                                "per.extension_bit": "0",
+                                "per.optional_field_bit": "0",
+                                "ngap.pDUSessionID": "10"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2026-09-16",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.section_number": "1",
+          "frame.interface_id": "0",
+          "frame.interface_id_tree": {
+            "frame.interface_name": "eth0"
+          },
+          "frame.encap_type": "1",
+          "frame.time": "Sep 16, 2026 20:35:15.987437497 CEST",
+          "frame.time_utc": "Sep 16, 2026 18:35:15.987437497 UTC",
+          "frame.time_epoch": "1789583715.987437497",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.000213746",
+          "frame.time_delta_displayed": "15.156247509",
+          "frame.time_relative": "15.528641090",
+          "frame.number": "30",
+          "frame.len": "138",
+          "frame.cap_len": "138",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.protocols": "eth:ethertype:ip:sctp:ngap:ngap:nas-5gs"
+        },
+        "eth": {
+          "eth.dst": "8a:5f:36:c4:54:e4",
+          "eth.dst_tree": {
+            "eth.dst_resolved": "8a:5f:36:c4:54:e4",
+            "eth.dst.oui": "9068342",
+            "eth.addr": "8a:5f:36:c4:54:e4",
+            "eth.addr_resolved": "8a:5f:36:c4:54:e4",
+            "eth.addr.oui": "9068342",
+            "eth.dst.lg": "1",
+            "eth.lg": "1",
+            "eth.dst.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.src": "82:24:fc:bb:8a:96",
+          "eth.src_tree": {
+            "eth.src_resolved": "82:24:fc:bb:8a:96",
+            "eth.src.oui": "8529148",
+            "eth.addr": "82:24:fc:bb:8a:96",
+            "eth.addr_resolved": "82:24:fc:bb:8a:96",
+            "eth.addr.oui": "8529148",
+            "eth.src.lg": "1",
+            "eth.lg": "1",
+            "eth.src.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.type": "0x0800"
+        },
+        "ip": {
+          "ip.version": "4",
+          "ip.hdr_len": "20",
+          "ip.dsfield": "0x02",
+          "ip.dsfield_tree": {
+            "ip.dsfield.dscp": "0",
+            "ip.dsfield.ecn": "2"
+          },
+          "ip.len": "124",
+          "ip.id": "0x118c",
+          "ip.flags": "0x02",
+          "ip.flags_tree": {
+            "ip.flags.rb": "0",
+            "ip.flags.df": "1",
+            "ip.flags.mf": "0"
+          },
+          "ip.frag_offset": "0",
+          "ip.ttl": "64",
+          "ip.proto": "132",
+          "ip.checksum": "0x1805",
+          "ip.checksum.status": "2",
+          "ip.src": "192.168.71.150",
+          "ip.addr": "192.168.71.150",
+          "ip.src_host": "192.168.71.150",
+          "ip.host": "192.168.71.150",
+          "ip.dst": "192.168.71.132",
+          "ip.addr": "192.168.71.132",
+          "ip.dst_host": "192.168.71.132",
+          "ip.host": "192.168.71.132"
+        },
+        "sctp": {
+          "sctp.srcport": "39691",
+          "sctp.dstport": "38412",
+          "sctp.verification_tag": "0xf2c8f0e5",
+          "sctp.assoc_index": "65535",
+          "sctp.port": "39691",
+          "sctp.port": "38412",
+          "sctp.checksum": "0x00000000",
+          "sctp.checksum.status": "2",
+          "DATA chunk (ordered, complete segment, TSN: 2, SID: 1, SSN: 168, PPID: 60, payload length: 76 bytes)": {
+            "sctp.chunk_type": "0",
+            "sctp.chunk_type_tree": {
+              "sctp.chunk_bit_1": "0",
+              "sctp.chunk_bit_2": "0"
+            },
+            "sctp.chunk_flags": "0x03",
+            "sctp.chunk_flags_tree": {
+              "sctp.data_i_bit": "0",
+              "sctp.data_u_bit": "0",
+              "sctp.data_b_bit": "1",
+              "sctp.data_e_bit": "1"
+            },
+            "sctp.chunk_length": "92",
+            "sctp.data_tsn": "2",
+            "sctp.data_tsn_raw": "2882918603",
+            "sctp.data_sid": "0x0001",
+            "sctp.data_ssn": "168",
+            "sctp.data_payload_proto_id": "60"
+          }
+        },
+        "ngap": {
+          "per.extension_bit": "0",
+          "per.choice_index": "0",
+          "ngap.NGAP_PDU": "0",
+          "ngap.NGAP_PDU_tree": {
+            "ngap.initiatingMessage_element": {
+              "ngap.procedureCode": "15",
+              "per.enum_index": "1",
+              "ngap.criticality": "1",
+              "per.open_type_length": "72",
+              "ngap.value_element": {
+                "ngap.InitialUEMessage_element": {
+                  "per.extension_bit": "0",
+                  "per.sequence_of_length": "5",
+                  "ngap.protocolIEs": "5",
+                  "ngap.protocolIEs_tree": {
+                    "Item 0: id-RAN-UE-NGAP-ID": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "85",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "2",
+                        "ngap.value_element": {
+                          "ngap.RAN_UE_NGAP_ID": "1"
+                        }
+                      }
+                    },
+                    "Item 1: id-NAS-PDU": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "38",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "30",
+                        "ngap.value_element": {
+                          "per.octet_string_length": "29",
+                          "ngap.NAS_PDU": "7e:00:41:09:00:0d:01:02:f8:99:00:00:00:00:10:00:00:11:00:2e:08:e0:60:00:00:00:00:00:00",
+                          "ngap.NAS_PDU_tree": {
+                            "nas-5gs": {
+                              "Plain NAS 5GS Message": {
+                                "nas-5gs.epd": "126",
+                                "nas-5gs.spare_half_octet": "0",
+                                "nas-5gs.security_header_type": "0",
+                                "nas-5gs.mm.message_type": "0x41",
+                                "5GS registration type": {
+                                  "nas-5gs.mm.for": "1",
+                                  "nas-5gs.mm.5gs_reg_type": "1"
+                                },
+                                "NAS key set identifier": {
+                                  "nas-5gs.mm.tsc.h1": "0",
+                                  "nas-5gs.mm.nas_key_set_id.h1": "0"
+                                },
+                                "5GS mobile identity": {
+                                  "gsm_a.len": "13",
+                                  "nas-5gs.spare_b7": "0",
+                                  "nas-5gs.mm.suci.supi_fmt": "0",
+                                  "nas-5gs.spare_b3": "0",
+                                  "nas-5gs.mm.type_id": "1",
+                                  "e212.mcc": "208",
+                                  "e212.mnc": "99",
+                                  "nas-5gs.mm.suci.routing_indicator": "0000",
+                                  "nas-5gs.mm.suci.scheme_id": "0",
+                                  "nas-5gs.mm.suci.pki": "0",
+                                  "nas-5gs.mm.suci.msin": "0100001100"
+                                },
+                                "UE security capability": {
+                                  "nas-5gs.mm.elem_id": "0x2e",
+                                  "gsm_a.len": "8",
+                                  "nas-5gs.mm.5g_ea0": "1",
+                                  "nas-5gs.mm.128_5g_ea1": "1",
+                                  "nas-5gs.mm.128_5g_ea2": "1",
+                                  "nas-5gs.mm.128_5g_ea3": "0",
+                                  "nas-5gs.mm.5g_ea4": "0",
+                                  "nas-5gs.mm.5g_ea5": "0",
+                                  "nas-5gs.mm.5g_ea6": "0",
+                                  "nas-5gs.mm.5g_ea7": "0",
+                                  "nas-5gs.mm.ia0": "0",
+                                  "nas-5gs.mm.5g_128_ia1": "1",
+                                  "nas-5gs.mm.5g_128_ia2": "1",
+                                  "nas-5gs.mm.5g_128_ia3": "0",
+                                  "nas-5gs.mm.5g_128_ia4": "0",
+                                  "nas-5gs.mm.5g_ia5": "0",
+                                  "nas-5gs.mm.5g_ia6": "0",
+                                  "nas-5gs.mm.5g_ia7": "0",
+                                  "nas-5gs.mm.eea0": "0",
+                                  "nas-5gs.mm.128eea1": "0",
+                                  "nas-5gs.mm.128eea2": "0",
+                                  "nas-5gs.mm.eea3": "0",
+                                  "nas-5gs.mm.eea4": "0",
+                                  "nas-5gs.mm.eea5": "0",
+                                  "nas-5gs.mm.eea6": "0",
+                                  "nas-5gs.mm.eea7": "0",
+                                  "nas-5gs.mm.eia0": "0",
+                                  "nas-5gs.mm.128eia1": "0",
+                                  "nas-5gs.mm.128eia2": "0",
+                                  "nas-5gs.mm.eia3": "0",
+                                  "nas-5gs.mm.eia4": "0",
+                                  "nas-5gs.mm.eia5": "0",
+                                  "nas-5gs.mm.eia6": "0",
+                                  "nas-5gs.mm.eia7": "0"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "Item 2: id-UserLocationInformation": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "121",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "15",
+                        "ngap.value_element": {
+                          "per.choice_index": "1",
+                          "ngap.UserLocationInformation": "1",
+                          "ngap.UserLocationInformation_tree": {
+                            "ngap.userLocationInformationNR_element": {
+                              "per.extension_bit": "0",
+                              "per.optional_field_bit": "0",
+                              "per.optional_field_bit": "0",
+                              "ngap.nR_CGI_element": {
+                                "per.extension_bit": "0",
+                                "per.optional_field_bit": "0",
+                                "ngap.pLMNIdentity": "02:f8:99",
+                                "ngap.pLMNIdentity_tree": {
+                                  "e212.nrcgi.mcc": "208",
+                                  "e212.nrcgi.mnc": "99"
+                                },
+                                "ngap.NRCellIdentity": "0x00000000000e014e"
+                              },
+                              "ngap.tAI_element": {
+                                "per.extension_bit": "0",
+                                "per.optional_field_bit": "0",
+                                "ngap.pLMNIdentity": "02:f8:99",
+                                "ngap.pLMNIdentity_tree": {
+                                  "e212.5gstai.mcc": "208",
+                                  "e212.5gstai.mnc": "99"
+                                },
+                                "ngap.tAC": "1"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "Item 3: id-RRCEstablishmentCause": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "90",
+                        "per.enum_index": "1",
+                        "ngap.criticality": "1",
+                        "per.open_type_length": "1",
+                        "ngap.value_element": {
+                          "per.extension_present_bit": "0",
+                          "per.enum_index": "3",
+                          "ngap.RRCEstablishmentCause": "3"
+                        }
+                      }
+                    },
+                    "Item 4: id-UEContextRequest": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "112",
+                        "per.enum_index": "1",
+                        "ngap.criticality": "1",
+                        "per.open_type_length": "1",
+                        "ngap.value_element": {
+                          "per.extension_present_bit": "0",
+                          "per.enum_index": "0",
+                          "ngap.UEContextRequest": "0"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2026-09-16",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.section_number": "1",
+          "frame.interface_id": "0",
+          "frame.interface_id_tree": {
+            "frame.interface_name": "eth0"
+          },
+          "frame.encap_type": "1",
+          "frame.time": "Sep 16, 2026 20:35:16.001075030 CEST",
+          "frame.time_utc": "Sep 16, 2026 18:35:16.001075030 UTC",
+          "frame.time_epoch": "1789583716.001075030",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.013637533",
+          "frame.time_delta_displayed": "0.013637533",
+          "frame.time_relative": "15.542278623",
+          "frame.number": "31",
+          "frame.len": "146",
+          "frame.cap_len": "146",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.protocols": "eth:ethertype:ip:sctp:ngap:ngap:nas-5gs"
+        },
+        "eth": {
+          "eth.dst": "82:24:fc:bb:8a:96",
+          "eth.dst_tree": {
+            "eth.dst_resolved": "82:24:fc:bb:8a:96",
+            "eth.dst.oui": "8529148",
+            "eth.addr": "82:24:fc:bb:8a:96",
+            "eth.addr_resolved": "82:24:fc:bb:8a:96",
+            "eth.addr.oui": "8529148",
+            "eth.dst.lg": "1",
+            "eth.lg": "1",
+            "eth.dst.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.src": "8a:5f:36:c4:54:e4",
+          "eth.src_tree": {
+            "eth.src_resolved": "8a:5f:36:c4:54:e4",
+            "eth.src.oui": "9068342",
+            "eth.addr": "8a:5f:36:c4:54:e4",
+            "eth.addr_resolved": "8a:5f:36:c4:54:e4",
+            "eth.addr.oui": "9068342",
+            "eth.src.lg": "1",
+            "eth.lg": "1",
+            "eth.src.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.type": "0x0800"
+        },
+        "ip": {
+          "ip.version": "4",
+          "ip.hdr_len": "20",
+          "ip.dsfield": "0x02",
+          "ip.dsfield_tree": {
+            "ip.dsfield.dscp": "0",
+            "ip.dsfield.ecn": "2"
+          },
+          "ip.len": "132",
+          "ip.id": "0x58e8",
+          "ip.flags": "0x02",
+          "ip.flags_tree": {
+            "ip.flags.rb": "0",
+            "ip.flags.df": "1",
+            "ip.flags.mf": "0"
+          },
+          "ip.frag_offset": "0",
+          "ip.ttl": "64",
+          "ip.proto": "132",
+          "ip.checksum": "0xd0a0",
+          "ip.checksum.status": "2",
+          "ip.src": "192.168.71.132",
+          "ip.addr": "192.168.71.132",
+          "ip.src_host": "192.168.71.132",
+          "ip.host": "192.168.71.132",
+          "ip.dst": "192.168.71.150",
+          "ip.addr": "192.168.71.150",
+          "ip.dst_host": "192.168.71.150",
+          "ip.host": "192.168.71.150"
+        },
+        "sctp": {
+          "sctp.srcport": "38412",
+          "sctp.dstport": "39691",
+          "sctp.verification_tag": "0xe4ccd8f8",
+          "sctp.assoc_index": "65535",
+          "sctp.port": "38412",
+          "sctp.port": "39691",
+          "sctp.checksum": "0x00000000",
+          "sctp.checksum.status": "2",
+          "SACK chunk (Cumulative TSN: 2882918603, a_rwnd: 106496, gaps: 0, duplicate TSNs: 0)": {
+            "sctp.chunk_type": "3",
+            "sctp.chunk_type_tree": {
+              "sctp.chunk_bit_1": "0",
+              "sctp.chunk_bit_2": "0"
+            },
+            "sctp.chunk_flags": "0x00",
+            "sctp.chunk_flags_tree": {
+              "sctp.sack_nonce_sum": "0"
+            },
+            "sctp.chunk_length": "16",
+            "sctp.sack_cumulative_tsn_ack": "2",
+            "sctp.sack_cumulative_tsn_ack_raw": "2882918603",
+            "sctp.sack_a_rwnd": "106496",
+            "sctp.sack_number_of_gap_blocks": "0",
+            "sctp.sack_number_of_duplicated_tsns": "0"
+          },
+          "DATA chunk (ordered, complete segment, TSN: 2, SID: 1, SSN: 97, PPID: 60, payload length: 66 bytes)": {
+            "sctp.chunk_type": "0",
+            "sctp.chunk_type_tree": {
+              "sctp.chunk_bit_1": "0",
+              "sctp.chunk_bit_2": "0"
+            },
+            "sctp.chunk_flags": "0x03",
+            "sctp.chunk_flags_tree": {
+              "sctp.data_i_bit": "0",
+              "sctp.data_u_bit": "0",
+              "sctp.data_b_bit": "1",
+              "sctp.data_e_bit": "1"
+            },
+            "sctp.chunk_length": "82",
+            "sctp.data_tsn": "2",
+            "sctp.data_tsn_raw": "4194998706",
+            "sctp.data_sid": "0x0001",
+            "sctp.data_ssn": "97",
+            "sctp.data_payload_proto_id": "60",
+            "sctp.chunk_padding": "00:00"
+          }
+        },
+        "ngap": {
+          "per.extension_bit": "0",
+          "per.choice_index": "0",
+          "ngap.NGAP_PDU": "0",
+          "ngap.NGAP_PDU_tree": {
+            "ngap.initiatingMessage_element": {
+              "ngap.procedureCode": "4",
+              "per.enum_index": "1",
+              "ngap.criticality": "1",
+              "per.open_type_length": "62",
+              "ngap.value_element": {
+                "ngap.DownlinkNASTransport_element": {
+                  "per.extension_bit": "0",
+                  "per.sequence_of_length": "3",
+                  "ngap.protocolIEs": "3",
+                  "ngap.protocolIEs_tree": {
+                    "Item 0: id-AMF-UE-NGAP-ID": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "10",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "2",
+                        "ngap.value_element": {
+                          "ngap.AMF_UE_NGAP_ID": "18"
+                        }
+                      }
+                    },
+                    "Item 1: id-RAN-UE-NGAP-ID": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "85",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "2",
+                        "ngap.value_element": {
+                          "ngap.RAN_UE_NGAP_ID": "1"
+                        }
+                      }
+                    },
+                    "Item 2: id-NAS-PDU": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "38",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "43",
+                        "ngap.value_element": {
+                          "per.octet_string_length": "42",
+                          "ngap.NAS_PDU": "7e:00:56:05:02:00:00:21:11:12:13:14:15:16:17:18:19:1a:1b:1c:1d:1e:1f:20:20:10:fc:00:f4:57:56:ac:80:00:7b:23:9a:27:72:00:eb:e4",
+                          "ngap.NAS_PDU_tree": {
+                            "nas-5gs": {
+                              "Plain NAS 5GS Message": {
+                                "nas-5gs.epd": "126",
+                                "nas-5gs.spare_half_octet": "0",
+                                "nas-5gs.security_header_type": "0",
+                                "nas-5gs.mm.message_type": "0x56",
+                                "nas-5gs.spare_half_octet": "0",
+                                "NAS key set identifier - ngKSI": {
+                                  "nas-5gs.mm.tsc": "0",
+                                  "nas-5gs.mm.nas_key_set_id": "5"
+                                },
+                                "ABBA": {
+                                  "gsm_a.len": "2",
+                                  "nas-5gs.mm.abba_contents": "00:00"
+                                },
+                                "Authentication Parameter RAND - 5G authentication challenge": {
+                                  "gsm_a.dtap.elem_id": "0x21",
+                                  "gsm_a.dtap.rand": "11:12:13:14:15:16:17:18:19:1a:1b:1c:1d:1e:1f:20"
+                                },
+                                "Authentication Parameter AUTN (UMTS and EPS authentication challenge) - 5G authentication challenge": {
+                                  "gsm_a.dtap.elem_id": "0x20",
+                                  "gsm_a.len": "16",
+                                  "gsm_a.dtap.autn": "fc:00:f4:57:56:ac:80:00:7b:23:9a:27:72:00:eb:e4",
+                                  "gsm_a.dtap.autn_tree": {
+                                    "gsm_a.dtap.autn.sqn_xor_ak": "fc:00:f4:57:56:ac",
+                                    "gsm_a.dtap.autn.amf": "80:00",
+                                    "gsm_a.dtap.autn.mac": "7b:23:9a:27:72:00:eb:e4"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2026-09-16",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.section_number": "1",
+          "frame.interface_id": "0",
+          "frame.interface_id_tree": {
+            "frame.interface_name": "eth0"
+          },
+          "frame.encap_type": "1",
+          "frame.time": "Sep 16, 2026 20:35:16.049221834 CEST",
+          "frame.time_utc": "Sep 16, 2026 18:35:16.049221834 UTC",
+          "frame.time_epoch": "1789583716.049221834",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.000161908",
+          "frame.time_delta_displayed": "0.048146804",
+          "frame.time_relative": "15.590425427",
+          "frame.number": "34",
+          "frame.len": "142",
+          "frame.cap_len": "142",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.protocols": "eth:ethertype:ip:sctp:ngap:ngap:nas-5gs"
+        },
+        "eth": {
+          "eth.dst": "8a:5f:36:c4:54:e4",
+          "eth.dst_tree": {
+            "eth.dst_resolved": "8a:5f:36:c4:54:e4",
+            "eth.dst.oui": "9068342",
+            "eth.addr": "8a:5f:36:c4:54:e4",
+            "eth.addr_resolved": "8a:5f:36:c4:54:e4",
+            "eth.addr.oui": "9068342",
+            "eth.dst.lg": "1",
+            "eth.lg": "1",
+            "eth.dst.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.src": "82:24:fc:bb:8a:96",
+          "eth.src_tree": {
+            "eth.src_resolved": "82:24:fc:bb:8a:96",
+            "eth.src.oui": "8529148",
+            "eth.addr": "82:24:fc:bb:8a:96",
+            "eth.addr_resolved": "82:24:fc:bb:8a:96",
+            "eth.addr.oui": "8529148",
+            "eth.src.lg": "1",
+            "eth.lg": "1",
+            "eth.src.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.type": "0x0800"
+        },
+        "ip": {
+          "ip.version": "4",
+          "ip.hdr_len": "20",
+          "ip.dsfield": "0x02",
+          "ip.dsfield_tree": {
+            "ip.dsfield.dscp": "0",
+            "ip.dsfield.ecn": "2"
+          },
+          "ip.len": "128",
+          "ip.id": "0x118d",
+          "ip.flags": "0x02",
+          "ip.flags_tree": {
+            "ip.flags.rb": "0",
+            "ip.flags.df": "1",
+            "ip.flags.mf": "0"
+          },
+          "ip.frag_offset": "0",
+          "ip.ttl": "64",
+          "ip.proto": "132",
+          "ip.checksum": "0x1800",
+          "ip.checksum.status": "2",
+          "ip.src": "192.168.71.150",
+          "ip.addr": "192.168.71.150",
+          "ip.src_host": "192.168.71.150",
+          "ip.host": "192.168.71.150",
+          "ip.dst": "192.168.71.132",
+          "ip.addr": "192.168.71.132",
+          "ip.dst_host": "192.168.71.132",
+          "ip.host": "192.168.71.132"
+        },
+        "sctp": {
+          "sctp.srcport": "39691",
+          "sctp.dstport": "38412",
+          "sctp.verification_tag": "0xf2c8f0e5",
+          "sctp.assoc_index": "65535",
+          "sctp.port": "39691",
+          "sctp.port": "38412",
+          "sctp.checksum": "0x00000000",
+          "sctp.checksum.status": "2",
+          "SACK chunk (Cumulative TSN: 4194998706, a_rwnd: 106496, gaps: 0, duplicate TSNs: 0)": {
+            "sctp.chunk_type": "3",
+            "sctp.chunk_type_tree": {
+              "sctp.chunk_bit_1": "0",
+              "sctp.chunk_bit_2": "0"
+            },
+            "sctp.chunk_flags": "0x00",
+            "sctp.chunk_flags_tree": {
+              "sctp.sack_nonce_sum": "0"
+            },
+            "sctp.chunk_length": "16",
+            "sctp.sack_cumulative_tsn_ack": "2",
+            "sctp.sack_cumulative_tsn_ack_raw": "4194998706",
+            "sctp.sack_a_rwnd": "106496",
+            "sctp.sack_number_of_gap_blocks": "0",
+            "sctp.sack_number_of_duplicated_tsns": "0"
+          },
+          "DATA chunk (ordered, complete segment, TSN: 3, SID: 1, SSN: 169, PPID: 60, payload length: 64 bytes)": {
+            "sctp.chunk_type": "0",
+            "sctp.chunk_type_tree": {
+              "sctp.chunk_bit_1": "0",
+              "sctp.chunk_bit_2": "0"
+            },
+            "sctp.chunk_flags": "0x03",
+            "sctp.chunk_flags_tree": {
+              "sctp.data_i_bit": "0",
+              "sctp.data_u_bit": "0",
+              "sctp.data_b_bit": "1",
+              "sctp.data_e_bit": "1"
+            },
+            "sctp.chunk_length": "80",
+            "sctp.data_tsn": "3",
+            "sctp.data_tsn_raw": "2882918604",
+            "sctp.data_sid": "0x0001",
+            "sctp.data_ssn": "169",
+            "sctp.data_payload_proto_id": "60"
+          }
+        },
+        "ngap": {
+          "per.extension_bit": "0",
+          "per.choice_index": "0",
+          "ngap.NGAP_PDU": "0",
+          "ngap.NGAP_PDU_tree": {
+            "ngap.initiatingMessage_element": {
+              "ngap.procedureCode": "46",
+              "per.enum_index": "1",
+              "ngap.criticality": "1",
+              "per.open_type_length": "60",
+              "ngap.value_element": {
+                "ngap.UplinkNASTransport_element": {
+                  "per.extension_bit": "0",
+                  "per.sequence_of_length": "4",
+                  "ngap.protocolIEs": "4",
+                  "ngap.protocolIEs_tree": {
+                    "Item 0: id-AMF-UE-NGAP-ID": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "10",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "2",
+                        "ngap.value_element": {
+                          "ngap.AMF_UE_NGAP_ID": "18"
+                        }
+                      }
+                    },
+                    "Item 1: id-RAN-UE-NGAP-ID": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "85",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "2",
+                        "ngap.value_element": {
+                          "ngap.RAN_UE_NGAP_ID": "1"
+                        }
+                      }
+                    },
+                    "Item 2: id-NAS-PDU": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "38",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "22",
+                        "ngap.value_element": {
+                          "per.octet_string_length": "21",
+                          "ngap.NAS_PDU": "7e:00:57:2d:10:11:e4:af:98:50:6e:6c:69:5d:d0:78:96:53:b7:eb:0b",
+                          "ngap.NAS_PDU_tree": {
+                            "nas-5gs": {
+                              "Plain NAS 5GS Message": {
+                                "nas-5gs.epd": "126",
+                                "nas-5gs.spare_half_octet": "0",
+                                "nas-5gs.security_header_type": "0",
+                                "nas-5gs.mm.message_type": "0x57",
+                                "Authentication response parameter": {
+                                  "nas-eps.emm.elem_id": "0x2d",
+                                  "gsm_a.len": "16",
+                                  "nas-eps.emm.res": "11:e4:af:98:50:6e:6c:69:5d:d0:78:96:53:b7:eb:0b"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "Item 3: id-UserLocationInformation": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "121",
+                        "per.enum_index": "1",
+                        "ngap.criticality": "1",
+                        "per.open_type_length": "15",
+                        "ngap.value_element": {
+                          "per.choice_index": "1",
+                          "ngap.UserLocationInformation": "1",
+                          "ngap.UserLocationInformation_tree": {
+                            "ngap.userLocationInformationNR_element": {
+                              "per.extension_bit": "0",
+                              "per.optional_field_bit": "0",
+                              "per.optional_field_bit": "0",
+                              "ngap.nR_CGI_element": {
+                                "per.extension_bit": "0",
+                                "per.optional_field_bit": "0",
+                                "ngap.pLMNIdentity": "02:f8:99",
+                                "ngap.pLMNIdentity_tree": {
+                                  "e212.nrcgi.mcc": "208",
+                                  "e212.nrcgi.mnc": "99"
+                                },
+                                "ngap.NRCellIdentity": "0x00000000000e014e"
+                              },
+                              "ngap.tAI_element": {
+                                "per.extension_bit": "0",
+                                "per.optional_field_bit": "0",
+                                "ngap.pLMNIdentity": "02:f8:99",
+                                "ngap.pLMNIdentity_tree": {
+                                  "e212.5gstai.mcc": "208",
+                                  "e212.5gstai.mnc": "99"
+                                },
+                                "ngap.tAC": "1"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2026-09-16",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.section_number": "1",
+          "frame.interface_id": "0",
+          "frame.interface_id_tree": {
+            "frame.interface_name": "eth0"
+          },
+          "frame.encap_type": "1",
+          "frame.time": "Sep 16, 2026 20:35:16.049792450 CEST",
+          "frame.time_utc": "Sep 16, 2026 18:35:16.049792450 UTC",
+          "frame.time_epoch": "1789583716.049792450",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.000570616",
+          "frame.time_delta_displayed": "0.000570616",
+          "frame.time_relative": "15.590996043",
+          "frame.number": "35",
+          "frame.len": "126",
+          "frame.cap_len": "126",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.protocols": "eth:ethertype:ip:sctp:ngap:ngap:nas-5gs"
+        },
+        "eth": {
+          "eth.dst": "82:24:fc:bb:8a:96",
+          "eth.dst_tree": {
+            "eth.dst_resolved": "82:24:fc:bb:8a:96",
+            "eth.dst.oui": "8529148",
+            "eth.addr": "82:24:fc:bb:8a:96",
+            "eth.addr_resolved": "82:24:fc:bb:8a:96",
+            "eth.addr.oui": "8529148",
+            "eth.dst.lg": "1",
+            "eth.lg": "1",
+            "eth.dst.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.src": "8a:5f:36:c4:54:e4",
+          "eth.src_tree": {
+            "eth.src_resolved": "8a:5f:36:c4:54:e4",
+            "eth.src.oui": "9068342",
+            "eth.addr": "8a:5f:36:c4:54:e4",
+            "eth.addr_resolved": "8a:5f:36:c4:54:e4",
+            "eth.addr.oui": "9068342",
+            "eth.src.lg": "1",
+            "eth.lg": "1",
+            "eth.src.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.type": "0x0800"
+        },
+        "ip": {
+          "ip.version": "4",
+          "ip.hdr_len": "20",
+          "ip.dsfield": "0x02",
+          "ip.dsfield_tree": {
+            "ip.dsfield.dscp": "0",
+            "ip.dsfield.ecn": "2"
+          },
+          "ip.len": "112",
+          "ip.id": "0x58e9",
+          "ip.flags": "0x02",
+          "ip.flags_tree": {
+            "ip.flags.rb": "0",
+            "ip.flags.df": "1",
+            "ip.flags.mf": "0"
+          },
+          "ip.frag_offset": "0",
+          "ip.ttl": "64",
+          "ip.proto": "132",
+          "ip.checksum": "0xd0b3",
+          "ip.checksum.status": "2",
+          "ip.src": "192.168.71.132",
+          "ip.addr": "192.168.71.132",
+          "ip.src_host": "192.168.71.132",
+          "ip.host": "192.168.71.132",
+          "ip.dst": "192.168.71.150",
+          "ip.addr": "192.168.71.150",
+          "ip.dst_host": "192.168.71.150",
+          "ip.host": "192.168.71.150"
+        },
+        "sctp": {
+          "sctp.srcport": "38412",
+          "sctp.dstport": "39691",
+          "sctp.verification_tag": "0xe4ccd8f8",
+          "sctp.assoc_index": "65535",
+          "sctp.port": "38412",
+          "sctp.port": "39691",
+          "sctp.checksum": "0x00000000",
+          "sctp.checksum.status": "2",
+          "SACK chunk (Cumulative TSN: 2882918604, a_rwnd: 106496, gaps: 0, duplicate TSNs: 0)": {
+            "sctp.chunk_type": "3",
+            "sctp.chunk_type_tree": {
+              "sctp.chunk_bit_1": "0",
+              "sctp.chunk_bit_2": "0"
+            },
+            "sctp.chunk_flags": "0x00",
+            "sctp.chunk_flags_tree": {
+              "sctp.sack_nonce_sum": "0"
+            },
+            "sctp.chunk_length": "16",
+            "sctp.sack_cumulative_tsn_ack": "3",
+            "sctp.sack_cumulative_tsn_ack_raw": "2882918604",
+            "sctp.sack_a_rwnd": "106496",
+            "sctp.sack_number_of_gap_blocks": "0",
+            "sctp.sack_number_of_duplicated_tsns": "0"
+          },
+          "DATA chunk (ordered, complete segment, TSN: 3, SID: 1, SSN: 98, PPID: 60, payload length: 45 bytes)": {
+            "sctp.chunk_type": "0",
+            "sctp.chunk_type_tree": {
+              "sctp.chunk_bit_1": "0",
+              "sctp.chunk_bit_2": "0"
+            },
+            "sctp.chunk_flags": "0x03",
+            "sctp.chunk_flags_tree": {
+              "sctp.data_i_bit": "0",
+              "sctp.data_u_bit": "0",
+              "sctp.data_b_bit": "1",
+              "sctp.data_e_bit": "1"
+            },
+            "sctp.chunk_length": "61",
+            "sctp.data_tsn": "3",
+            "sctp.data_tsn_raw": "4194998707",
+            "sctp.data_sid": "0x0001",
+            "sctp.data_ssn": "98",
+            "sctp.data_payload_proto_id": "60",
+            "sctp.chunk_padding": "00:00:00"
+          }
+        },
+        "ngap": {
+          "per.extension_bit": "0",
+          "per.choice_index": "0",
+          "ngap.NGAP_PDU": "0",
+          "ngap.NGAP_PDU_tree": {
+            "ngap.initiatingMessage_element": {
+              "ngap.procedureCode": "4",
+              "per.enum_index": "1",
+              "ngap.criticality": "1",
+              "per.open_type_length": "41",
+              "ngap.value_element": {
+                "ngap.DownlinkNASTransport_element": {
+                  "per.extension_bit": "0",
+                  "per.sequence_of_length": "3",
+                  "ngap.protocolIEs": "3",
+                  "ngap.protocolIEs_tree": {
+                    "Item 0: id-AMF-UE-NGAP-ID": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "10",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "2",
+                        "ngap.value_element": {
+                          "ngap.AMF_UE_NGAP_ID": "18"
+                        }
+                      }
+                    },
+                    "Item 1: id-RAN-UE-NGAP-ID": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "85",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "2",
+                        "ngap.value_element": {
+                          "ngap.RAN_UE_NGAP_ID": "1"
+                        }
+                      }
+                    },
+                    "Item 2: id-NAS-PDU": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "38",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "22",
+                        "ngap.value_element": {
+                          "per.octet_string_length": "21",
+                          "ngap.NAS_PDU": "7e:03:2e:8b:79:5f:00:7e:00:5d:01:05:04:e0:60:00:00:e1:36:01:02",
+                          "ngap.NAS_PDU_tree": {
+                            "nas-5gs": {
+                              "Security protected NAS 5GS message": {
+                                "nas-5gs.epd": "126",
+                                "nas-5gs.spare_half_octet": "0",
+                                "nas-5gs.security_header_type": "3",
+                                "nas-5gs.msg_auth_code": "0x2e8b795f",
+                                "nas-5gs.seq_no": "0"
+                              },
+                              "Plain NAS 5GS Message": {
+                                "nas-5gs.epd": "126",
+                                "nas-5gs.spare_half_octet": "0",
+                                "nas-5gs.security_header_type": "0",
+                                "nas-5gs.mm.message_type": "0x5d",
+                                "NAS security algorithms": {
+                                  "nas-5gs.mm.nas_sec_algo_enc": "0",
+                                  "nas-5gs.mm.nas_sec_algo_ip": "1"
+                                },
+                                "nas-5gs.spare_half_octet": "0",
+                                "NAS key set identifier - ngKSI": {
+                                  "nas-5gs.mm.tsc": "0",
+                                  "nas-5gs.mm.nas_key_set_id": "5"
+                                },
+                                "UE security capability - Replayed UE security capabilities": {
+                                  "gsm_a.len": "4",
+                                  "nas-5gs.mm.5g_ea0": "1",
+                                  "nas-5gs.mm.128_5g_ea1": "1",
+                                  "nas-5gs.mm.128_5g_ea2": "1",
+                                  "nas-5gs.mm.128_5g_ea3": "0",
+                                  "nas-5gs.mm.5g_ea4": "0",
+                                  "nas-5gs.mm.5g_ea5": "0",
+                                  "nas-5gs.mm.5g_ea6": "0",
+                                  "nas-5gs.mm.5g_ea7": "0",
+                                  "nas-5gs.mm.ia0": "0",
+                                  "nas-5gs.mm.5g_128_ia1": "1",
+                                  "nas-5gs.mm.5g_128_ia2": "1",
+                                  "nas-5gs.mm.5g_128_ia3": "0",
+                                  "nas-5gs.mm.5g_128_ia4": "0",
+                                  "nas-5gs.mm.5g_ia5": "0",
+                                  "nas-5gs.mm.5g_ia6": "0",
+                                  "nas-5gs.mm.5g_ia7": "0",
+                                  "nas-5gs.mm.eea0": "0",
+                                  "nas-5gs.mm.128eea1": "0",
+                                  "nas-5gs.mm.128eea2": "0",
+                                  "nas-5gs.mm.eea3": "0",
+                                  "nas-5gs.mm.eea4": "0",
+                                  "nas-5gs.mm.eea5": "0",
+                                  "nas-5gs.mm.eea6": "0",
+                                  "nas-5gs.mm.eea7": "0",
+                                  "nas-5gs.mm.eia0": "0",
+                                  "nas-5gs.mm.128eia1": "0",
+                                  "nas-5gs.mm.128eia2": "0",
+                                  "nas-5gs.mm.eia3": "0",
+                                  "nas-5gs.mm.eia4": "0",
+                                  "nas-5gs.mm.eia5": "0",
+                                  "nas-5gs.mm.eia6": "0",
+                                  "nas-5gs.mm.eia7": "0"
+                                },
+                                "IMEISV request": {
+                                  "gsm_a.common.elem_id": "0x0e",
+                                  "nas-eps.spare_bits": "0x00",
+                                  "nas-eps.emm.imeisv_req": "1"
+                                },
+                                "Additional 5G security information": {
+                                  "nas-5gs.mm.elem_id": "0x36",
+                                  "gsm_a.len": "1",
+                                  "nas-5gs.spare_b7": "0",
+                                  "nas-5gs.spare_b6": "0",
+                                  "nas-5gs.spare_b5": "0",
+                                  "nas-5gs.spare_b4": "0",
+                                  "nas-5gs.spare_b3": "0",
+                                  "nas-5gs.spare_b2": "0",
+                                  "nas-5gs.mm.rinmr": "1",
+                                  "nas-5gs.mm.hdp": "0"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2026-09-16",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.section_number": "1",
+          "frame.interface_id": "0",
+          "frame.interface_id_tree": {
+            "frame.interface_name": "eth0"
+          },
+          "frame.encap_type": "1",
+          "frame.time": "Sep 16, 2026 20:35:16.104052044 CEST",
+          "frame.time_utc": "Sep 16, 2026 18:35:16.104052044 UTC",
+          "frame.time_epoch": "1789583716.104052044",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.000162073",
+          "frame.time_delta_displayed": "0.054259594",
+          "frame.time_relative": "15.645255637",
+          "frame.number": "38",
+          "frame.len": "178",
+          "frame.cap_len": "178",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.protocols": "eth:ethertype:ip:sctp:ngap:ngap:nas-5gs"
+        },
+        "eth": {
+          "eth.dst": "8a:5f:36:c4:54:e4",
+          "eth.dst_tree": {
+            "eth.dst_resolved": "8a:5f:36:c4:54:e4",
+            "eth.dst.oui": "9068342",
+            "eth.addr": "8a:5f:36:c4:54:e4",
+            "eth.addr_resolved": "8a:5f:36:c4:54:e4",
+            "eth.addr.oui": "9068342",
+            "eth.dst.lg": "1",
+            "eth.lg": "1",
+            "eth.dst.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.src": "82:24:fc:bb:8a:96",
+          "eth.src_tree": {
+            "eth.src_resolved": "82:24:fc:bb:8a:96",
+            "eth.src.oui": "8529148",
+            "eth.addr": "82:24:fc:bb:8a:96",
+            "eth.addr_resolved": "82:24:fc:bb:8a:96",
+            "eth.addr.oui": "8529148",
+            "eth.src.lg": "1",
+            "eth.lg": "1",
+            "eth.src.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.type": "0x0800"
+        },
+        "ip": {
+          "ip.version": "4",
+          "ip.hdr_len": "20",
+          "ip.dsfield": "0x02",
+          "ip.dsfield_tree": {
+            "ip.dsfield.dscp": "0",
+            "ip.dsfield.ecn": "2"
+          },
+          "ip.len": "164",
+          "ip.id": "0x118e",
+          "ip.flags": "0x02",
+          "ip.flags_tree": {
+            "ip.flags.rb": "0",
+            "ip.flags.df": "1",
+            "ip.flags.mf": "0"
+          },
+          "ip.frag_offset": "0",
+          "ip.ttl": "64",
+          "ip.proto": "132",
+          "ip.checksum": "0x17db",
+          "ip.checksum.status": "2",
+          "ip.src": "192.168.71.150",
+          "ip.addr": "192.168.71.150",
+          "ip.src_host": "192.168.71.150",
+          "ip.host": "192.168.71.150",
+          "ip.dst": "192.168.71.132",
+          "ip.addr": "192.168.71.132",
+          "ip.dst_host": "192.168.71.132",
+          "ip.host": "192.168.71.132"
+        },
+        "sctp": {
+          "sctp.srcport": "39691",
+          "sctp.dstport": "38412",
+          "sctp.verification_tag": "0xf2c8f0e5",
+          "sctp.assoc_index": "65535",
+          "sctp.port": "39691",
+          "sctp.port": "38412",
+          "sctp.checksum": "0x00000000",
+          "sctp.checksum.status": "2",
+          "SACK chunk (Cumulative TSN: 4194998707, a_rwnd: 106496, gaps: 0, duplicate TSNs: 0)": {
+            "sctp.chunk_type": "3",
+            "sctp.chunk_type_tree": {
+              "sctp.chunk_bit_1": "0",
+              "sctp.chunk_bit_2": "0"
+            },
+            "sctp.chunk_flags": "0x00",
+            "sctp.chunk_flags_tree": {
+              "sctp.sack_nonce_sum": "0"
+            },
+            "sctp.chunk_length": "16",
+            "sctp.sack_cumulative_tsn_ack": "3",
+            "sctp.sack_cumulative_tsn_ack_raw": "4194998707",
+            "sctp.sack_a_rwnd": "106496",
+            "sctp.sack_number_of_gap_blocks": "0",
+            "sctp.sack_number_of_duplicated_tsns": "0"
+          },
+          "DATA chunk (ordered, complete segment, TSN: 4, SID: 1, SSN: 170, PPID: 60, payload length: 100 bytes)": {
+            "sctp.chunk_type": "0",
+            "sctp.chunk_type_tree": {
+              "sctp.chunk_bit_1": "0",
+              "sctp.chunk_bit_2": "0"
+            },
+            "sctp.chunk_flags": "0x03",
+            "sctp.chunk_flags_tree": {
+              "sctp.data_i_bit": "0",
+              "sctp.data_u_bit": "0",
+              "sctp.data_b_bit": "1",
+              "sctp.data_e_bit": "1"
+            },
+            "sctp.chunk_length": "116",
+            "sctp.data_tsn": "4",
+            "sctp.data_tsn_raw": "2882918605",
+            "sctp.data_sid": "0x0001",
+            "sctp.data_ssn": "170",
+            "sctp.data_payload_proto_id": "60"
+          }
+        },
+        "ngap": {
+          "per.extension_bit": "0",
+          "per.choice_index": "0",
+          "ngap.NGAP_PDU": "0",
+          "ngap.NGAP_PDU_tree": {
+            "ngap.initiatingMessage_element": {
+              "ngap.procedureCode": "46",
+              "per.enum_index": "1",
+              "ngap.criticality": "1",
+              "per.open_type_length": "96",
+              "ngap.value_element": {
+                "ngap.UplinkNASTransport_element": {
+                  "per.extension_bit": "0",
+                  "per.sequence_of_length": "4",
+                  "ngap.protocolIEs": "4",
+                  "ngap.protocolIEs_tree": {
+                    "Item 0: id-AMF-UE-NGAP-ID": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "10",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "2",
+                        "ngap.value_element": {
+                          "ngap.AMF_UE_NGAP_ID": "18"
+                        }
+                      }
+                    },
+                    "Item 1: id-RAN-UE-NGAP-ID": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "85",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "2",
+                        "ngap.value_element": {
+                          "ngap.RAN_UE_NGAP_ID": "1"
+                        }
+                      }
+                    },
+                    "Item 2: id-NAS-PDU": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "38",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "58",
+                        "ngap.value_element": {
+                          "per.octet_string_length": "57",
+                          "ngap.NAS_PDU": "7e:04:09:ab:5d:40:00:7e:00:5e:77:00:09:65:57:54:76:98:10:32:14:f3:71:00:20:7e:00:41:09:00:0d:01:02:f8:99:00:00:00:00:10:00:00:11:00:10:01:06:2e:08:e0:60:00:00:00:00:00:00",
+                          "ngap.NAS_PDU_tree": {
+                            "nas-5gs": {
+                              "Security protected NAS 5GS message": {
+                                "nas-5gs.epd": "126",
+                                "nas-5gs.spare_half_octet": "0",
+                                "nas-5gs.security_header_type": "4",
+                                "nas-5gs.msg_auth_code": "0x09ab5d40",
+                                "nas-5gs.seq_no": "0"
+                              },
+                              "Encrypted data": ""
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "Item 3: id-UserLocationInformation": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "121",
+                        "per.enum_index": "1",
+                        "ngap.criticality": "1",
+                        "per.open_type_length": "15",
+                        "ngap.value_element": {
+                          "per.choice_index": "1",
+                          "ngap.UserLocationInformation": "1",
+                          "ngap.UserLocationInformation_tree": {
+                            "ngap.userLocationInformationNR_element": {
+                              "per.extension_bit": "0",
+                              "per.optional_field_bit": "0",
+                              "per.optional_field_bit": "0",
+                              "ngap.nR_CGI_element": {
+                                "per.extension_bit": "0",
+                                "per.optional_field_bit": "0",
+                                "ngap.pLMNIdentity": "02:f8:99",
+                                "ngap.pLMNIdentity_tree": {
+                                  "e212.nrcgi.mcc": "208",
+                                  "e212.nrcgi.mnc": "99"
+                                },
+                                "ngap.NRCellIdentity": "0x00000000000e014e"
+                              },
+                              "ngap.tAI_element": {
+                                "per.extension_bit": "0",
+                                "per.optional_field_bit": "0",
+                                "ngap.pLMNIdentity": "02:f8:99",
+                                "ngap.pLMNIdentity_tree": {
+                                  "e212.5gstai.mcc": "208",
+                                  "e212.5gstai.mnc": "99"
+                                },
+                                "ngap.tAC": "1"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2026-09-16",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.section_number": "1",
+          "frame.interface_id": "0",
+          "frame.interface_id_tree": {
+            "frame.interface_name": "eth0"
+          },
+          "frame.encap_type": "1",
+          "frame.time": "Sep 16, 2026 20:35:16.105111693 CEST",
+          "frame.time_utc": "Sep 16, 2026 18:35:16.105111693 UTC",
+          "frame.time_epoch": "1789583716.105111693",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.001059649",
+          "frame.time_delta_displayed": "0.001059649",
+          "frame.time_relative": "15.646315286",
+          "frame.number": "39",
+          "frame.len": "242",
+          "frame.cap_len": "242",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.protocols": "eth:ethertype:ip:sctp:ngap:ngap:nas-5gs"
+        },
+        "eth": {
+          "eth.dst": "82:24:fc:bb:8a:96",
+          "eth.dst_tree": {
+            "eth.dst_resolved": "82:24:fc:bb:8a:96",
+            "eth.dst.oui": "8529148",
+            "eth.addr": "82:24:fc:bb:8a:96",
+            "eth.addr_resolved": "82:24:fc:bb:8a:96",
+            "eth.addr.oui": "8529148",
+            "eth.dst.lg": "1",
+            "eth.lg": "1",
+            "eth.dst.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.src": "8a:5f:36:c4:54:e4",
+          "eth.src_tree": {
+            "eth.src_resolved": "8a:5f:36:c4:54:e4",
+            "eth.src.oui": "9068342",
+            "eth.addr": "8a:5f:36:c4:54:e4",
+            "eth.addr_resolved": "8a:5f:36:c4:54:e4",
+            "eth.addr.oui": "9068342",
+            "eth.src.lg": "1",
+            "eth.lg": "1",
+            "eth.src.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.type": "0x0800"
+        },
+        "ip": {
+          "ip.version": "4",
+          "ip.hdr_len": "20",
+          "ip.dsfield": "0x02",
+          "ip.dsfield_tree": {
+            "ip.dsfield.dscp": "0",
+            "ip.dsfield.ecn": "2"
+          },
+          "ip.len": "228",
+          "ip.id": "0x58ea",
+          "ip.flags": "0x02",
+          "ip.flags_tree": {
+            "ip.flags.rb": "0",
+            "ip.flags.df": "1",
+            "ip.flags.mf": "0"
+          },
+          "ip.frag_offset": "0",
+          "ip.ttl": "64",
+          "ip.proto": "132",
+          "ip.checksum": "0xd03e",
+          "ip.checksum.status": "2",
+          "ip.src": "192.168.71.132",
+          "ip.addr": "192.168.71.132",
+          "ip.src_host": "192.168.71.132",
+          "ip.host": "192.168.71.132",
+          "ip.dst": "192.168.71.150",
+          "ip.addr": "192.168.71.150",
+          "ip.dst_host": "192.168.71.150",
+          "ip.host": "192.168.71.150"
+        },
+        "sctp": {
+          "sctp.srcport": "38412",
+          "sctp.dstport": "39691",
+          "sctp.verification_tag": "0xe4ccd8f8",
+          "sctp.assoc_index": "65535",
+          "sctp.port": "38412",
+          "sctp.port": "39691",
+          "sctp.checksum": "0x00000000",
+          "sctp.checksum.status": "2",
+          "SACK chunk (Cumulative TSN: 2882918605, a_rwnd: 106496, gaps: 0, duplicate TSNs: 0)": {
+            "sctp.chunk_type": "3",
+            "sctp.chunk_type_tree": {
+              "sctp.chunk_bit_1": "0",
+              "sctp.chunk_bit_2": "0"
+            },
+            "sctp.chunk_flags": "0x00",
+            "sctp.chunk_flags_tree": {
+              "sctp.sack_nonce_sum": "0"
+            },
+            "sctp.chunk_length": "16",
+            "sctp.sack_cumulative_tsn_ack": "4",
+            "sctp.sack_cumulative_tsn_ack_raw": "2882918605",
+            "sctp.sack_a_rwnd": "106496",
+            "sctp.sack_number_of_gap_blocks": "0",
+            "sctp.sack_number_of_duplicated_tsns": "0"
+          },
+          "DATA chunk (ordered, complete segment, TSN: 4, SID: 1, SSN: 99, PPID: 60, payload length: 164 bytes)": {
+            "sctp.chunk_type": "0",
+            "sctp.chunk_type_tree": {
+              "sctp.chunk_bit_1": "0",
+              "sctp.chunk_bit_2": "0"
+            },
+            "sctp.chunk_flags": "0x03",
+            "sctp.chunk_flags_tree": {
+              "sctp.data_i_bit": "0",
+              "sctp.data_u_bit": "0",
+              "sctp.data_b_bit": "1",
+              "sctp.data_e_bit": "1"
+            },
+            "sctp.chunk_length": "180",
+            "sctp.data_tsn": "4",
+            "sctp.data_tsn_raw": "4194998708",
+            "sctp.data_sid": "0x0001",
+            "sctp.data_ssn": "99",
+            "sctp.data_payload_proto_id": "60"
+          }
+        },
+        "ngap": {
+          "per.extension_bit": "0",
+          "per.choice_index": "0",
+          "ngap.NGAP_PDU": "0",
+          "ngap.NGAP_PDU_tree": {
+            "ngap.initiatingMessage_element": {
+              "ngap.procedureCode": "14",
+              "per.enum_index": "0",
+              "ngap.criticality": "0",
+              "per.open_type_length": "159",
+              "ngap.value_element": {
+                "ngap.InitialContextSetupRequest_element": {
+                  "per.extension_bit": "0",
+                  "per.sequence_of_length": "9",
+                  "ngap.protocolIEs": "9",
+                  "ngap.protocolIEs_tree": {
+                    "Item 0: id-AMF-UE-NGAP-ID": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "10",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "2",
+                        "ngap.value_element": {
+                          "ngap.AMF_UE_NGAP_ID": "18"
+                        }
+                      }
+                    },
+                    "Item 1: id-RAN-UE-NGAP-ID": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "85",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "2",
+                        "ngap.value_element": {
+                          "ngap.RAN_UE_NGAP_ID": "1"
+                        }
+                      }
+                    },
+                    "Item 2: id-GUAMI": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "28",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "7",
+                        "ngap.value_element": {
+                          "ngap.GUAMI_element": {
+                            "per.extension_bit": "0",
+                            "per.optional_field_bit": "0",
+                            "ngap.pLMNIdentity": "02:f8:99",
+                            "ngap.pLMNIdentity_tree": {
+                              "e212.guami.mcc": "208",
+                              "e212.guami.mnc": "99"
+                            },
+                            "ngap.aMFRegionID": "01",
+                            "ngap.aMFSetID": "00:40",
+                            "ngap.aMFPointer": "04"
+                          }
+                        }
+                      }
+                    },
+                    "Item 3: id-AllowedNSSAI": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "0",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "2",
+                        "ngap.value_element": {
+                          "per.sequence_of_length": "1",
+                          "ngap.AllowedNSSAI": "1",
+                          "ngap.AllowedNSSAI_tree": {
+                            "Item 0": {
+                              "ngap.AllowedNSSAI_Item_element": {
+                                "per.extension_bit": "0",
+                                "per.optional_field_bit": "0",
+                                "ngap.s_NSSAI_element": {
+                                  "per.extension_bit": "0",
+                                  "per.optional_field_bit": "0",
+                                  "per.optional_field_bit": "0",
+                                  "ngap.sST": "01"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "Item 4: id-UESecurityCapabilities": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "119",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "9",
+                        "ngap.value_element": {
+                          "ngap.UESecurityCapabilities_element": {
+                            "per.extension_bit": "0",
+                            "per.optional_field_bit": "0",
+                            "per.extension_present_bit": "0",
+                            "ngap.nRencryptionAlgorithms": "c0:00",
+                            "ngap.nRencryptionAlgorithms_tree": {
+                              "ngap.NrencryptionAlgorithms.nea1": "1",
+                              "ngap.NrencryptionAlgorithms.nea2": "1",
+                              "ngap.NrencryptionAlgorithms.nea3": "0",
+                              "ngap.NrencryptionAlgorithms.reserved": "0x0000"
+                            },
+                            "per.extension_present_bit": "0",
+                            "ngap.nRintegrityProtectionAlgorithms": "c0:00",
+                            "ngap.nRintegrityProtectionAlgorithms_tree": {
+                              "ngap.NrintegrityProtectionAlgorithms.nia1": "1",
+                              "ngap.NrintegrityProtectionAlgorithms.nia2": "1",
+                              "ngap.NrintegrityProtectionAlgorithms.nia3": "0",
+                              "ngap.NrintegrityProtectionAlgorithms.reserved": "0x0000"
+                            },
+                            "per.extension_present_bit": "0",
+                            "ngap.eUTRAencryptionAlgorithms": "00:00",
+                            "ngap.eUTRAencryptionAlgorithms_tree": {
+                              "ngap.EUTRAencryptionAlgorithms.eea1": "0",
+                              "ngap.EUTRAencryptionAlgorithms.eea2": "0",
+                              "ngap.EUTRAencryptionAlgorithms.eea3": "0",
+                              "ngap.EUTRAencryptionAlgorithms.reserved": "0x0000"
+                            },
+                            "per.extension_present_bit": "0",
+                            "ngap.eUTRAintegrityProtectionAlgorithms": "00:00",
+                            "ngap.eUTRAintegrityProtectionAlgorithms_tree": {
+                              "ngap.EUTRAintegrityProtectionAlgorithms.eia1": "0",
+                              "ngap.EUTRAintegrityProtectionAlgorithms.eia2": "0",
+                              "ngap.EUTRAintegrityProtectionAlgorithms.eia3": "0",
+                              "ngap.EUTRAintegrityProtectionAlgorithms.eia7": "0",
+                              "ngap.EUTRAintegrityProtectionAlgorithms.reserved": "0x0000"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "Item 5: id-SecurityKey": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "94",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "32",
+                        "ngap.value_element": {
+                          "ngap.SecurityKey": "6c:f1:bf:41:38:95:bb:99:1d:a3:72:0b:ef:9c:d6:0d:0b:f9:3e:dc:8a:60:0b:f2:39:d5:50:44:86:fa:c9:73"
+                        }
+                      }
+                    },
+                    "Item 6: id-MobilityRestrictionList": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "36",
+                        "per.enum_index": "1",
+                        "ngap.criticality": "1",
+                        "per.open_type_length": "4",
+                        "ngap.value_element": {
+                          "ngap.MobilityRestrictionList_element": {
+                            "per.extension_bit": "0",
+                            "per.optional_field_bit": "0",
+                            "per.optional_field_bit": "0",
+                            "per.optional_field_bit": "0",
+                            "per.optional_field_bit": "0",
+                            "per.optional_field_bit": "0",
+                            "ngap.servingPLMN": "02:f8:99",
+                            "ngap.servingPLMN_tree": {
+                              "e212.mcc": "208",
+                              "e212.mnc": "99"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "Item 7: id-MaskedIMEISV": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "34",
+                        "per.enum_index": "1",
+                        "ngap.criticality": "1",
+                        "per.open_type_length": "8",
+                        "ngap.value_element": {
+                          "ngap.MaskedIMEISV": "76:45:65:87:09:ff:ff:31"
+                        }
+                      }
+                    },
+                    "Item 8: id-NAS-PDU": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "38",
+                        "per.enum_index": "1",
+                        "ngap.criticality": "1",
+                        "per.open_type_length": "54",
+                        "ngap.value_element": {
+                          "per.octet_string_length": "53",
+                          "ngap.NAS_PDU": "7e:02:bd:a9:fd:4f:01:7e:00:42:01:01:77:00:0b:f2:02:f8:99:01:00:41:cc:4b:95:e3:54:07:00:02:f8:99:00:00:01:15:02:01:01:31:02:01:01:21:02:01:00:5e:01:b6:16:01:0c",
+                          "ngap.NAS_PDU_tree": {
+                            "nas-5gs": {
+                              "Security protected NAS 5GS message": {
+                                "nas-5gs.epd": "126",
+                                "nas-5gs.spare_half_octet": "0",
+                                "nas-5gs.security_header_type": "2",
+                                "nas-5gs.msg_auth_code": "0xbda9fd4f",
+                                "nas-5gs.seq_no": "1"
+                              },
+                              "Encrypted data": ""
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2026-09-16",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.section_number": "1",
+          "frame.interface_id": "0",
+          "frame.interface_id_tree": {
+            "frame.interface_name": "eth0"
+          },
+          "frame.encap_type": "1",
+          "frame.time": "Sep 16, 2026 20:35:16.219118289 CEST",
+          "frame.time_utc": "Sep 16, 2026 18:35:16.219118289 UTC",
+          "frame.time_epoch": "1789583716.219118289",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.000213073",
+          "frame.time_delta_displayed": "0.114006596",
+          "frame.time_relative": "15.760321882",
+          "frame.number": "44",
+          "frame.len": "118",
+          "frame.cap_len": "118",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.protocols": "eth:ethertype:ip:sctp:ngap:ngap:nr-rrc"
+        },
+        "eth": {
+          "eth.dst": "8a:5f:36:c4:54:e4",
+          "eth.dst_tree": {
+            "eth.dst_resolved": "8a:5f:36:c4:54:e4",
+            "eth.dst.oui": "9068342",
+            "eth.addr": "8a:5f:36:c4:54:e4",
+            "eth.addr_resolved": "8a:5f:36:c4:54:e4",
+            "eth.addr.oui": "9068342",
+            "eth.dst.lg": "1",
+            "eth.lg": "1",
+            "eth.dst.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.src": "82:24:fc:bb:8a:96",
+          "eth.src_tree": {
+            "eth.src_resolved": "82:24:fc:bb:8a:96",
+            "eth.src.oui": "8529148",
+            "eth.addr": "82:24:fc:bb:8a:96",
+            "eth.addr_resolved": "82:24:fc:bb:8a:96",
+            "eth.addr.oui": "8529148",
+            "eth.src.lg": "1",
+            "eth.lg": "1",
+            "eth.src.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.type": "0x0800"
+        },
+        "ip": {
+          "ip.version": "4",
+          "ip.hdr_len": "20",
+          "ip.dsfield": "0x02",
+          "ip.dsfield_tree": {
+            "ip.dsfield.dscp": "0",
+            "ip.dsfield.ecn": "2"
+          },
+          "ip.len": "104",
+          "ip.id": "0x118f",
+          "ip.flags": "0x02",
+          "ip.flags_tree": {
+            "ip.flags.rb": "0",
+            "ip.flags.df": "1",
+            "ip.flags.mf": "0"
+          },
+          "ip.frag_offset": "0",
+          "ip.ttl": "64",
+          "ip.proto": "132",
+          "ip.checksum": "0x1816",
+          "ip.checksum.status": "2",
+          "ip.src": "192.168.71.150",
+          "ip.addr": "192.168.71.150",
+          "ip.src_host": "192.168.71.150",
+          "ip.host": "192.168.71.150",
+          "ip.dst": "192.168.71.132",
+          "ip.addr": "192.168.71.132",
+          "ip.dst_host": "192.168.71.132",
+          "ip.host": "192.168.71.132"
+        },
+        "sctp": {
+          "sctp.srcport": "39691",
+          "sctp.dstport": "38412",
+          "sctp.verification_tag": "0xf2c8f0e5",
+          "sctp.assoc_index": "65535",
+          "sctp.port": "39691",
+          "sctp.port": "38412",
+          "sctp.checksum": "0x00000000",
+          "sctp.checksum.status": "2",
+          "SACK chunk (Cumulative TSN: 4194998708, a_rwnd: 106496, gaps: 0, duplicate TSNs: 0)": {
+            "sctp.chunk_type": "3",
+            "sctp.chunk_type_tree": {
+              "sctp.chunk_bit_1": "0",
+              "sctp.chunk_bit_2": "0"
+            },
+            "sctp.chunk_flags": "0x00",
+            "sctp.chunk_flags_tree": {
+              "sctp.sack_nonce_sum": "0"
+            },
+            "sctp.chunk_length": "16",
+            "sctp.sack_cumulative_tsn_ack": "4",
+            "sctp.sack_cumulative_tsn_ack_raw": "4194998708",
+            "sctp.sack_a_rwnd": "106496",
+            "sctp.sack_number_of_gap_blocks": "0",
+            "sctp.sack_number_of_duplicated_tsns": "0"
+          },
+          "DATA chunk (ordered, complete segment, TSN: 5, SID: 1, SSN: 171, PPID: 60, payload length: 38 bytes)": {
+            "sctp.chunk_type": "0",
+            "sctp.chunk_type_tree": {
+              "sctp.chunk_bit_1": "0",
+              "sctp.chunk_bit_2": "0"
+            },
+            "sctp.chunk_flags": "0x03",
+            "sctp.chunk_flags_tree": {
+              "sctp.data_i_bit": "0",
+              "sctp.data_u_bit": "0",
+              "sctp.data_b_bit": "1",
+              "sctp.data_e_bit": "1"
+            },
+            "sctp.chunk_length": "54",
+            "sctp.data_tsn": "5",
+            "sctp.data_tsn_raw": "2882918606",
+            "sctp.data_sid": "0x0001",
+            "sctp.data_ssn": "171",
+            "sctp.data_payload_proto_id": "60",
+            "sctp.chunk_padding": "00:00"
+          }
+        },
+        "ngap": {
+          "per.extension_bit": "0",
+          "per.choice_index": "0",
+          "ngap.NGAP_PDU": "0",
+          "ngap.NGAP_PDU_tree": {
+            "ngap.initiatingMessage_element": {
+              "ngap.procedureCode": "44",
+              "per.enum_index": "1",
+              "ngap.criticality": "1",
+              "per.open_type_length": "34",
+              "ngap.value_element": {
+                "ngap.UERadioCapabilityInfoIndication_element": {
+                  "per.extension_bit": "0",
+                  "per.sequence_of_length": "3",
+                  "ngap.protocolIEs": "3",
+                  "ngap.protocolIEs_tree": {
+                    "Item 0: id-AMF-UE-NGAP-ID": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "10",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "2",
+                        "ngap.value_element": {
+                          "ngap.AMF_UE_NGAP_ID": "18"
+                        }
+                      }
+                    },
+                    "Item 1: id-RAN-UE-NGAP-ID": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "85",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "2",
+                        "ngap.value_element": {
+                          "ngap.RAN_UE_NGAP_ID": "1"
+                        }
+                      }
+                    },
+                    "Item 2: id-UERadioCapability": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "117",
+                        "per.enum_index": "1",
+                        "ngap.criticality": "1",
+                        "per.open_type_length": "15",
+                        "ngap.value_element": {
+                          "per.octet_string_length": "14",
+                          "ngap.UERadioCapability": "00:60:80:a0:00:00:00:00:00:00:00:00:00:00",
+                          "ngap.UERadioCapability_tree": {
+                            "nr-rrc": "NR Radio Resource Control (RRC) protocol",
+                            "nr-rrc": "NR Radio Resource Control (RRC) protocol",
+                            "nr-rrc.UERadioAccessCapabilityInformation_element": {
+                              "per.choice_index": "0",
+                              "nr-rrc.criticalExtensions": "0",
+                              "nr-rrc.criticalExtensions_tree": {
+                                "per.choice_index": "0",
+                                "nr-rrc.c1": "0",
+                                "nr-rrc.c1_tree": {
+                                  "nr-rrc.ueRadioAccessCapabilityInformation_element": {
+                                    "per.optional_field_bit": "0",
+                                    "per.octet_string_length": "12",
+                                    "nr-rrc.ue_RadioAccessCapabilityInfo": "10:14:00:00:00:00:00:00:00:00:00:00",
+                                    "nr-rrc.ue_RadioAccessCapabilityInfo_tree": {
+                                      "nr-rrc": "NR Radio Resource Control (RRC) protocol",
+                                      "per.sequence_of_length": "1",
+                                      "nr-rrc.UE_CapabilityRAT_ContainerList": "1",
+                                      "nr-rrc.UE_CapabilityRAT_ContainerList_tree": {
+                                        "Item 0": {
+                                          "nr-rrc.UE_CapabilityRAT_Container_element": {
+                                            "per.extension_present_bit": "0",
+                                            "per.enum_index": "0",
+                                            "nr-rrc.rat_Type": "0",
+                                            "per.octet_string_length": "10",
+                                            "nr-rrc.ue_CapabilityRAT_Container": "00:00:00:00:00:00:00:00:00:00",
+                                            "nr-rrc.ue_CapabilityRAT_Container_tree": {
+                                              "nr-rrc": "NR Radio Resource Control (RRC) protocol",
+                                              "nr-rrc.UE_NR_Capability_element": {
+                                                "per.optional_field_bit": "0",
+                                                "per.optional_field_bit": "0",
+                                                "per.optional_field_bit": "0",
+                                                "per.optional_field_bit": "0",
+                                                "per.optional_field_bit": "0",
+                                                "per.optional_field_bit": "0",
+                                                "per.optional_field_bit": "0",
+                                                "per.optional_field_bit": "0",
+                                                "per.optional_field_bit": "0",
+                                                "per.optional_field_bit": "0",
+                                                "per.optional_field_bit": "0",
+                                                "per.extension_present_bit": "0",
+                                                "per.enum_index": "0",
+                                                "nr-rrc.accessStratumRelease": "0",
+                                                "nr-rrc.pdcp_Parameters_element": {
+                                                  "per.extension_bit": "0",
+                                                  "per.optional_field_bit": "0",
+                                                  "per.optional_field_bit": "0",
+                                                  "per.optional_field_bit": "0",
+                                                  "per.optional_field_bit": "0",
+                                                  "per.optional_field_bit": "0",
+                                                  "per.optional_field_bit": "0",
+                                                  "nr-rrc.supportedROHC_Profiles_element": {
+                                                    "nr-rrc.profile0x0000": "0",
+                                                    "nr-rrc.profile0x0001": "0",
+                                                    "nr-rrc.profile0x0002": "0",
+                                                    "nr-rrc.profile0x0003": "0",
+                                                    "nr-rrc.profile0x0004": "0",
+                                                    "nr-rrc.profile0x0006": "0",
+                                                    "nr-rrc.profile0x0101": "0",
+                                                    "nr-rrc.profile0x0102": "0",
+                                                    "nr-rrc.profile0x0103": "0",
+                                                    "nr-rrc.profile0x0104": "0"
+                                                  },
+                                                  "per.enum_index": "0",
+                                                  "nr-rrc.maxNumberROHC_ContextSessions": "0"
+                                                },
+                                                "nr-rrc.phy_Parameters_element": {
+                                                  "per.optional_field_bit": "0",
+                                                  "per.optional_field_bit": "0",
+                                                  "per.optional_field_bit": "0",
+                                                  "per.optional_field_bit": "0",
+                                                  "per.optional_field_bit": "0"
+                                                },
+                                                "nr-rrc.rf_Parameters_element": {
+                                                  "per.extension_bit": "0",
+                                                  "per.optional_field_bit": "0",
+                                                  "per.optional_field_bit": "0",
+                                                  "per.sequence_of_length": "1",
+                                                  "nr-rrc.supportedBandListNR": "1",
+                                                  "nr-rrc.supportedBandListNR_tree": {
+                                                    "Item 0": {
+                                                      "nr-rrc.BandNR_element": {
+                                                        "per.extension_bit": "0",
+                                                        "per.optional_field_bit": "0",
+                                                        "per.optional_field_bit": "0",
+                                                        "per.optional_field_bit": "0",
+                                                        "per.optional_field_bit": "0",
+                                                        "per.optional_field_bit": "0",
+                                                        "per.optional_field_bit": "0",
+                                                        "per.optional_field_bit": "0",
+                                                        "per.optional_field_bit": "0",
+                                                        "per.optional_field_bit": "0",
+                                                        "per.optional_field_bit": "0",
+                                                        "per.optional_field_bit": "0",
+                                                        "per.optional_field_bit": "0",
+                                                        "per.optional_field_bit": "0",
+                                                        "per.optional_field_bit": "0",
+                                                        "nr-rrc.bandNR": "1"
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2026-09-16",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.section_number": "1",
+          "frame.interface_id": "0",
+          "frame.interface_id_tree": {
+            "frame.interface_name": "eth0"
+          },
+          "frame.encap_type": "1",
+          "frame.time": "Sep 16, 2026 20:35:16.219168535 CEST",
+          "frame.time_utc": "Sep 16, 2026 18:35:16.219168535 UTC",
+          "frame.time_epoch": "1789583716.219168535",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.000050246",
+          "frame.time_delta_displayed": "0.000050246",
+          "frame.time_relative": "15.760372128",
+          "frame.number": "45",
+          "frame.len": "82",
+          "frame.cap_len": "82",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.protocols": "eth:ethertype:ip:sctp:ngap:ngap"
+        },
+        "eth": {
+          "eth.dst": "8a:5f:36:c4:54:e4",
+          "eth.dst_tree": {
+            "eth.dst_resolved": "8a:5f:36:c4:54:e4",
+            "eth.dst.oui": "9068342",
+            "eth.addr": "8a:5f:36:c4:54:e4",
+            "eth.addr_resolved": "8a:5f:36:c4:54:e4",
+            "eth.addr.oui": "9068342",
+            "eth.dst.lg": "1",
+            "eth.lg": "1",
+            "eth.dst.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.src": "82:24:fc:bb:8a:96",
+          "eth.src_tree": {
+            "eth.src_resolved": "82:24:fc:bb:8a:96",
+            "eth.src.oui": "8529148",
+            "eth.addr": "82:24:fc:bb:8a:96",
+            "eth.addr_resolved": "82:24:fc:bb:8a:96",
+            "eth.addr.oui": "8529148",
+            "eth.src.lg": "1",
+            "eth.lg": "1",
+            "eth.src.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.type": "0x0800"
+        },
+        "ip": {
+          "ip.version": "4",
+          "ip.hdr_len": "20",
+          "ip.dsfield": "0x02",
+          "ip.dsfield_tree": {
+            "ip.dsfield.dscp": "0",
+            "ip.dsfield.ecn": "2"
+          },
+          "ip.len": "68",
+          "ip.id": "0x1190",
+          "ip.flags": "0x02",
+          "ip.flags_tree": {
+            "ip.flags.rb": "0",
+            "ip.flags.df": "1",
+            "ip.flags.mf": "0"
+          },
+          "ip.frag_offset": "0",
+          "ip.ttl": "64",
+          "ip.proto": "132",
+          "ip.checksum": "0x1839",
+          "ip.checksum.status": "2",
+          "ip.src": "192.168.71.150",
+          "ip.addr": "192.168.71.150",
+          "ip.src_host": "192.168.71.150",
+          "ip.host": "192.168.71.150",
+          "ip.dst": "192.168.71.132",
+          "ip.addr": "192.168.71.132",
+          "ip.dst_host": "192.168.71.132",
+          "ip.host": "192.168.71.132"
+        },
+        "sctp": {
+          "sctp.srcport": "39691",
+          "sctp.dstport": "38412",
+          "sctp.verification_tag": "0xf2c8f0e5",
+          "sctp.assoc_index": "65535",
+          "sctp.port": "39691",
+          "sctp.port": "38412",
+          "sctp.checksum": "0x00000000",
+          "sctp.checksum.status": "2",
+          "DATA chunk (ordered, complete segment, TSN: 6, SID: 1, SSN: 172, PPID: 60, payload length: 19 bytes)": {
+            "sctp.chunk_type": "0",
+            "sctp.chunk_type_tree": {
+              "sctp.chunk_bit_1": "0",
+              "sctp.chunk_bit_2": "0"
+            },
+            "sctp.chunk_flags": "0x03",
+            "sctp.chunk_flags_tree": {
+              "sctp.data_i_bit": "0",
+              "sctp.data_u_bit": "0",
+              "sctp.data_b_bit": "1",
+              "sctp.data_e_bit": "1"
+            },
+            "sctp.chunk_length": "35",
+            "sctp.data_tsn": "6",
+            "sctp.data_tsn_raw": "2882918607",
+            "sctp.data_sid": "0x0001",
+            "sctp.data_ssn": "172",
+            "sctp.data_payload_proto_id": "60",
+            "sctp.chunk_padding": "00"
+          }
+        },
+        "ngap": {
+          "per.extension_bit": "0",
+          "per.choice_index": "1",
+          "ngap.NGAP_PDU": "1",
+          "ngap.NGAP_PDU_tree": {
+            "ngap.successfulOutcome_element": {
+              "ngap.procedureCode": "14",
+              "per.enum_index": "0",
+              "ngap.criticality": "0",
+              "per.open_type_length": "15",
+              "ngap.value_element": {
+                "ngap.InitialContextSetupResponse_element": {
+                  "per.extension_bit": "0",
+                  "per.sequence_of_length": "2",
+                  "ngap.protocolIEs": "2",
+                  "ngap.protocolIEs_tree": {
+                    "Item 0: id-AMF-UE-NGAP-ID": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "10",
+                        "per.enum_index": "1",
+                        "ngap.criticality": "1",
+                        "per.open_type_length": "2",
+                        "ngap.value_element": {
+                          "ngap.AMF_UE_NGAP_ID": "18"
+                        }
+                      }
+                    },
+                    "Item 1: id-RAN-UE-NGAP-ID": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "85",
+                        "per.enum_index": "1",
+                        "ngap.criticality": "1",
+                        "per.open_type_length": "2",
+                        "ngap.value_element": {
+                          "ngap.RAN_UE_NGAP_ID": "1"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2026-09-16",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.section_number": "1",
+          "frame.interface_id": "0",
+          "frame.interface_id_tree": {
+            "frame.interface_name": "eth0"
+          },
+          "frame.encap_type": "1",
+          "frame.time": "Sep 16, 2026 20:35:16.273523887 CEST",
+          "frame.time_utc": "Sep 16, 2026 18:35:16.273523887 UTC",
+          "frame.time_epoch": "1789583716.273523887",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.000245249",
+          "frame.time_delta_displayed": "0.054355352",
+          "frame.time_relative": "15.814727480",
+          "frame.number": "49",
+          "frame.len": "118",
+          "frame.cap_len": "118",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.protocols": "eth:ethertype:ip:sctp:ngap:ngap:nas-5gs"
+        },
+        "eth": {
+          "eth.dst": "8a:5f:36:c4:54:e4",
+          "eth.dst_tree": {
+            "eth.dst_resolved": "8a:5f:36:c4:54:e4",
+            "eth.dst.oui": "9068342",
+            "eth.addr": "8a:5f:36:c4:54:e4",
+            "eth.addr_resolved": "8a:5f:36:c4:54:e4",
+            "eth.addr.oui": "9068342",
+            "eth.dst.lg": "1",
+            "eth.lg": "1",
+            "eth.dst.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.src": "82:24:fc:bb:8a:96",
+          "eth.src_tree": {
+            "eth.src_resolved": "82:24:fc:bb:8a:96",
+            "eth.src.oui": "8529148",
+            "eth.addr": "82:24:fc:bb:8a:96",
+            "eth.addr_resolved": "82:24:fc:bb:8a:96",
+            "eth.addr.oui": "8529148",
+            "eth.src.lg": "1",
+            "eth.lg": "1",
+            "eth.src.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.type": "0x0800"
+        },
+        "ip": {
+          "ip.version": "4",
+          "ip.hdr_len": "20",
+          "ip.dsfield": "0x02",
+          "ip.dsfield_tree": {
+            "ip.dsfield.dscp": "0",
+            "ip.dsfield.ecn": "2"
+          },
+          "ip.len": "104",
+          "ip.id": "0x1191",
+          "ip.flags": "0x02",
+          "ip.flags_tree": {
+            "ip.flags.rb": "0",
+            "ip.flags.df": "1",
+            "ip.flags.mf": "0"
+          },
+          "ip.frag_offset": "0",
+          "ip.ttl": "64",
+          "ip.proto": "132",
+          "ip.checksum": "0x1814",
+          "ip.checksum.status": "2",
+          "ip.src": "192.168.71.150",
+          "ip.addr": "192.168.71.150",
+          "ip.src_host": "192.168.71.150",
+          "ip.host": "192.168.71.150",
+          "ip.dst": "192.168.71.132",
+          "ip.addr": "192.168.71.132",
+          "ip.dst_host": "192.168.71.132",
+          "ip.host": "192.168.71.132"
+        },
+        "sctp": {
+          "sctp.srcport": "39691",
+          "sctp.dstport": "38412",
+          "sctp.verification_tag": "0xf2c8f0e5",
+          "sctp.assoc_index": "65535",
+          "sctp.port": "39691",
+          "sctp.port": "38412",
+          "sctp.checksum": "0x00000000",
+          "sctp.checksum.status": "2",
+          "DATA chunk (ordered, complete segment, TSN: 7, SID: 1, SSN: 173, PPID: 60, payload length: 53 bytes)": {
+            "sctp.chunk_type": "0",
+            "sctp.chunk_type_tree": {
+              "sctp.chunk_bit_1": "0",
+              "sctp.chunk_bit_2": "0"
+            },
+            "sctp.chunk_flags": "0x03",
+            "sctp.chunk_flags_tree": {
+              "sctp.data_i_bit": "0",
+              "sctp.data_u_bit": "0",
+              "sctp.data_b_bit": "1",
+              "sctp.data_e_bit": "1"
+            },
+            "sctp.chunk_length": "69",
+            "sctp.data_tsn": "7",
+            "sctp.data_tsn_raw": "2882918608",
+            "sctp.data_sid": "0x0001",
+            "sctp.data_ssn": "173",
+            "sctp.data_payload_proto_id": "60",
+            "sctp.chunk_padding": "00:00:00"
+          }
+        },
+        "ngap": {
+          "per.extension_bit": "0",
+          "per.choice_index": "0",
+          "ngap.NGAP_PDU": "0",
+          "ngap.NGAP_PDU_tree": {
+            "ngap.initiatingMessage_element": {
+              "ngap.procedureCode": "46",
+              "per.enum_index": "1",
+              "ngap.criticality": "1",
+              "per.open_type_length": "49",
+              "ngap.value_element": {
+                "ngap.UplinkNASTransport_element": {
+                  "per.extension_bit": "0",
+                  "per.sequence_of_length": "4",
+                  "ngap.protocolIEs": "4",
+                  "ngap.protocolIEs_tree": {
+                    "Item 0: id-AMF-UE-NGAP-ID": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "10",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "2",
+                        "ngap.value_element": {
+                          "ngap.AMF_UE_NGAP_ID": "18"
+                        }
+                      }
+                    },
+                    "Item 1: id-RAN-UE-NGAP-ID": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "85",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "2",
+                        "ngap.value_element": {
+                          "ngap.RAN_UE_NGAP_ID": "1"
+                        }
+                      }
+                    },
+                    "Item 2: id-NAS-PDU": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "38",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "11",
+                        "ngap.value_element": {
+                          "per.octet_string_length": "10",
+                          "ngap.NAS_PDU": "7e:02:64:41:e4:ba:01:7e:00:43",
+                          "ngap.NAS_PDU_tree": {
+                            "nas-5gs": {
+                              "Security protected NAS 5GS message": {
+                                "nas-5gs.epd": "126",
+                                "nas-5gs.spare_half_octet": "0",
+                                "nas-5gs.security_header_type": "2",
+                                "nas-5gs.msg_auth_code": "0x6441e4ba",
+                                "nas-5gs.seq_no": "1"
+                              },
+                              "Encrypted data": ""
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "Item 3: id-UserLocationInformation": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "121",
+                        "per.enum_index": "1",
+                        "ngap.criticality": "1",
+                        "per.open_type_length": "15",
+                        "ngap.value_element": {
+                          "per.choice_index": "1",
+                          "ngap.UserLocationInformation": "1",
+                          "ngap.UserLocationInformation_tree": {
+                            "ngap.userLocationInformationNR_element": {
+                              "per.extension_bit": "0",
+                              "per.optional_field_bit": "0",
+                              "per.optional_field_bit": "0",
+                              "ngap.nR_CGI_element": {
+                                "per.extension_bit": "0",
+                                "per.optional_field_bit": "0",
+                                "ngap.pLMNIdentity": "02:f8:99",
+                                "ngap.pLMNIdentity_tree": {
+                                  "e212.nrcgi.mcc": "208",
+                                  "e212.nrcgi.mnc": "99"
+                                },
+                                "ngap.NRCellIdentity": "0x00000000000e014e"
+                              },
+                              "ngap.tAI_element": {
+                                "per.extension_bit": "0",
+                                "per.optional_field_bit": "0",
+                                "ngap.pLMNIdentity": "02:f8:99",
+                                "ngap.pLMNIdentity_tree": {
+                                  "e212.5gstai.mcc": "208",
+                                  "e212.5gstai.mnc": "99"
+                                },
+                                "ngap.tAC": "1"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2026-09-16",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.section_number": "1",
+          "frame.interface_id": "0",
+          "frame.interface_id_tree": {
+            "frame.interface_name": "eth0"
+          },
+          "frame.encap_type": "1",
+          "frame.time": "Sep 16, 2026 20:35:16.274182722 CEST",
+          "frame.time_utc": "Sep 16, 2026 18:35:16.274182722 UTC",
+          "frame.time_epoch": "1789583716.274182722",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.000101933",
+          "frame.time_delta_displayed": "0.000658835",
+          "frame.time_relative": "15.815386315",
+          "frame.number": "52",
+          "frame.len": "138",
+          "frame.cap_len": "138",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.protocols": "eth:ethertype:ip:sctp:ngap:ngap:nas-5gs"
+        },
+        "eth": {
+          "eth.dst": "8a:5f:36:c4:54:e4",
+          "eth.dst_tree": {
+            "eth.dst_resolved": "8a:5f:36:c4:54:e4",
+            "eth.dst.oui": "9068342",
+            "eth.addr": "8a:5f:36:c4:54:e4",
+            "eth.addr_resolved": "8a:5f:36:c4:54:e4",
+            "eth.addr.oui": "9068342",
+            "eth.dst.lg": "1",
+            "eth.lg": "1",
+            "eth.dst.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.src": "82:24:fc:bb:8a:96",
+          "eth.src_tree": {
+            "eth.src_resolved": "82:24:fc:bb:8a:96",
+            "eth.src.oui": "8529148",
+            "eth.addr": "82:24:fc:bb:8a:96",
+            "eth.addr_resolved": "82:24:fc:bb:8a:96",
+            "eth.addr.oui": "8529148",
+            "eth.src.lg": "1",
+            "eth.lg": "1",
+            "eth.src.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.type": "0x0800"
+        },
+        "ip": {
+          "ip.version": "4",
+          "ip.hdr_len": "20",
+          "ip.dsfield": "0x02",
+          "ip.dsfield_tree": {
+            "ip.dsfield.dscp": "0",
+            "ip.dsfield.ecn": "2"
+          },
+          "ip.len": "124",
+          "ip.id": "0x1192",
+          "ip.flags": "0x02",
+          "ip.flags_tree": {
+            "ip.flags.rb": "0",
+            "ip.flags.df": "1",
+            "ip.flags.mf": "0"
+          },
+          "ip.frag_offset": "0",
+          "ip.ttl": "64",
+          "ip.proto": "132",
+          "ip.checksum": "0x17ff",
+          "ip.checksum.status": "2",
+          "ip.src": "192.168.71.150",
+          "ip.addr": "192.168.71.150",
+          "ip.src_host": "192.168.71.150",
+          "ip.host": "192.168.71.150",
+          "ip.dst": "192.168.71.132",
+          "ip.addr": "192.168.71.132",
+          "ip.dst_host": "192.168.71.132",
+          "ip.host": "192.168.71.132"
+        },
+        "sctp": {
+          "sctp.srcport": "39691",
+          "sctp.dstport": "38412",
+          "sctp.verification_tag": "0xf2c8f0e5",
+          "sctp.assoc_index": "65535",
+          "sctp.port": "39691",
+          "sctp.port": "38412",
+          "sctp.checksum": "0x00000000",
+          "sctp.checksum.status": "2",
+          "DATA chunk (ordered, complete segment, TSN: 8, SID: 1, SSN: 174, PPID: 60, payload length: 75 bytes)": {
+            "sctp.chunk_type": "0",
+            "sctp.chunk_type_tree": {
+              "sctp.chunk_bit_1": "0",
+              "sctp.chunk_bit_2": "0"
+            },
+            "sctp.chunk_flags": "0x03",
+            "sctp.chunk_flags_tree": {
+              "sctp.data_i_bit": "0",
+              "sctp.data_u_bit": "0",
+              "sctp.data_b_bit": "1",
+              "sctp.data_e_bit": "1"
+            },
+            "sctp.chunk_length": "91",
+            "sctp.data_tsn": "8",
+            "sctp.data_tsn_raw": "2882918609",
+            "sctp.data_sid": "0x0001",
+            "sctp.data_ssn": "174",
+            "sctp.data_payload_proto_id": "60",
+            "sctp.chunk_padding": "00"
+          }
+        },
+        "ngap": {
+          "per.extension_bit": "0",
+          "per.choice_index": "0",
+          "ngap.NGAP_PDU": "0",
+          "ngap.NGAP_PDU_tree": {
+            "ngap.initiatingMessage_element": {
+              "ngap.procedureCode": "46",
+              "per.enum_index": "1",
+              "ngap.criticality": "1",
+              "per.open_type_length": "71",
+              "ngap.value_element": {
+                "ngap.UplinkNASTransport_element": {
+                  "per.extension_bit": "0",
+                  "per.sequence_of_length": "4",
+                  "ngap.protocolIEs": "4",
+                  "ngap.protocolIEs_tree": {
+                    "Item 0: id-AMF-UE-NGAP-ID": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "10",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "2",
+                        "ngap.value_element": {
+                          "ngap.AMF_UE_NGAP_ID": "18"
+                        }
+                      }
+                    },
+                    "Item 1: id-RAN-UE-NGAP-ID": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "85",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "2",
+                        "ngap.value_element": {
+                          "ngap.RAN_UE_NGAP_ID": "1"
+                        }
+                      }
+                    },
+                    "Item 2: id-NAS-PDU": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "38",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "33",
+                        "ngap.value_element": {
+                          "per.octet_string_length": "32",
+                          "ngap.NAS_PDU": "7e:02:54:da:7a:ea:02:7e:00:67:01:00:07:2e:0a:01:c1:ff:ff:91:12:0a:81:22:01:01:25:04:03:6f:61:69",
+                          "ngap.NAS_PDU_tree": {
+                            "nas-5gs": {
+                              "Security protected NAS 5GS message": {
+                                "nas-5gs.epd": "126",
+                                "nas-5gs.spare_half_octet": "0",
+                                "nas-5gs.security_header_type": "2",
+                                "nas-5gs.msg_auth_code": "0x54da7aea",
+                                "nas-5gs.seq_no": "2"
+                              },
+                              "Encrypted data": ""
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "Item 3: id-UserLocationInformation": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "121",
+                        "per.enum_index": "1",
+                        "ngap.criticality": "1",
+                        "per.open_type_length": "15",
+                        "ngap.value_element": {
+                          "per.choice_index": "1",
+                          "ngap.UserLocationInformation": "1",
+                          "ngap.UserLocationInformation_tree": {
+                            "ngap.userLocationInformationNR_element": {
+                              "per.extension_bit": "0",
+                              "per.optional_field_bit": "0",
+                              "per.optional_field_bit": "0",
+                              "ngap.nR_CGI_element": {
+                                "per.extension_bit": "0",
+                                "per.optional_field_bit": "0",
+                                "ngap.pLMNIdentity": "02:f8:99",
+                                "ngap.pLMNIdentity_tree": {
+                                  "e212.nrcgi.mcc": "208",
+                                  "e212.nrcgi.mnc": "99"
+                                },
+                                "ngap.NRCellIdentity": "0x00000000000e014e"
+                              },
+                              "ngap.tAI_element": {
+                                "per.extension_bit": "0",
+                                "per.optional_field_bit": "0",
+                                "ngap.pLMNIdentity": "02:f8:99",
+                                "ngap.pLMNIdentity_tree": {
+                                  "e212.5gstai.mcc": "208",
+                                  "e212.5gstai.mnc": "99"
+                                },
+                                "ngap.tAC": "1"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2026-09-16",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.section_number": "1",
+          "frame.interface_id": "0",
+          "frame.interface_id_tree": {
+            "frame.interface_name": "eth0"
+          },
+          "frame.encap_type": "1",
+          "frame.time": "Sep 16, 2026 20:35:16.277753505 CEST",
+          "frame.time_utc": "Sep 16, 2026 18:35:16.277753505 UTC",
+          "frame.time_epoch": "1789583716.277753505",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.003546420",
+          "frame.time_delta_displayed": "0.003570783",
+          "frame.time_relative": "15.818957098",
+          "frame.number": "54",
+          "frame.len": "254",
+          "frame.cap_len": "254",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.protocols": "eth:ethertype:ip:sctp:ngap:ngap:nas-5gs"
+        },
+        "eth": {
+          "eth.dst": "82:24:fc:bb:8a:96",
+          "eth.dst_tree": {
+            "eth.dst_resolved": "82:24:fc:bb:8a:96",
+            "eth.dst.oui": "8529148",
+            "eth.addr": "82:24:fc:bb:8a:96",
+            "eth.addr_resolved": "82:24:fc:bb:8a:96",
+            "eth.addr.oui": "8529148",
+            "eth.dst.lg": "1",
+            "eth.lg": "1",
+            "eth.dst.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.src": "8a:5f:36:c4:54:e4",
+          "eth.src_tree": {
+            "eth.src_resolved": "8a:5f:36:c4:54:e4",
+            "eth.src.oui": "9068342",
+            "eth.addr": "8a:5f:36:c4:54:e4",
+            "eth.addr_resolved": "8a:5f:36:c4:54:e4",
+            "eth.addr.oui": "9068342",
+            "eth.src.lg": "1",
+            "eth.lg": "1",
+            "eth.src.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.type": "0x0800"
+        },
+        "ip": {
+          "ip.version": "4",
+          "ip.hdr_len": "20",
+          "ip.dsfield": "0x02",
+          "ip.dsfield_tree": {
+            "ip.dsfield.dscp": "0",
+            "ip.dsfield.ecn": "2"
+          },
+          "ip.len": "240",
+          "ip.id": "0x58ed",
+          "ip.flags": "0x02",
+          "ip.flags_tree": {
+            "ip.flags.rb": "0",
+            "ip.flags.df": "1",
+            "ip.flags.mf": "0"
+          },
+          "ip.frag_offset": "0",
+          "ip.ttl": "64",
+          "ip.proto": "132",
+          "ip.checksum": "0xd02f",
+          "ip.checksum.status": "2",
+          "ip.src": "192.168.71.132",
+          "ip.addr": "192.168.71.132",
+          "ip.src_host": "192.168.71.132",
+          "ip.host": "192.168.71.132",
+          "ip.dst": "192.168.71.150",
+          "ip.addr": "192.168.71.150",
+          "ip.dst_host": "192.168.71.150",
+          "ip.host": "192.168.71.150"
+        },
+        "sctp": {
+          "sctp.srcport": "38412",
+          "sctp.dstport": "39691",
+          "sctp.verification_tag": "0xe4ccd8f8",
+          "sctp.assoc_index": "65535",
+          "sctp.port": "38412",
+          "sctp.port": "39691",
+          "sctp.checksum": "0x00000000",
+          "sctp.checksum.status": "2",
+          "DATA chunk (ordered, complete segment, TSN: 5, SID: 1, SSN: 100, PPID: 60, payload length: 191 bytes)": {
+            "sctp.chunk_type": "0",
+            "sctp.chunk_type_tree": {
+              "sctp.chunk_bit_1": "0",
+              "sctp.chunk_bit_2": "0"
+            },
+            "sctp.chunk_flags": "0x03",
+            "sctp.chunk_flags_tree": {
+              "sctp.data_i_bit": "0",
+              "sctp.data_u_bit": "0",
+              "sctp.data_b_bit": "1",
+              "sctp.data_e_bit": "1"
+            },
+            "sctp.chunk_length": "207",
+            "sctp.data_tsn": "5",
+            "sctp.data_tsn_raw": "4194998709",
+            "sctp.data_sid": "0x0001",
+            "sctp.data_ssn": "100",
+            "sctp.data_payload_proto_id": "60",
+            "sctp.chunk_padding": "00"
+          }
+        },
+        "ngap": {
+          "per.extension_bit": "0",
+          "per.choice_index": "0",
+          "ngap.NGAP_PDU": "0",
+          "ngap.NGAP_PDU_tree": {
+            "ngap.initiatingMessage_element": {
+              "ngap.procedureCode": "29",
+              "per.enum_index": "0",
+              "ngap.criticality": "0",
+              "per.open_type_length": "186",
+              "ngap.value_element": {
+                "ngap.PDUSessionResourceSetupRequest_element": {
+                  "per.extension_bit": "0",
+                  "per.sequence_of_length": "4",
+                  "ngap.protocolIEs": "4",
+                  "ngap.protocolIEs_tree": {
+                    "Item 0: id-AMF-UE-NGAP-ID": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "10",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "2",
+                        "ngap.value_element": {
+                          "ngap.AMF_UE_NGAP_ID": "18"
+                        }
+                      }
+                    },
+                    "Item 1: id-RAN-UE-NGAP-ID": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "85",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "2",
+                        "ngap.value_element": {
+                          "ngap.RAN_UE_NGAP_ID": "1"
+                        }
+                      }
+                    },
+                    "Item 2: id-PDUSessionResourceSetupListSUReq": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "74",
+                        "per.enum_index": "0",
+                        "ngap.criticality": "0",
+                        "per.open_type_length": "152",
+                        "ngap.value_element": {
+                          "per.sequence_of_length": "1",
+                          "ngap.PDUSessionResourceSetupListSUReq": "1",
+                          "ngap.PDUSessionResourceSetupListSUReq_tree": {
+                            "Item 0": {
+                              "ngap.PDUSessionResourceSetupItemSUReq_element": {
+                                "per.extension_bit": "0",
+                                "per.optional_field_bit": "1",
+                                "per.optional_field_bit": "0",
+                                "ngap.pDUSessionID": "10",
+                                "per.octet_string_length": "98",
+                                "ngap.pDUSessionNAS_PDU": "7e:02:1c:48:57:5f:02:7e:00:68:01:00:53:2e:0a:01:c2:11:00:09:01:00:06:31:21:01:01:00:01:06:06:01:90:06:00:c8:29:05:01:0c:01:01:06:22:01:01:81:79:00:06:01:20:41:01:01:09:7b:00:0d:80:00:0d:04:ac:15:03:64:00:10:02:05:dc:25:16:03:6f:61:69:05:6d:6e:63:39:39:06:6d:63:63:32:30:38:04:67:70:72:73:12:0a",
+                                "ngap.pDUSessionNAS_PDU_tree": {
+                                  "nas-5gs": {
+                                    "Security protected NAS 5GS message": {
+                                      "nas-5gs.epd": "126",
+                                      "nas-5gs.spare_half_octet": "0",
+                                      "nas-5gs.security_header_type": "2",
+                                      "nas-5gs.msg_auth_code": "0x1c48575f",
+                                      "nas-5gs.seq_no": "2"
+                                    },
+                                    "Encrypted data": ""
+                                  }
+                                },
+                                "ngap.s_NSSAI_element": {
+                                  "per.extension_bit": "0",
+                                  "per.optional_field_bit": "0",
+                                  "per.optional_field_bit": "0",
+                                  "ngap.sST": "01"
+                                },
+                                "per.octet_string_length": "47",
+                                "ngap.pDUSessionResourceSetupRequestTransfer": "00:00:04:00:82:00:0a:0c:19:00:00:00:30:0c:80:00:00:00:8b:00:0a:01:f0:c0:a8:47:86:00:00:00:12:00:86:00:01:00:00:88:00:07:00:01:00:00:09:00:00",
+                                "ngap.pDUSessionResourceSetupRequestTransfer_tree": {
+                                  "ngap.PDUSessionResourceSetupRequestTransfer_element": {
+                                    "per.extension_bit": "0",
+                                    "per.sequence_of_length": "4",
+                                    "ngap.protocolIEs": "4",
+                                    "ngap.protocolIEs_tree": {
+                                      "Item 0: id-PDUSessionAggregateMaximumBitRate": {
+                                        "ngap.ProtocolIE_Field_element": {
+                                          "ngap.id": "130",
+                                          "per.enum_index": "0",
+                                          "ngap.criticality": "0",
+                                          "per.open_type_length": "10",
+                                          "ngap.value_element": {
+                                            "ngap.PDUSessionAggregateMaximumBitRate_element": {
+                                              "per.extension_bit": "0",
+                                              "per.optional_field_bit": "0",
+                                              "per.extension_present_bit": "0",
+                                              "ngap.pDUSessionAggregateMaximumBitRateDL": "419430400",
+                                              "per.extension_present_bit": "0",
+                                              "ngap.pDUSessionAggregateMaximumBitRateUL": "209715200"
+                                            }
+                                          }
+                                        }
+                                      },
+                                      "Item 1: id-UL-NGU-UP-TNLInformation": {
+                                        "ngap.ProtocolIE_Field_element": {
+                                          "ngap.id": "139",
+                                          "per.enum_index": "0",
+                                          "ngap.criticality": "0",
+                                          "per.open_type_length": "10",
+                                          "ngap.value_element": {
+                                            "per.choice_index": "0",
+                                            "ngap.UPTransportLayerInformation": "0",
+                                            "ngap.UPTransportLayerInformation_tree": {
+                                              "ngap.gTPTunnel_element": {
+                                                "per.extension_bit": "0",
+                                                "per.optional_field_bit": "0",
+                                                "per.extension_present_bit": "0",
+                                                "per.bit_string_length": "32",
+                                                "ngap.transportLayerAddress": "c0:a8:47:86",
+                                                "ngap.transportLayerAddress_tree": {
+                                                  "ngap.TransportLayerAddressIPv4": "192.168.71.134"
+                                                },
+                                                "ngap.gTP_TEID": "00:00:00:12"
+                                              }
+                                            }
+                                          }
+                                        }
+                                      },
+                                      "Item 2: id-PDUSessionType": {
+                                        "ngap.ProtocolIE_Field_element": {
+                                          "ngap.id": "134",
+                                          "per.enum_index": "0",
+                                          "ngap.criticality": "0",
+                                          "per.open_type_length": "1",
+                                          "ngap.value_element": {
+                                            "per.extension_present_bit": "0",
+                                            "per.enum_index": "0",
+                                            "ngap.PDUSessionType": "0"
+                                          }
+                                        }
+                                      },
+                                      "Item 3: id-QosFlowSetupRequestList": {
+                                        "ngap.ProtocolIE_Field_element": {
+                                          "ngap.id": "136",
+                                          "per.enum_index": "0",
+                                          "ngap.criticality": "0",
+                                          "per.open_type_length": "7",
+                                          "ngap.value_element": {
+                                            "per.sequence_of_length": "1",
+                                            "ngap.QosFlowSetupRequestList": "1",
+                                            "ngap.QosFlowSetupRequestList_tree": {
+                                              "Item 0": {
+                                                "ngap.QosFlowSetupRequestItem_element": {
+                                                  "per.extension_bit": "0",
+                                                  "per.optional_field_bit": "0",
+                                                  "per.optional_field_bit": "0",
+                                                  "per.extension_present_bit": "0",
+                                                  "ngap.qosFlowIdentifier": "1",
+                                                  "ngap.qosFlowLevelQosParameters_element": {
+                                                    "per.extension_bit": "0",
+                                                    "per.optional_field_bit": "0",
+                                                    "per.optional_field_bit": "0",
+                                                    "per.optional_field_bit": "0",
+                                                    "per.optional_field_bit": "0",
+                                                    "per.choice_index": "0",
+                                                    "ngap.qosCharacteristics": "0",
+                                                    "ngap.qosCharacteristics_tree": {
+                                                      "ngap.nonDynamic5QI_element": {
+                                                        "per.extension_bit": "0",
+                                                        "per.optional_field_bit": "0",
+                                                        "per.optional_field_bit": "0",
+                                                        "per.optional_field_bit": "0",
+                                                        "per.optional_field_bit": "0",
+                                                        "per.extension_present_bit": "0",
+                                                        "ngap.fiveQI": "9"
+                                                      }
+                                                    },
+                                                    "ngap.allocationAndRetentionPriority_element": {
+                                                      "per.extension_bit": "0",
+                                                      "per.optional_field_bit": "0",
+                                                      "ngap.priorityLevelARP": "1",
+                                                      "per.extension_present_bit": "0",
+                                                      "per.enum_index": "0",
+                                                      "ngap.pre_emptionCapability": "0",
+                                                      "per.extension_present_bit": "0",
+                                                      "per.enum_index": "0",
+                                                      "ngap.pre_emptionVulnerability": "0"
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "Item 3: id-UEAggregateMaximumBitRate": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "110",
+                        "per.enum_index": "1",
+                        "ngap.criticality": "1",
+                        "per.open_type_length": "10",
+                        "ngap.value_element": {
+                          "ngap.UEAggregateMaximumBitRate_element": {
+                            "per.extension_bit": "0",
+                            "per.optional_field_bit": "0",
+                            "per.extension_present_bit": "0",
+                            "ngap.uEAggregateMaximumBitRateDL": "1000000000",
+                            "per.extension_present_bit": "0",
+                            "ngap.uEAggregateMaximumBitRateUL": "1000000000"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "_index": "packets-2026-09-16",
+    "_type": "doc",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.section_number": "1",
+          "frame.interface_id": "0",
+          "frame.interface_id_tree": {
+            "frame.interface_name": "eth0"
+          },
+          "frame.encap_type": "1",
+          "frame.time": "Sep 16, 2026 20:35:17.123383804 CEST",
+          "frame.time_utc": "Sep 16, 2026 18:35:17.123383804 UTC",
+          "frame.time_epoch": "1789583717.123383804",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_delta": "0.000037579",
+          "frame.time_delta_displayed": "0.845630299",
+          "frame.time_relative": "16.664587397",
+          "frame.number": "62",
+          "frame.len": "102",
+          "frame.cap_len": "102",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.protocols": "eth:ethertype:ip:sctp:ngap:ngap"
+        },
+        "eth": {
+          "eth.dst": "8a:5f:36:c4:54:e4",
+          "eth.dst_tree": {
+            "eth.dst_resolved": "8a:5f:36:c4:54:e4",
+            "eth.dst.oui": "9068342",
+            "eth.addr": "8a:5f:36:c4:54:e4",
+            "eth.addr_resolved": "8a:5f:36:c4:54:e4",
+            "eth.addr.oui": "9068342",
+            "eth.dst.lg": "1",
+            "eth.lg": "1",
+            "eth.dst.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.src": "82:24:fc:bb:8a:96",
+          "eth.src_tree": {
+            "eth.src_resolved": "82:24:fc:bb:8a:96",
+            "eth.src.oui": "8529148",
+            "eth.addr": "82:24:fc:bb:8a:96",
+            "eth.addr_resolved": "82:24:fc:bb:8a:96",
+            "eth.addr.oui": "8529148",
+            "eth.src.lg": "1",
+            "eth.lg": "1",
+            "eth.src.ig": "0",
+            "eth.ig": "0"
+          },
+          "eth.type": "0x0800"
+        },
+        "ip": {
+          "ip.version": "4",
+          "ip.hdr_len": "20",
+          "ip.dsfield": "0x02",
+          "ip.dsfield_tree": {
+            "ip.dsfield.dscp": "0",
+            "ip.dsfield.ecn": "2"
+          },
+          "ip.len": "88",
+          "ip.id": "0x1194",
+          "ip.flags": "0x02",
+          "ip.flags_tree": {
+            "ip.flags.rb": "0",
+            "ip.flags.df": "1",
+            "ip.flags.mf": "0"
+          },
+          "ip.frag_offset": "0",
+          "ip.ttl": "64",
+          "ip.proto": "132",
+          "ip.checksum": "0x1821",
+          "ip.checksum.status": "2",
+          "ip.src": "192.168.71.150",
+          "ip.addr": "192.168.71.150",
+          "ip.src_host": "192.168.71.150",
+          "ip.host": "192.168.71.150",
+          "ip.dst": "192.168.71.132",
+          "ip.addr": "192.168.71.132",
+          "ip.dst_host": "192.168.71.132",
+          "ip.host": "192.168.71.132"
+        },
+        "sctp": {
+          "sctp.srcport": "39691",
+          "sctp.dstport": "38412",
+          "sctp.verification_tag": "0xf2c8f0e5",
+          "sctp.assoc_index": "65535",
+          "sctp.port": "39691",
+          "sctp.port": "38412",
+          "sctp.checksum": "0x00000000",
+          "sctp.checksum.status": "2",
+          "DATA chunk (ordered, complete segment, TSN: 9, SID: 1, SSN: 175, PPID: 60, payload length: 40 bytes)": {
+            "sctp.chunk_type": "0",
+            "sctp.chunk_type_tree": {
+              "sctp.chunk_bit_1": "0",
+              "sctp.chunk_bit_2": "0"
+            },
+            "sctp.chunk_flags": "0x03",
+            "sctp.chunk_flags_tree": {
+              "sctp.data_i_bit": "0",
+              "sctp.data_u_bit": "0",
+              "sctp.data_b_bit": "1",
+              "sctp.data_e_bit": "1"
+            },
+            "sctp.chunk_length": "56",
+            "sctp.data_tsn": "9",
+            "sctp.data_tsn_raw": "2882918610",
+            "sctp.data_sid": "0x0001",
+            "sctp.data_ssn": "175",
+            "sctp.data_payload_proto_id": "60"
+          }
+        },
+        "ngap": {
+          "per.extension_bit": "0",
+          "per.choice_index": "1",
+          "ngap.NGAP_PDU": "1",
+          "ngap.NGAP_PDU_tree": {
+            "ngap.successfulOutcome_element": {
+              "ngap.procedureCode": "29",
+              "per.enum_index": "0",
+              "ngap.criticality": "0",
+              "per.open_type_length": "36",
+              "ngap.value_element": {
+                "ngap.PDUSessionResourceSetupResponse_element": {
+                  "per.extension_bit": "0",
+                  "per.sequence_of_length": "3",
+                  "ngap.protocolIEs": "3",
+                  "ngap.protocolIEs_tree": {
+                    "Item 0: id-AMF-UE-NGAP-ID": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "10",
+                        "per.enum_index": "1",
+                        "ngap.criticality": "1",
+                        "per.open_type_length": "2",
+                        "ngap.value_element": {
+                          "ngap.AMF_UE_NGAP_ID": "18"
+                        }
+                      }
+                    },
+                    "Item 1: id-RAN-UE-NGAP-ID": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "85",
+                        "per.enum_index": "1",
+                        "ngap.criticality": "1",
+                        "per.open_type_length": "2",
+                        "ngap.value_element": {
+                          "ngap.RAN_UE_NGAP_ID": "1"
+                        }
+                      }
+                    },
+                    "Item 2: id-PDUSessionResourceSetupListSURes": {
+                      "ngap.ProtocolIE_Field_element": {
+                        "ngap.id": "75",
+                        "per.enum_index": "1",
+                        "ngap.criticality": "1",
+                        "per.open_type_length": "17",
+                        "ngap.value_element": {
+                          "per.sequence_of_length": "1",
+                          "ngap.PDUSessionResourceSetupListSURes": "1",
+                          "ngap.PDUSessionResourceSetupListSURes_tree": {
+                            "Item 0": {
+                              "ngap.PDUSessionResourceSetupItemSURes_element": {
+                                "per.extension_bit": "0",
+                                "per.optional_field_bit": "0",
+                                "ngap.pDUSessionID": "10",
+                                "per.octet_string_length": "13",
+                                "ngap.pDUSessionResourceSetupResponseTransfer": "00:03:e0:c0:a8:47:96:43:3e:0e:16:00:01",
+                                "ngap.pDUSessionResourceSetupResponseTransfer_tree": {
+                                  "ngap.PDUSessionResourceSetupResponseTransfer_element": {
+                                    "per.extension_bit": "0",
+                                    "per.optional_field_bit": "0",
+                                    "per.optional_field_bit": "0",
+                                    "per.optional_field_bit": "0",
+                                    "per.optional_field_bit": "0",
+                                    "ngap.dLQosFlowPerTNLInformation_element": {
+                                      "per.extension_bit": "0",
+                                      "per.optional_field_bit": "0",
+                                      "per.choice_index": "0",
+                                      "ngap.uPTransportLayerInformation": "0",
+                                      "ngap.uPTransportLayerInformation_tree": {
+                                        "ngap.gTPTunnel_element": {
+                                          "per.extension_bit": "0",
+                                          "per.optional_field_bit": "0",
+                                          "per.extension_present_bit": "0",
+                                          "per.bit_string_length": "32",
+                                          "ngap.transportLayerAddress": "c0:a8:47:96",
+                                          "ngap.transportLayerAddress_tree": {
+                                            "ngap.TransportLayerAddressIPv4": "192.168.71.150"
+                                          },
+                                          "ngap.gTP_TEID": "43:3e:0e:16"
+                                        }
+                                      },
+                                      "per.sequence_of_length": "1",
+                                      "ngap.associatedQosFlowList": "1",
+                                      "ngap.associatedQosFlowList_tree": {
+                                        "Item 0": {
+                                          "ngap.AssociatedQosFlowItem_element": {
+                                            "per.extension_bit": "0",
+                                            "per.optional_field_bit": "0",
+                                            "per.optional_field_bit": "0",
+                                            "per.extension_present_bit": "0",
+                                            "ngap.qosFlowIdentifier": "1"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+]

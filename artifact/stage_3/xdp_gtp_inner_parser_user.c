@@ -103,6 +103,9 @@ struct gtp_event {
 #define OFFLOAD_EGRESS_IFACE    "eth0"              /* egress interface toward the DU */
 #define DU_IP                   "192.168.71.171"
 #define F1AP_CAPTURE_IFACE      "eth0"               /* interface F1AP/SCTP is visible on */
+#define NGAP_CAPTURE_IFACE      "eth0"               /* interface NGAP/SCTP (N2, gNB<->AMF) is
+                                                      * visible on -- adjust if this differs
+                                                      * from F1AP_CAPTURE_IFACE in your topology */
 
 static volatile sig_atomic_t stop;
 
@@ -113,12 +116,33 @@ static int f1u_dl_known;         /* 1 once we've learned a DL F1-U tunnel endpoi
 static __u32 f1u_dl_teid;        /* host byte order */
 static __u32 f1u_dl_ip;          /* network byte order (raw, from inet_pton) */
 
-/* 1 once we've learned the CU's own UL F1-U tunnel endpoint, i.e. the TEID
- * the CU advertised to the DU (via F1AP UEContextSetupRequest) for the DU
- * to use when sending uplink F1-U traffic to this CU. This is the TEID we
- * expect to see on inbound F1-U packets from the DU. */
+/*
+ * --- Uplink N3-side learning: guarded by ul_info_lock, separate from
+ * f1u_lock above (which only ever covered the downlink F1-U endpoint).
+ * Two independent pieces of information have to arrive -- in either
+ * order -- before ul_session_map can hold a real, usable uplink mapping:
+ *
+ *   1. f1u_ul_teid: the TEID the CU advertised to the DU (via F1AP
+ *      UEContextSetupRequest's "UL GTP Tunnel" IE) for the DU to use
+ *      when sending uplink F1-U traffic to this CU. This is the TEID we
+ *      expect to see on inbound F1-U packets from the DU -- the KEY of
+ *      ul_session_map.
+ *   2. n3_ul_teid / n3_ul_ip: the UPF's own N3 address and the TEID it
+ *      expects for uplink traffic (via NGAP PDUSessionResourceSetupRequest's
+ *      "UL NG-U UP TNL Information" IE). This becomes the VALUE we need
+ *      to write into that same ul_session_map entry so a future rewrite
+ *      knows where to actually send the packet.
+ *
+ * maybe_complete_ul_session_map() is called after either piece arrives
+ * and only acts once both are known.
+ */
+static pthread_mutex_t ul_info_lock = PTHREAD_MUTEX_INITIALIZER;
 static int f1u_ul_known;
 static __u32 f1u_ul_teid;        /* host byte order */
+static int n3_ul_known;
+static __u32 n3_ul_teid;         /* host byte order */
+static __u32 n3_ul_ip;           /* network byte order (raw, from inet_pton) --
+                                   * matches dst_ip's convention in session_ctx */
 
 /* Resolved once at startup, read-only afterwards. */
 static int g_session_map_fd = -1;
@@ -417,6 +441,75 @@ static void maybe_populate_ul_session_map(__u32 ul_teid)
 }
 
 /*
+ * Called after EITHER the F1-U UL TEID (from F1AP) or the N3 UL tunnel
+ * info (from NGAP) is learned. Only actually does anything once BOTH
+ * are known, since ul_session_map's key comes from the former and its
+ * value comes from the latter -- order of arrival isn't guaranteed.
+ *
+ * This intentionally still leaves egress_ifindex/dst_mac/src_mac zeroed:
+ * resolving the UPF's MAC (an ARP-refresh thread analogous to
+ * du_mac_refresh_thread) is separate follow-up work that belongs with
+ * the actual uplink rewrite, not this learning step. Right now the goal
+ * is only to confirm the destination (peer_teid/dst_ip) is being learned
+ * correctly -- no offload logic reads this map yet.
+ */
+static void maybe_complete_ul_session_map(void)
+{
+    int have_f1u, have_n3;
+    __u32 key, peer_teid_snapshot, dst_ip_snapshot;
+    struct session_ctx sess;
+    struct session_ctx existing;
+    char upf_ip_str[INET_ADDRSTRLEN];
+
+    pthread_mutex_lock(&ul_info_lock);
+    have_f1u = f1u_ul_known;
+    have_n3 = n3_ul_known;
+    key = f1u_ul_teid;
+    peer_teid_snapshot = n3_ul_teid;
+    dst_ip_snapshot = n3_ul_ip;
+    pthread_mutex_unlock(&ul_info_lock);
+
+    if (!have_f1u || !have_n3)
+        return;
+
+    if (g_ul_session_map_fd < 0)
+        return;
+
+    memset(&sess, 0, sizeof(sess));
+    sess.peer_teid = peer_teid_snapshot;
+    sess.dst_ip = dst_ip_snapshot;
+    sess.dst_port = htons(GTPU_STANDARD_PORT);
+    /* egress_ifindex/dst_mac/src_mac: intentionally left zero, see comment
+     * above. */
+
+    inet_ntop(AF_INET, &dst_ip_snapshot, upf_ip_str, sizeof(upf_ip_str));
+
+    if (bpf_map_lookup_elem(g_ul_session_map_fd, &key, &existing) == 0) {
+        /* Entry already exists -- almost certainly the all-zero
+         * placeholder inserted by maybe_populate_ul_session_map() when
+         * the F1-U UL TEID was first learned. Upgrade it in place now
+         * that we have real N3 destination info. */
+        if (bpf_map_update_elem(g_ul_session_map_fd, &key, &sess, BPF_EXIST) == 0)
+            printf("  [auto-learned] ul_session_map: UL F1-U TEID 0x%08x completed -> "
+                   "N3 UL TEID 0x%08x @ %s:%u (egress MAC/interface still pending)\n",
+                   key, sess.peer_teid, upf_ip_str, GTPU_STANDARD_PORT);
+        else
+            fprintf(stderr, "  [auto-learned] ul_session_map completion update failed: %s\n",
+                    strerror(errno));
+    } else {
+        /* No placeholder yet (N3 info arrived before the F1-U UL TEID) --
+         * insert directly with the real info already in place. */
+        if (bpf_map_update_elem(g_ul_session_map_fd, &key, &sess, BPF_NOEXIST) == 0)
+            printf("  [auto-learned] ul_session_map: UL F1-U TEID 0x%08x registered directly "
+                   "with N3 UL TEID 0x%08x @ %s:%u (egress MAC/interface still pending)\n",
+                   key, sess.peer_teid, upf_ip_str, GTPU_STANDARD_PORT);
+        else if (errno != EEXIST)
+            fprintf(stderr, "  [auto-learned] ul_session_map update failed: %s\n",
+                    strerror(errno));
+    }
+}
+
+/*
  * Confirmed via `tshark -T json` on a real UEContextSetupResponse:
  *   f1ap.gTP_TEID: "77:51:2b:d5"                      (colon-separated hex octets)
  *   f1ap.transportLayerAddressIPv4: "192.168.71.171"  (plain dotted-decimal)
@@ -558,16 +651,18 @@ static void *f1ap_watcher_thread(void *arg)
         } else if (strcmp(ip_field, own_ip_str) == 0) {
             /* UL F1-U tunnel endpoint: this CU's own address, from
              * UEContextSetupRequest -- the TEID the CU advertised for the
-             * DU to send uplink F1-U traffic to. Register it in
-             * ul_session_map (info-only; see maybe_populate_ul_session_map). */
-            pthread_mutex_lock(&f1u_lock);
+             * DU to send uplink F1-U traffic to. Register a placeholder
+             * in ul_session_map, then see if the N3 side (from NGAP) is
+             * already known too, in which case complete it immediately. */
+            pthread_mutex_lock(&ul_info_lock);
             f1u_ul_teid = teid_val;
             f1u_ul_known = 1;
-            pthread_mutex_unlock(&f1u_lock);
+            pthread_mutex_unlock(&ul_info_lock);
 
             printf("F1AP watcher: learned UL F1-U TEID 0x%08x @ %s (this CU's own address)\n",
                    teid_val, ip_field);
             maybe_populate_ul_session_map(teid_val);
+            maybe_complete_ul_session_map();
         } else {
             /* Neither the DU's address nor our own -- unexpected given
              * this testbed's topology. Log and move on rather than
@@ -576,6 +671,152 @@ static void *f1ap_watcher_thread(void *arg)
                    "(%s) nor our own (%s) -- unexpected topology)\n",
                    teid_val, ip_field, DU_IP, own_ip_str);
         }
+    }
+
+    pclose(fp);
+    return NULL;
+}
+
+/*
+ * Background thread: runs tshark filtered to NGAP messages carrying a GTP
+ * tunnel endpoint (ngap.gTP_TEID present). Confirmed against a real
+ * capture (ngap.json): both the PDUSessionResourceSetupRequest's
+ * "UL NG-U UP TNL Information" IE (the UPF's uplink endpoint -- what we
+ * want) and the PDUSessionResourceSetupResponse's "DL QoS Flow Per TNL
+ * Information" IE (this gNB's OWN downlink endpoint -- NOT what we want)
+ * both carry this field, so this filter alone matches both messages.
+ *
+ * Rather than try to discriminate the two in the tshark filter itself
+ * (an earlier attempt used "&& ngap.initiatingMessage" to keep only the
+ * Request; this relied on a field name that was never independently
+ * confirmed as filterable, and evidently isn't -- tshark failed to parse
+ * it and exited immediately, silently, before even printing the
+ * "capture is live" line), this now uses the SAME discrimination
+ * approach as the F1AP watcher above: extract the IP unconditionally,
+ * then compare it against this CU's own address in C. If it matches our
+ * own IP, it's the DL self-referential entry from the Response -- ignore
+ * it. Otherwise it's the UPF's address from the Request -- keep it.
+ *
+ * Field names confirmed against a real tshark -T json capture of a
+ * PDUSessionResourceSetupRequest (see ngap.json): the TEID field really
+ * is ngap.gTP_TEID (colon-separated hex octets, same format as F1AP's),
+ * and the address field is ngap.TransportLayerAddressIPv4 -- note the
+ * capital T, which differs from F1AP's all-lowercase
+ * f1ap.transportLayerAddressIPv4.
+ *
+ * Simplification: like the F1AP watcher, tracks only the single most
+ * recently announced N3 UL tunnel endpoint (fine for a one-UE/one-bearer
+ * testbed). Multiple concurrent PDU sessions need correlation to a
+ * specific session/bearer, which this does not attempt yet.
+ */
+static void *ngap_watcher_thread(void *arg)
+{
+    char cmd[512];
+    char line[512];
+    char own_ip_str[INET_ADDRSTRLEN];
+    FILE *fp;
+    int seen_first_packet = 0;
+
+    (void)arg;
+
+    inet_ntop(AF_INET, &g_own_ip, own_ip_str, sizeof(own_ip_str));
+
+    snprintf(cmd, sizeof(cmd),
+             "tshark -i %s -f \"sctp\" "
+             "-Y \"ngap.gTP_TEID\" "
+             "-T fields -e ngap.gTP_TEID -e ngap.TransportLayerAddressIPv4 "
+             "-E separator=/t -E occurrence=f -l 2>/dev/null",
+             NGAP_CAPTURE_IFACE);
+
+    fp = popen(cmd, "r");
+    if (!fp) {
+        fprintf(stderr, "NGAP watcher: failed to start tshark: %s\n", strerror(errno));
+        return NULL;
+    }
+
+    printf("NGAP watcher started (%s)\n", cmd);
+    printf("NGAP watcher: waiting for first matching packet (PDU session setup)...\n");
+
+    while (!stop && fgets(line, sizeof(line), fp)) {
+        char *tab, *newline;
+        char teid_field[64];
+        char ip_field[64];
+        const char *teid_str;
+        __u32 teid_val;
+        struct in_addr addr;
+
+        if (!seen_first_packet) {
+            printf("NGAP watcher: capture is live (first matching packet seen)\n");
+            seen_first_packet = 1;
+        }
+
+        newline = strchr(line, '\n');
+        if (newline)
+            *newline = '\0';
+
+        tab = strchr(line, '\t');
+        if (!tab || tab == line) {
+            /* No TEID field on this line (shouldn't happen given the
+             * display filter, but be defensive) or line is otherwise
+             * malformed -- skip it. */
+            continue;
+        }
+
+        {
+            size_t teid_len = (size_t)(tab - line);
+            if (teid_len >= sizeof(teid_field))
+                teid_len = sizeof(teid_field) - 1;
+            memcpy(teid_field, line, teid_len);
+            teid_field[teid_len] = '\0';
+        }
+        snprintf(ip_field, sizeof(ip_field), "%s", tab + 1);
+
+        if (ip_field[0] == '\0') {
+            fprintf(stderr,
+                    "NGAP watcher: TEID field '%s' present but no IP on the same "
+                    "line -- ignoring\n", teid_field);
+            continue;
+        }
+
+        /* NGAP's gTP_TEID field, confirmed against a real capture, uses
+         * the same colon-separated hex octet format as F1AP's (e.g.
+         * "00:00:00:12"), so parse_colon_hex_teid() handles it directly.
+         * The 0x-prefix skip below is defensive only, in case a
+         * different tshark/build version ever formats it differently. */
+        teid_str = teid_field;
+        if (teid_str[0] == '0' && (teid_str[1] == 'x' || teid_str[1] == 'X'))
+            teid_str += 2;
+
+        teid_val = parse_colon_hex_teid(teid_str);
+        if (teid_val == 0) {
+            fprintf(stderr, "NGAP watcher: parsed TEID as 0 from '%s' -- ignoring\n", teid_field);
+            continue;
+        }
+
+        if (inet_pton(AF_INET, ip_field, &addr) != 1) {
+            fprintf(stderr, "NGAP watcher: could not parse IP '%s' -- ignoring\n", ip_field);
+            continue;
+        }
+
+        if (strcmp(ip_field, own_ip_str) == 0) {
+            /* This is the DL QoS Flow Per TNL Information from a
+             * PDUSessionResourceSetupResponse -- this gNB's OWN address,
+             * not the UPF's. Not what this watcher is looking for. */
+            printf("NGAP watcher: ignoring TEID 0x%08x @ %s (our own address -- "
+                   "this is the DL N3 endpoint from a Response, not the UPF's UL one)\n",
+                   teid_val, ip_field);
+            continue;
+        }
+
+        pthread_mutex_lock(&ul_info_lock);
+        n3_ul_teid = teid_val;
+        n3_ul_ip = addr.s_addr;
+        n3_ul_known = 1;
+        pthread_mutex_unlock(&ul_info_lock);
+
+        printf("NGAP watcher: learned N3 UL tunnel TEID 0x%08x @ %s (the UPF's address)\n",
+               teid_val, ip_field);
+        maybe_complete_ul_session_map();
     }
 
     pclose(fp);
@@ -773,6 +1014,7 @@ int main(int argc, char **argv)
     struct bpf_map *events_map, *session_map, *ul_session_map;
     struct ring_buffer *ring = NULL;
     pthread_t f1ap_thread;
+    pthread_t ngap_thread;
     pthread_t du_mac_thread;
     int interface_index, program_fd, error = 1;
     int attached = 0;
@@ -917,6 +1159,12 @@ int main(int argc, char **argv)
         goto cleanup;
     }
 
+    if (pthread_create(&ngap_thread, NULL, ngap_watcher_thread, NULL) != 0) {
+        fprintf(stderr, "Failed to start NGAP watcher thread: %s\n", strerror(errno));
+        error = 1;
+        goto cleanup;
+    }
+
     /* TEMPORARY DIAGNOSTIC: SEED_SESSION=<n3_teid_hex>:<f1u_teid_hex> seeds
      * session_map directly with an already-known real bearer mapping,
      * bypassing the F1AP watcher -- useful when the bearer was already
@@ -977,6 +1225,7 @@ int main(int argc, char **argv)
     error = 0;
 
     pthread_join(f1ap_thread, NULL);
+    pthread_join(ngap_thread, NULL);
     pthread_join(du_mac_thread, NULL);
 
 cleanup:
