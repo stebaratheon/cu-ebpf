@@ -16,10 +16,21 @@
 /* F1-U rewrite constants (see F1U_HEADER_FORMAT_INVESTIGATION.md for how
  * these were confirmed against real OAI CU-UP/DU behavior). */
 #define F1U_NEW_HDR_BYTES 4        /* 3-byte PDCP (long/18-bit SN) + 1-byte SDAP */
-#define MAX_INNER_MOVE_BYTES 1400  /* bound for the bounded payload-compaction loop;
-                                    * packets whose inner payload exceeds this are
-                                    * skipped for offload rather than risk an unsafe
-                                    * or incorrect rewrite */
+#define MAX_INNER_MOVE_BYTES 512  /* bound for the unrolled payload-copy loops (both
+                                    * directions). See comment below: this was reduced
+                                    * from 1400 after two such loops in one program hit
+                                    * an LLVM BPF backend limit ("Branch target out of
+                                    * insn range") -- confirmed empirically to compile
+                                    * cleanly at 512 with real margin below the measured
+                                    * ~940-945 cliff for this file. Packets whose inner
+                                    * payload exceeds this are skipped for offload (fall
+                                    * through to plain XDP_PASS, unmodified) rather than
+                                    * risk an unsafe or incorrect rewrite -- so this is a
+                                    * real reduction in fast-path COVERAGE for large
+                                    * packets (e.g. near-MTU bulk-transfer segments),
+                                    * not a correctness issue. See the project README/
+                                    * journal for the follow-up (BPF subprogram split)
+                                    * that would restore full ~1450-byte coverage. */
 #define PDCP_SN_MAX 0x3FFFF        /* 18-bit sequence number wraparound */
 
 struct gtp_event {
@@ -54,9 +65,11 @@ struct gtp_event {
     __u8 inner_protocol;
     __u8 is_gtpu;
     __u8 pad;
-    /* Step-1 fast-path offload outcome (session_map lookup result). This
-     * only ever applies to the downlink (N3 -> F1-U) direction -- see
-     * is_f1u below. */
+    /* Fast-path offload outcome. Shared by BOTH directions -- downlink
+     * (session_map, N3 -> F1-U) and uplink (ul_session_map, F1-U -> N3)
+     * -- since exactly one of the two offload blocks can ever run per
+     * packet (event->is_f1u tells you which one these fields describe
+     * for a given event). */
     __u8 offload_attempted;
     __u8 offload_applied;
     __u32 offload_new_teid;
@@ -64,16 +77,16 @@ struct gtp_event {
     __u16 offload_new_dst_port;  /* host order, same convention as outer_*_port */
     __u16 pad2;
     /* Debug instrumentation: the kernel's own computed values for the
-     * F1-U reframing decision, reported for every attempted rewrite
-     * (even ones that bail out via offload_skip), to diagnose why the
-     * rewrite may not be taking effect as expected. Remove once no
-     * longer needed. */
+     * reframing decision, reported for every attempted rewrite (even
+     * ones that bail out via offload_skip/ul_offload_skip), to diagnose
+     * why a rewrite may not be taking effect as expected. Shared by both
+     * directions, same reasoning as offload_attempted above. */
     __s32 debug_old_removed_bytes;
     __s32 debug_move_len;
     __s32 debug_delta;
     __u32 debug_reached_rewrite; /* 1 if we got past the bail-out check */
     __u8 debug_flags_right_after_write; /* gtp->flags read back immediately
-                                          * after `gtp->flags = 0x30;` */
+                                          * after the new flags byte is written */
     __u8 debug_flags_right_before_redirect; /* gtp->flags read back right
                                               * before bpf_redirect() returns */
     __u8 pad3[2];
@@ -646,27 +659,220 @@ offload_skip:
     }
 
     /*
-     * Uplink (F1-U) side: informational-only mapping check. We look the
-     * inbound TEID up in ul_session_map -- populated by userspace once it
-     * learns the CU's own UL F1-U TEID via F1AP -- and report HIT/MISS,
-     * plus whether the matched entry is actually READY (sess->ready == 1,
-     * i.e. the UPF's MAC has also been resolved -- see struct
-     * session_ctx's comment on that field), so this can be confirmed
-     * against real DU traffic before any rewrite exists. Deliberately no
-     * rewrite, no bpf_xdp_adjust_tail(), no bpf_redirect() here: uplink
-     * offload is a later step, and when it's added, sess->ready is
-     * exactly the condition it will gate on.
+     * Uplink (F1-U -> N3) fast-path offload: for GTP-U packets whose
+     * TEID has a COMPLETE (sess->ready == 1) ul_session_map entry,
+     * transform the F1-U-shaped packet into a correctly N3-shaped one
+     * before redirecting it to the UPF. This is the structural mirror
+     * image of the downlink block above, but NOT a mirror-image
+     * implementation -- see the comments inline below for exactly why.
+     *
+     * A map miss, or a HIT that isn't yet ready, falls straight through
+     * to plain XDP_PASS, unchanged -- exactly like a downlink map miss.
      */
     if (event->is_gtpu && event->is_f1u) {
         __u32 ul_key = event->teid;
-        struct session_ctx *ul_sess;
+        struct session_ctx *ul_sess = bpf_map_lookup_elem(&ul_session_map, &ul_key);
 
         event->ul_map_lookup_attempted = 1;
-        ul_sess = bpf_map_lookup_elem(&ul_session_map, &ul_key);
+        event->offload_attempted = 1;
         if (ul_sess) {
             event->ul_map_lookup_hit = 1;
             event->ul_map_ready = ul_sess->ready;
         }
+
+        if (ul_sess && ul_sess->ready && outer_ihl == sizeof(*outer_ip) &&
+            (void *)(eth + 1) <= data_end &&
+            (void *)(outer_ip + 1) <= data_end &&
+            (void *)(udp + 1) <= data_end &&
+            (void *)(gtp + 1) <= data_end) {
+
+            /*
+             * 'cursor' was already advanced by exactly F1U_NEW_HDR_BYTES
+             * (4) in the F1-U PDCP/SDAP parsing branch earlier in this
+             * function -- every is_f1u packet that reaches here without
+             * an extension chain (E=0, required to enter that branch)
+             * has a fixed, not variable, header size to remove, unlike
+             * the downlink side where the N3 extension chain's length
+             * varies. old_removed_bytes is therefore expected to always
+             * equal F1U_NEW_HDR_BYTES; checked explicitly below as a
+             * defensive invariant rather than assumed.
+             *
+             * new_hdr_bytes is the N3 shape being constructed: 4 bytes
+             * of optional fields (seq/npdu/next-ext-type) + 4 bytes of
+             * PDU Session Container extension = 8. Net delta is
+             * therefore +4 -- the packet must GROW, the opposite of the
+             * downlink rewrite's shrink.
+             */
+            long old_removed_bytes = (long)cursor - (long)(gtp + 1);
+            long move_len = (long)data_end - (long)cursor;
+            long new_hdr_bytes = 4 /* optional seq/npdu/next-ext-type */
+                                + 4; /* PDU Session Container extension */
+            long delta = new_hdr_bytes - old_removed_bytes;
+
+            event->debug_old_removed_bytes = (__s32)old_removed_bytes;
+            event->debug_move_len = (__s32)move_len;
+            event->debug_delta = (__s32)delta;
+
+            if (old_removed_bytes != F1U_NEW_HDR_BYTES ||
+                move_len < 0 || move_len > MAX_INNER_MOVE_BYTES ||
+                delta <= 0 || delta > 64) {
+                goto ul_offload_skip;
+            }
+
+            event->debug_reached_rewrite = 1;
+
+            /*
+             * Grow FIRST. Unlike the downlink shrink (which compacts the
+             * payload into its smaller new position, THEN trims the
+             * tail), there is no room to shift the payload into until
+             * the tail is actually extended -- so bpf_xdp_adjust_tail()
+             * must run before any data movement here, not after.
+             */
+            if (bpf_xdp_adjust_tail(ctx, (int)delta))
+                goto ul_offload_drop; /* e.g. insufficient tailroom in the
+                                        * underlying buffer -- fail safe
+                                        * rather than forward a
+                                        * half-grown packet */
+
+            /* adjust_tail() invalidates every previously-held packet
+             * pointer -- re-fetch fresh, same discipline as the
+             * downlink path. */
+            data = (void *)(long)ctx->data;
+            data_end = (void *)(long)ctx->data_end;
+
+            eth = data;
+            if ((void *)(eth + 1) > data_end)
+                goto ul_offload_drop;
+            outer_ip = (void *)(eth + 1);
+            if ((void *)(outer_ip + 1) > data_end)
+                goto ul_offload_drop;
+            udp = (void *)outer_ip + outer_ihl;
+            if ((void *)(udp + 1) > data_end)
+                goto ul_offload_drop;
+            gtp = (void *)(udp + 1);
+            if ((void *)(gtp + 1) > data_end)
+                goto ul_offload_drop;
+
+            {
+                /*
+                 * Shift the inner payload right by `delta` bytes: from
+                 * its old position (right after the old 4-byte
+                 * PDCP+SDAP block) to its new position (right after the
+                 * new 8-byte optional+extension block). Because
+                 * new_data > old_data and the regions overlap whenever
+                 * move_len > delta (essentially always, since delta is
+                 * fixed at 4), this MUST copy highest-offset-first --
+                 * the exact opposite direction from the downlink
+                 * compaction loop's forward (lowest-offset-first) copy
+                 * -- or source bytes get overwritten before they're
+                 * read. Bounds are checked against the fresh (grown)
+                 * data_end from immediately above.
+                 */
+                __u8 *old_data = (__u8 *)(gtp + 1) + F1U_NEW_HDR_BYTES;
+                __u8 *new_data = (__u8 *)(gtp + 1) + new_hdr_bytes;
+                int i;
+
+#pragma unroll
+                for (i = 0; i < MAX_INNER_MOVE_BYTES; i++) {
+                    int idx = (int)move_len - 1 - i;
+
+                    if (idx < 0)
+                        break;
+                    if ((void *)(old_data + idx + 1) > data_end)
+                        break;
+                    if ((void *)(new_data + idx + 1) > data_end)
+                        break;
+                    new_data[idx] = old_data[idx];
+                }
+            }
+
+            {
+                __u8 *hdr = (__u8 *)(gtp + 1);
+                __u8 qfi_to_write = event->qfi_present ? event->qfi : 0;
+
+                if ((void *)(hdr + new_hdr_bytes) > data_end)
+                    goto ul_offload_drop;
+
+                /* 4-byte optional field block. seq/npdu are reserved
+                 * (S=PN=0) but still must be present since E=1; next
+                 * extension type = PDU Session Container. */
+                hdr[0] = 0;
+                hdr[1] = 0;
+                hdr[2] = 0;
+                hdr[3] = GTP_EXT_PDU_SESSION_CONTAINER;
+
+                /* 4-byte PDU Session Container extension: length=1
+                 * (four-byte units), PDU_TYPE=1 (UL) in the upper
+                 * nibble of the first content octet, QFI (already
+                 * extracted from the inbound SDAP byte) in the next,
+                 * next-extension-type=0 (none). Byte layout confirmed
+                 * earlier in this project against a real captured N3
+                 * uplink packet. */
+                hdr[4] = 1;
+                hdr[5] = (__u8)(1 << 4);
+                hdr[6] = qfi_to_write & 0x3f;
+                hdr[7] = 0;
+            }
+
+            /* Rewrite L2/L3/L4/GTP-U fields for the N3 destination. */
+            __builtin_memcpy(eth->h_dest, ul_sess->dst_mac, ETH_ALEN);
+            __builtin_memcpy(eth->h_source, ul_sess->src_mac, ETH_ALEN);
+            outer_ip->saddr = ul_sess->src_ip;
+            outer_ip->daddr = ul_sess->dst_ip;
+            udp->dest = ul_sess->dst_port;
+
+            gtp->flags = 0x34; /* version=1, PT=1, E=1, S=0, PN=0 */
+            event->debug_flags_right_after_write = gtp->flags;
+            gtp->message_type = GTPU_G_PDU;
+            gtp->teid = bpf_htonl(ul_sess->peer_teid);
+            gtp->length = bpf_htons((__u16)(new_hdr_bytes + move_len));
+
+            outer_ip->tot_len = bpf_htons((__u16)(outer_ihl + sizeof(struct udphdr) +
+                                                   sizeof(*gtp) + new_hdr_bytes +
+                                                   move_len));
+            udp->len = bpf_htons((__u16)(sizeof(struct udphdr) + sizeof(*gtp) +
+                                          new_hdr_bytes + move_len));
+
+            /* IP header has no options here (checked above), so a full
+             * recompute over its fixed 20 bytes is simple and cheap --
+             * same as the downlink path. */
+            outer_ip->check = 0;
+            {
+                __u16 *hwords = (__u16 *)outer_ip;
+                __u32 csum = 0;
+
+#pragma unroll
+                for (int w = 0; w < (int)(sizeof(*outer_ip) / 2); w++)
+                    csum += hwords[w];
+                csum = (csum & 0xffff) + (csum >> 16);
+                csum = (csum & 0xffff) + (csum >> 16);
+                outer_ip->check = ~csum;
+            }
+
+            /* UDP checksum: every field it covers changed (dst IP, dst
+             * port, and the entire GTP-U/optional/extension payload) --
+             * set to 0, explicitly legal for UDP-over-IPv4 (RFC 768),
+             * same reasoning as the downlink path. */
+            udp->check = 0;
+
+            event->offload_applied = 1;
+            event->offload_new_teid = ul_sess->peer_teid;
+            event->offload_new_dst_ip = ul_sess->dst_ip;
+            event->offload_new_dst_port = bpf_ntohs(ul_sess->dst_port);
+            event->debug_flags_right_before_redirect = gtp->flags;
+
+            bpf_ringbuf_submit(event, 0);
+            return bpf_redirect(ul_sess->egress_ifindex, 0);
+
+ul_offload_drop:
+            /* Already grown/mutated the packet and then hit an
+             * unexpected (believed-unreachable) bounds failure -- do
+             * not forward a partially-rewritten packet. */
+            bpf_ringbuf_submit(event, 0);
+            return XDP_DROP;
+        }
+ul_offload_skip:
+        ;
     }
 
     bpf_ringbuf_submit(event, 0);

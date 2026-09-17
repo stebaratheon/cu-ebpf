@@ -12,3 +12,7 @@ gcc -O2 -g \
 
 # tshark command to capture ngap messages in cu:
 tshark -i eth0 -f sctp -Y ngap -T json
+
+# Client — sends fixed 200-byte UDP datagrams (well under the 512-byte cap,
+# once you add ~28 bytes of UDP/IP header overhead)
+iperf3 -c 192.168.72.135 -B 12.1.1.2 -u -l 200 -b 1M -t 30

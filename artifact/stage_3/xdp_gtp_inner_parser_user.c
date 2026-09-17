@@ -511,6 +511,10 @@ static void maybe_complete_ul_session_map(void)
     sess.peer_teid = peer_teid_snapshot;
     sess.dst_ip = dst_ip_snapshot;
     sess.dst_port = htons(GTPU_STANDARD_PORT);
+    sess.src_ip = g_own_ip; /* new outer source IP toward the UPF -- this was
+                             * never being set before this fix, which would
+                             * have left every rewritten uplink packet with a
+                             * zero source address. */
     if (have_mac) {
         memcpy(sess.dst_mac, upf_mac_snapshot, ETH_ALEN);
         memcpy(sess.src_mac, g_own_mac, ETH_ALEN);
@@ -1139,7 +1143,14 @@ static int print_event(void *ctx, void *data, size_t size)
                    event->debug_flags_right_before_redirect);
     }
 
-    if (event->ul_map_lookup_attempted) {
+    /* Only print this when offload did NOT actually fire -- once
+     * event->offload_applied is set, the "Fast-path offload: HIT ->
+     * redirected to ..." line above already reports the same
+     * information, and printing both is stale/misleading (this line
+     * predates the real uplink rewrite, from when the map lookup was
+     * still info-only). Still shown for MISS and HIT-not-ready, since
+     * those cases have no offload line to fall back on. */
+    if (event->ul_map_lookup_attempted && !event->offload_applied) {
         const char *state;
 
         if (!event->ul_map_lookup_hit)
@@ -1149,7 +1160,7 @@ static int print_event(void *ctx, void *data, size_t size)
         else
             state = "HIT, not ready (MAC/interface pending)";
 
-        printf("  UL session map:   %s (TEID 0x%08x) -- info only, no offload applied yet\n",
+        printf("  UL session map:   %s (TEID 0x%08x) -- no offload applied\n",
                state, event->teid);
     }
 
