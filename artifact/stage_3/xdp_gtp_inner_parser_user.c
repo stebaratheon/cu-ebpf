@@ -35,6 +35,17 @@ struct session_ctx {
     __u32 next_dl_pdcp_sn; /* mirrors kernel-side struct exactly; zero-initialized
                             * via memset() before population, incremented only by
                             * the kernel program */
+    __u8 ready;            /* 1 once this entry is fully populated and safe to
+                            * offload from. session_map (downlink) entries are
+                            * always inserted complete in one shot, so this is
+                            * always 1 there. ul_session_map (uplink) entries
+                            * start at 0 (the initial placeholder, MAC/egress
+                            * still zero) and flip to 1 only once
+                            * maybe_complete_ul_session_map() has also resolved
+                            * the UPF's MAC -- this is the actual gate the
+                            * uplink rewrite (once written) will check before
+                            * touching a packet. */
+    __u8 pad2[3];
 };
 
 /* Mirrors the kernel-side struct gtp_event exactly (same field order and
@@ -87,7 +98,10 @@ struct gtp_event {
     __u32 f1u_pdcp_sn;
     __u8 ul_map_lookup_attempted;
     __u8 ul_map_lookup_hit;
-    __u8 pad4[2];
+    __u8 ul_map_ready;    /* mirrors session_ctx.ready for the matched
+                           * ul_session_map entry (only meaningful when
+                           * ul_map_lookup_hit is set) */
+    __u8 pad4;
     __u64 gtpu_count;
     __u64 udp_non_gtpu_count;
 };
@@ -154,6 +168,16 @@ static __u32 g_own_ip;            /* CU's own eth0 IPv4 address, network byte or
                                     * via ioctl -- used as the rewritten outer source IP */
 static pthread_mutex_t g_du_mac_lock = PTHREAD_MUTEX_INITIALIZER;
 static volatile int g_du_mac_valid; /* 0 until a real (non-stale) DU MAC has been confirmed */
+
+/* UPF's MAC (toward the N3 uplink destination), via ARP lookup on
+ * n3_ul_ip -- used as dst_mac for the (future) uplink rewrite. Unlike
+ * g_du_mac, there's no compile-time IP constant to target here: the
+ * UPF's address is only known once the NGAP watcher learns it
+ * (n3_ul_known/n3_ul_ip), so upf_mac_refresh_thread waits for that
+ * before it has anything to resolve. */
+static pthread_mutex_t g_upf_mac_lock = PTHREAD_MUTEX_INITIALIZER;
+static __u8 g_upf_mac[ETH_ALEN];
+static volatile int g_upf_mac_valid; /* 0 until a real UPF MAC has been confirmed */
 
 static void handle_signal(int signo)
 {
@@ -441,25 +465,28 @@ static void maybe_populate_ul_session_map(__u32 ul_teid)
 }
 
 /*
- * Called after EITHER the F1-U UL TEID (from F1AP) or the N3 UL tunnel
- * info (from NGAP) is learned. Only actually does anything once BOTH
- * are known, since ul_session_map's key comes from the former and its
- * value comes from the latter -- order of arrival isn't guaranteed.
+ * Called after any of: the F1-U UL TEID (from F1AP), the N3 UL tunnel
+ * info (from NGAP), or the UPF's resolved MAC (from
+ * upf_mac_refresh_thread) changes. Only actually writes anything once
+ * the two REQUIRED pieces -- F1-U UL TEID and N3 UL tunnel info -- are
+ * known (order-independent); the UPF MAC is optional for the write to
+ * happen at all, but its presence is what flips the entry from
+ * "destination known" to "COMPLETE, ready for offload gate".
  *
- * This intentionally still leaves egress_ifindex/dst_mac/src_mac zeroed:
- * resolving the UPF's MAC (an ARP-refresh thread analogous to
- * du_mac_refresh_thread) is separate follow-up work that belongs with
- * the actual uplink rewrite, not this learning step. Right now the goal
- * is only to confirm the destination (peer_teid/dst_ip) is being learned
- * correctly -- no offload logic reads this map yet.
+ * Safe to call redundantly (e.g. once per periodic MAC-refresh tick):
+ * before writing, it compares the fully-built session_ctx against
+ * whatever's already in the map and skips the update (and the log line)
+ * entirely if nothing actually changed.
  */
 static void maybe_complete_ul_session_map(void)
 {
-    int have_f1u, have_n3;
+    int have_f1u, have_n3, have_mac;
     __u32 key, peer_teid_snapshot, dst_ip_snapshot;
+    __u8 upf_mac_snapshot[ETH_ALEN];
     struct session_ctx sess;
     struct session_ctx existing;
     char upf_ip_str[INET_ADDRSTRLEN];
+    int existing_found;
 
     pthread_mutex_lock(&ul_info_lock);
     have_f1u = f1u_ul_known;
@@ -475,38 +502,159 @@ static void maybe_complete_ul_session_map(void)
     if (g_ul_session_map_fd < 0)
         return;
 
+    pthread_mutex_lock(&g_upf_mac_lock);
+    have_mac = g_upf_mac_valid;
+    memcpy(upf_mac_snapshot, g_upf_mac, ETH_ALEN);
+    pthread_mutex_unlock(&g_upf_mac_lock);
+
     memset(&sess, 0, sizeof(sess));
     sess.peer_teid = peer_teid_snapshot;
     sess.dst_ip = dst_ip_snapshot;
     sess.dst_port = htons(GTPU_STANDARD_PORT);
-    /* egress_ifindex/dst_mac/src_mac: intentionally left zero, see comment
-     * above. */
+    if (have_mac) {
+        memcpy(sess.dst_mac, upf_mac_snapshot, ETH_ALEN);
+        memcpy(sess.src_mac, g_own_mac, ETH_ALEN);
+        /* Assumes the UPF is reachable via the same egress interface as
+         * the DU (true in this flat, single-eth0 testbed topology --
+         * revisit this if a real deployment splits F1 and N3 across
+         * separate interfaces). */
+        sess.egress_ifindex = g_egress_ifindex;
+        sess.ready = 1; /* the actual gate: only flips to 1 once every
+                         * field needed for a real rewrite is populated. */
+    }
+    /* else: dst_mac/src_mac/egress_ifindex/ready stay zero -- MAC not
+     * resolved yet, entry is destination-known but not yet offload-ready. */
 
     inet_ntop(AF_INET, &dst_ip_snapshot, upf_ip_str, sizeof(upf_ip_str));
 
-    if (bpf_map_lookup_elem(g_ul_session_map_fd, &key, &existing) == 0) {
-        /* Entry already exists -- almost certainly the all-zero
-         * placeholder inserted by maybe_populate_ul_session_map() when
-         * the F1-U UL TEID was first learned. Upgrade it in place now
-         * that we have real N3 destination info. */
-        if (bpf_map_update_elem(g_ul_session_map_fd, &key, &sess, BPF_EXIST) == 0)
-            printf("  [auto-learned] ul_session_map: UL F1-U TEID 0x%08x completed -> "
-                   "N3 UL TEID 0x%08x @ %s:%u (egress MAC/interface still pending)\n",
-                   key, sess.peer_teid, upf_ip_str, GTPU_STANDARD_PORT);
-        else
+    existing_found = (bpf_map_lookup_elem(g_ul_session_map_fd, &key, &existing) == 0);
+
+    if (existing_found && memcmp(&existing, &sess, sizeof(sess)) == 0) {
+        /* Nothing changed since the last write to this entry -- skip,
+         * so a periodic MAC-refresh tick after MAC is already resolved
+         * doesn't spam an identical update+log line every cycle. */
+        return;
+    }
+
+    if (existing_found) {
+        if (bpf_map_update_elem(g_ul_session_map_fd, &key, &sess, BPF_EXIST) == 0) {
+            if (have_mac)
+                printf("  [auto-learned] ul_session_map: UL F1-U TEID 0x%08x COMPLETE -> "
+                       "N3 UL TEID 0x%08x @ %s:%u, MAC %02x:%02x:%02x:%02x:%02x:%02x, "
+                       "egress ifindex %u -- ready for offload gate\n",
+                       key, sess.peer_teid, upf_ip_str, GTPU_STANDARD_PORT,
+                       sess.dst_mac[0], sess.dst_mac[1], sess.dst_mac[2],
+                       sess.dst_mac[3], sess.dst_mac[4], sess.dst_mac[5],
+                       sess.egress_ifindex);
+            else
+                printf("  [auto-learned] ul_session_map: UL F1-U TEID 0x%08x updated -> "
+                       "N3 UL TEID 0x%08x @ %s:%u (MAC/interface still pending)\n",
+                       key, sess.peer_teid, upf_ip_str, GTPU_STANDARD_PORT);
+        } else {
             fprintf(stderr, "  [auto-learned] ul_session_map completion update failed: %s\n",
                     strerror(errno));
+        }
     } else {
         /* No placeholder yet (N3 info arrived before the F1-U UL TEID) --
-         * insert directly with the real info already in place. */
-        if (bpf_map_update_elem(g_ul_session_map_fd, &key, &sess, BPF_NOEXIST) == 0)
-            printf("  [auto-learned] ul_session_map: UL F1-U TEID 0x%08x registered directly "
-                   "with N3 UL TEID 0x%08x @ %s:%u (egress MAC/interface still pending)\n",
-                   key, sess.peer_teid, upf_ip_str, GTPU_STANDARD_PORT);
-        else if (errno != EEXIST)
+         * insert directly with whatever's already known in place. */
+        if (bpf_map_update_elem(g_ul_session_map_fd, &key, &sess, BPF_NOEXIST) == 0) {
+            if (have_mac)
+                printf("  [auto-learned] ul_session_map: UL F1-U TEID 0x%08x registered "
+                       "directly COMPLETE -> N3 UL TEID 0x%08x @ %s:%u, MAC "
+                       "%02x:%02x:%02x:%02x:%02x:%02x, egress ifindex %u -- ready for "
+                       "offload gate\n",
+                       key, sess.peer_teid, upf_ip_str, GTPU_STANDARD_PORT,
+                       sess.dst_mac[0], sess.dst_mac[1], sess.dst_mac[2],
+                       sess.dst_mac[3], sess.dst_mac[4], sess.dst_mac[5],
+                       sess.egress_ifindex);
+            else
+                printf("  [auto-learned] ul_session_map: UL F1-U TEID 0x%08x registered directly "
+                       "with N3 UL TEID 0x%08x @ %s:%u (MAC/interface still pending)\n",
+                       key, sess.peer_teid, upf_ip_str, GTPU_STANDARD_PORT);
+        } else if (errno != EEXIST) {
             fprintf(stderr, "  [auto-learned] ul_session_map update failed: %s\n",
                     strerror(errno));
+        }
     }
+}
+
+#define UPF_MAC_REFRESH_INTERVAL_SEC 3
+
+/*
+ * Background thread: the uplink analogue of du_mac_refresh_thread above,
+ * periodically flushing any cached ARP entry for the UPF and re-probing
+ * it. The key difference from the DU version: there's no compile-time
+ * IP constant to target here. The UPF's address is only known once the
+ * NGAP watcher learns it (n3_ul_known/n3_ul_ip), so this thread first
+ * waits for that, then behaves identically to the DU version from that
+ * point on -- including re-targeting itself (and forcing a fresh
+ * resolve rather than trusting anything cached) if the NGAP watcher
+ * ever reports a different UPF address than it did before.
+ */
+static void *upf_mac_refresh_thread(void *arg)
+{
+    __u8 candidate[ETH_ALEN];
+    __u8 last_logged[ETH_ALEN];
+    int have_last_logged = 0;
+    char upf_ip_str[INET_ADDRSTRLEN];
+    int have_target = 0;
+    __u32 target_ip = 0;
+
+    (void)arg;
+
+    while (!stop) {
+        int known;
+        __u32 ip_snapshot;
+
+        pthread_mutex_lock(&ul_info_lock);
+        known = n3_ul_known;
+        ip_snapshot = n3_ul_ip;
+        pthread_mutex_unlock(&ul_info_lock);
+
+        if (!known) {
+            /* NGAP watcher hasn't learned the UPF's address yet --
+             * nothing to resolve. Check again shortly. */
+            sleep(UPF_MAC_REFRESH_INTERVAL_SEC);
+            continue;
+        }
+
+        if (!have_target || ip_snapshot != target_ip) {
+            target_ip = ip_snapshot;
+            have_target = 1;
+            have_last_logged = 0; /* force a fresh "resolved" log line below */
+            inet_ntop(AF_INET, &target_ip, upf_ip_str, sizeof(upf_ip_str));
+            printf("UPF MAC refresh: now targeting UPF address %s (learned via NGAP)\n",
+                   upf_ip_str);
+        }
+
+        flush_arp_entry(upf_ip_str);
+        force_arp_resolve(upf_ip_str);
+        usleep(300000); /* give the ARP exchange a moment to complete */
+
+        if (lookup_mac_by_ip(upf_ip_str, candidate) == 0) {
+            int changed = !have_last_logged ||
+                          memcmp(candidate, last_logged, ETH_ALEN) != 0;
+
+            pthread_mutex_lock(&g_upf_mac_lock);
+            memcpy(g_upf_mac, candidate, ETH_ALEN);
+            g_upf_mac_valid = 1;
+            pthread_mutex_unlock(&g_upf_mac_lock);
+
+            if (changed) {
+                printf("UPF MAC (%s) resolved/updated: %02x:%02x:%02x:%02x:%02x:%02x\n",
+                       upf_ip_str, candidate[0], candidate[1], candidate[2],
+                       candidate[3], candidate[4], candidate[5]);
+                memcpy(last_logged, candidate, ETH_ALEN);
+                have_last_logged = 1;
+                maybe_complete_ul_session_map();
+            }
+        }
+        /* No entry found: UPF ARP not resolved yet. Keep whatever was
+         * last known valid (if any); just try again next cycle. */
+
+        sleep(UPF_MAC_REFRESH_INTERVAL_SEC);
+    }
+    return NULL;
 }
 
 /*
@@ -877,6 +1025,8 @@ static void maybe_learn_and_populate(const struct gtp_event *event)
     sess.egress_ifindex = g_egress_ifindex;
     memcpy(sess.dst_mac, du_mac, ETH_ALEN);
     memcpy(sess.src_mac, g_own_mac, ETH_ALEN);
+    sess.ready = 1; /* always inserted complete in one shot -- see struct
+                     * session_ctx's comment on this field. */
     /* next_dl_pdcp_sn stays 0 here -- this is the one-time initial
      * population; the kernel program takes over incrementing it from
      * this point on. */
@@ -989,9 +1139,19 @@ static int print_event(void *ctx, void *data, size_t size)
                    event->debug_flags_right_before_redirect);
     }
 
-    if (event->ul_map_lookup_attempted)
+    if (event->ul_map_lookup_attempted) {
+        const char *state;
+
+        if (!event->ul_map_lookup_hit)
+            state = "MISS";
+        else if (event->ul_map_ready)
+            state = "HIT, READY";
+        else
+            state = "HIT, not ready (MAC/interface pending)";
+
         printf("  UL session map:   %s (TEID 0x%08x) -- info only, no offload applied yet\n",
-               event->ul_map_lookup_hit ? "HIT" : "MISS", event->teid);
+               state, event->teid);
+    }
 
     /* DL auto-learn only applies to genuine N3-side packets. Guard with
      * !is_f1u explicitly: now that F1-U packets can also come back with
@@ -1016,6 +1176,7 @@ int main(int argc, char **argv)
     pthread_t f1ap_thread;
     pthread_t ngap_thread;
     pthread_t du_mac_thread;
+    pthread_t upf_mac_thread;
     int interface_index, program_fd, error = 1;
     int attached = 0;
     __u32 attached_mode = 0;
@@ -1153,6 +1314,12 @@ int main(int argc, char **argv)
         goto cleanup;
     }
 
+    if (pthread_create(&upf_mac_thread, NULL, upf_mac_refresh_thread, NULL) != 0) {
+        fprintf(stderr, "Failed to start UPF MAC refresh thread: %s\n", strerror(errno));
+        error = 1;
+        goto cleanup;
+    }
+
     if (pthread_create(&f1ap_thread, NULL, f1ap_watcher_thread, NULL) != 0) {
         fprintf(stderr, "Failed to start F1AP watcher thread: %s\n", strerror(errno));
         error = 1;
@@ -1195,6 +1362,9 @@ int main(int argc, char **argv)
                     pthread_mutex_unlock(&g_du_mac_lock);
                     memcpy(sess.src_mac, g_own_mac, ETH_ALEN);
                     sess.qfi = 1;
+                    sess.ready = 1; /* manually seeded, but still a complete
+                                     * one-shot entry -- see struct
+                                     * session_ctx's comment on this field. */
                     if (bpf_map_update_elem(g_session_map_fd, &n3_teid, &sess, BPF_ANY) == 0)
                         printf("SEED_SESSION: seeded N3 TEID 0x%08x -> F1-U TEID 0x%08x\n",
                                n3_teid, f1u_teid);
@@ -1227,6 +1397,7 @@ int main(int argc, char **argv)
     pthread_join(f1ap_thread, NULL);
     pthread_join(ngap_thread, NULL);
     pthread_join(du_mac_thread, NULL);
+    pthread_join(upf_mac_thread, NULL);
 
 cleanup:
     ring_buffer__free(ring);

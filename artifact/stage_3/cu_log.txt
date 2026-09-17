@@ -1,4 +1,4 @@
-Own MAC on eth0: da:fa:a2:20:99:99
+Own MAC on eth0: ee:ca:27:d6:46:8d
 Own IP on eth0: 192.168.71.150
 Attached in generic (SKB) mode.
 Parsing ingress UDP and GTP-U packets on eth0; press Ctrl+C to stop.
@@ -7,95 +7,15 @@ F1AP watcher started (tshark -i eth0 -f "sctp" -Y "f1ap.procedureCode==5 && f1ap
 F1AP watcher: waiting for first matching packet to confirm capture is live...
 NGAP watcher started (tshark -i eth0 -f "sctp" -Y "ngap.gTP_TEID" -T fields -e ngap.gTP_TEID -e ngap.TransportLayerAddressIPv4 -E separator=/t -E occurrence=f -l 2>/dev/null)
 NGAP watcher: waiting for first matching packet (PDU session setup)...
-DU MAC (192.168.71.171) resolved/updated: b6:3f:24:b4:df:2a
-UDP packet without recognized GTP-U header
-  Outer path:       192.168.71.129:55384 -> 239.255.255.250:1900
-  UDP non-GTP count: 1
-
-UDP packet without recognized GTP-U header
-  Outer path:       192.168.71.129:55384 -> 239.255.255.250:1900
-  UDP non-GTP count: 2
-
-UDP packet without recognized GTP-U header
-  Outer path:       192.168.71.129:55384 -> 239.255.255.250:1900
-  UDP non-GTP count: 3
-
-UDP packet without recognized GTP-U header
-  Outer path:       192.168.71.129:5353 -> 224.0.0.251:5353
-  UDP non-GTP count: 4
-
-UDP packet without recognized GTP-U header
-  Outer path:       192.168.71.129:5353 -> 224.0.0.251:5353
-  UDP non-GTP count: 5
-
-UDP packet without recognized GTP-U header
-  Outer path:       192.168.71.129:55384 -> 239.255.255.250:1900
-  UDP non-GTP count: 6
-
-UDP packet without recognized GTP-U header
-  Outer path:       192.168.71.129:5353 -> 224.0.0.251:5353
-  UDP non-GTP count: 7
-
-UDP packet without recognized GTP-U header
-  Outer path:       192.168.71.129:5353 -> 224.0.0.251:5353
-  UDP non-GTP count: 8
-
-UDP packet without recognized GTP-U header
-  Outer path:       192.168.71.129:5353 -> 224.0.0.251:5353
-  UDP non-GTP count: 9
-
-UDP packet without recognized GTP-U header
-  Outer path:       192.168.71.129:5353 -> 224.0.0.251:5353
-  UDP non-GTP count: 10
-
-DU MAC (192.168.71.171) resolved/updated: 1e:24:9d:98:de:97
-UDP packet without recognized GTP-U header
-  Outer path:       192.168.71.129:34232 -> 239.255.255.250:1900
-  UDP non-GTP count: 11
-
-UDP packet without recognized GTP-U header
-  Outer path:       192.168.71.129:34232 -> 239.255.255.250:1900
-  UDP non-GTP count: 12
-
-UDP packet without recognized GTP-U header
-  Outer path:       192.168.71.129:34232 -> 239.255.255.250:1900
-  UDP non-GTP count: 13
-
-UDP packet without recognized GTP-U header
-  Outer path:       192.168.71.129:5353 -> 224.0.0.251:5353
-  UDP non-GTP count: 14
-
-UDP packet without recognized GTP-U header
-  Outer path:       192.168.71.129:5353 -> 224.0.0.251:5353
-  UDP non-GTP count: 15
-
-UDP packet without recognized GTP-U header
-  Outer path:       192.168.71.129:34232 -> 239.255.255.250:1900
-  UDP non-GTP count: 16
-
-UDP packet without recognized GTP-U header
-  Outer path:       192.168.71.129:5353 -> 224.0.0.251:5353
-  UDP non-GTP count: 17
-
-UDP packet without recognized GTP-U header
-  Outer path:       192.168.71.129:5353 -> 224.0.0.251:5353
-  UDP non-GTP count: 18
+DU MAC (192.168.71.171) resolved/updated: c6:bd:be:e4:f7:a0
 
 NGAP watcher: capture is live (first matching packet seen)
-NGAP watcher: learned N3 UL tunnel TEID 0x00000003 @ 192.168.71.134 (the UPF's address)
-UDP packet without recognized GTP-U header
-  Outer path:       192.168.71.129:5353 -> 224.0.0.251:5353
-  UDP non-GTP count: 19
-
-UDP packet without recognized GTP-U header
-  Outer path:       192.168.71.129:5353 -> 224.0.0.251:5353
-  UDP non-GTP count: 20
-
+NGAP watcher: learned N3 UL tunnel TEID 0x00000006 @ 192.168.71.134 (the UPF's address)
 F1AP watcher: capture is live (first matching packet seen) -- safe to bring up DU/UE from here on
-F1AP watcher: learned UL F1-U TEID 0x4cf10768 @ 192.168.71.150 (this CU's own address)
-  [auto-learned] ul_session_map: UL F1-U TEID 0x4cf10768 registered (info-only, no offload yet)
-  [auto-learned] ul_session_map: UL F1-U TEID 0x4cf10768 completed -> N3 UL TEID 0x00000003 @ 192.168.71.134:2152 (egress MAC/interface still pending)
-F1AP watcher: learned DL F1-U TEID 0x8d4411a0 @ 192.168.71.171
+F1AP watcher: learned UL F1-U TEID 0x5f9066a8 @ 192.168.71.150 (this CU's own address)
+  [auto-learned] ul_session_map: UL F1-U TEID 0x5f9066a8 registered (info-only, no offload yet)
+  [auto-learned] ul_session_map: UL F1-U TEID 0x5f9066a8 updated -> N3 UL TEID 0x00000006 @ 192.168.71.134:2152 (MAC/interface still pending)
+F1AP watcher: learned DL F1-U TEID 0xa81a995a @ 192.168.71.171
 GTP-U packet found (count: 1)
   Outer path:       192.168.71.171:2153 -> 192.168.71.150:2153
   Framing:          F1-U (PDCP+SDAP, no GTP extension)
@@ -104,13 +24,18 @@ GTP-U packet found (count: 1)
   Protocol type:    1 (GTP)
   Message type:     255 (G-PDU (user data))
   GTP length:       52 bytes
-  TEID:             1290864488 (0x4cf10768)
+  TEID:             1603298984 (0x5f9066a8)
   Flags:            E=0 S=0 PN=0
   PDCP SN (F1-U):   0
   QFI:              1
-  UL session map:   HIT (TEID 0x4cf10768) -- info only, no offload applied yet
+  UL session map:   HIT, not ready (MAC/interface pending) (TEID 0x5f9066a8) -- info only, no offload applied yet
 
-NGAP watcher: ignoring TEID 0x5503ba86 @ 192.168.71.150 (our own address -- this is the DL N3 endpoint from a Response, not the UPF's UL one)
+UPF MAC refresh: now targeting UPF address 192.168.71.134 (learned via NGAP)
+UPF MAC (192.168.71.134) resolved/updated: 7a:43:d9:5e:f1:6d
+  [auto-learned] ul_session_map: UL F1-U TEID 0x5f9066a8 COMPLETE -> N3 UL TEID 0x00000006 @ 192.168.71.134:2152, MAC 7a:43:d9:5e:f1:6d, egress ifindex 2 -- ready for offload gate
+
+NGAP watcher: ignoring TEID 0x8df92095 @ 192.168.71.150 (our own address -- this is the DL N3 endpoint from a Response, not the UPF's UL one)
+
 GTP-U packet found (count: 2)
   Outer path:       192.168.71.171:2153 -> 192.168.71.150:2153
   Framing:          F1-U (PDCP+SDAP, no GTP extension)
@@ -119,11 +44,11 @@ GTP-U packet found (count: 2)
   Protocol type:    1 (GTP)
   Message type:     255 (G-PDU (user data))
   GTP length:       52 bytes
-  TEID:             1290864488 (0x4cf10768)
+  TEID:             1603298984 (0x5f9066a8)
   Flags:            E=0 S=0 PN=0
   PDCP SN (F1-U):   1
   QFI:              1
-  UL session map:   HIT (TEID 0x4cf10768) -- info only, no offload applied yet
+  UL session map:   HIT, READY (TEID 0x5f9066a8) -- info only, no offload applied yet
 
 GTP-U packet found (count: 3)
   Outer path:       192.168.71.171:2153 -> 192.168.71.150:2153
@@ -133,11 +58,11 @@ GTP-U packet found (count: 3)
   Protocol type:    1 (GTP)
   Message type:     255 (G-PDU (user data))
   GTP length:       52 bytes
-  TEID:             1290864488 (0x4cf10768)
+  TEID:             1603298984 (0x5f9066a8)
   Flags:            E=0 S=0 PN=0
   PDCP SN (F1-U):   2
   QFI:              1
-  UL session map:   HIT (TEID 0x4cf10768) -- info only, no offload applied yet
+  UL session map:   HIT, READY (TEID 0x5f9066a8) -- info only, no offload applied yet
 
 GTP-U packet found (count: 4)
   Outer path:       192.168.71.171:2153 -> 192.168.71.150:2153
@@ -147,27 +72,13 @@ GTP-U packet found (count: 4)
   Protocol type:    1 (GTP)
   Message type:     255 (G-PDU (user data))
   GTP length:       52 bytes
-  TEID:             1290864488 (0x4cf10768)
+  TEID:             1603298984 (0x5f9066a8)
   Flags:            E=0 S=0 PN=0
   PDCP SN (F1-U):   3
   QFI:              1
-  UL session map:   HIT (TEID 0x4cf10768) -- info only, no offload applied yet
+  UL session map:   HIT, READY (TEID 0x5f9066a8) -- info only, no offload applied yet
 
 GTP-U packet found (count: 5)
-  Outer path:       192.168.71.171:2153 -> 192.168.71.150:2153
-  Framing:          F1-U (PDCP+SDAP, no GTP extension)
-  Inner IP:         unavailable/not parsable (non-IPv4, truncated, or unsupported extension chain)
-  Version:          1
-  Protocol type:    1 (GTP)
-  Message type:     255 (G-PDU (user data))
-  GTP length:       52 bytes
-  TEID:             1290864488 (0x4cf10768)
-  Flags:            E=0 S=0 PN=0
-  PDCP SN (F1-U):   4
-  QFI:              1
-  UL session map:   HIT (TEID 0x4cf10768) -- info only, no offload applied yet
-
-GTP-U packet found (count: 6)
   Outer path:       192.168.71.171:2153 -> 192.168.71.150:2153
   Framing:          F1-U (PDCP+SDAP, no GTP extension)
   Inner path:       12.1.1.2 -> 192.168.72.135
@@ -176,13 +87,13 @@ GTP-U packet found (count: 6)
   Protocol type:    1 (GTP)
   Message type:     255 (G-PDU (user data))
   GTP length:       64 bytes
-  TEID:             1290864488 (0x4cf10768)
+  TEID:             1603298984 (0x5f9066a8)
   Flags:            E=0 S=0 PN=0
-  PDCP SN (F1-U):   5
+  PDCP SN (F1-U):   4
   QFI:              1
-  UL session map:   HIT (TEID 0x4cf10768) -- info only, no offload applied yet
+  UL session map:   HIT, READY (TEID 0x5f9066a8) -- info only, no offload applied yet
 
-GTP-U packet found (count: 7)
+GTP-U packet found (count: 6)
   Outer path:       192.168.71.134:2152 -> 192.168.71.150:2152
   Framing:          N3 (GTP-U extension for QFI)
   Inner path:       192.168.72.135 -> 12.1.1.2
@@ -191,7 +102,7 @@ GTP-U packet found (count: 7)
   Protocol type:    1 (GTP)
   Message type:     255 (G-PDU (user data))
   GTP length:       68 bytes
-  TEID:             1426307718 (0x5503ba86)
+  TEID:             2381914261 (0x8df92095)
   Flags:            E=1 S=0 PN=0
   First extension:  0x85
   Extension headers (1 total):
@@ -200,4 +111,4 @@ GTP-U packet found (count: 7)
   QFI:              1
   Fast-path offload: miss (no session_map entry for this TEID, or unsupported IP options)
   [debug] old_removed_bytes=0 move_len=0 delta=0 reached_rewrite=0
-  [auto-learned] session_map: N3 TEID 0x5503ba86 -> F1-U TEID 0x8d4411a0 @ 192.168.71.171:2153
+  [auto-learned] session_map: N3 TEID 0x8df92095 -> F1-U TEID 0xa81a995a @ 192.168.71.171:2153

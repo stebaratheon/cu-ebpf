@@ -142,16 +142,28 @@ inner IP/TCP all decode) and correctly report `HIT` against
 
 ## What's left (to be replaced by the next stage's journal entry)
 
+Two items from this list's original version are now done, confirmed
+against live traffic:
+
+- **MAC resolution toward the UPF** — `upf_mac_refresh_thread()` (the
+  uplink analogue of the existing DU MAC refresh thread) now resolves
+  the UPF's MAC via ARP once the NGAP watcher learns its address, and
+  `ul_session_map`'s `dst_mac`/`src_mac`/`egress_ifindex` are populated
+  from it.
+- **Offload gating on map completeness** — `struct session_ctx` gained
+  an explicit `ready` byte (mirrored in both the kernel and userspace
+  programs). `ul_session_map` entries start at `ready=0` when first
+  registered and flip to `ready=1` only once the UPF's MAC has also
+  been resolved. The kernel's uplink lookup already reads this back
+  per-packet (`event->ul_map_ready`), confirmed on live traffic:
+  the first uplink packet(s) after bearer setup correctly report
+  `HIT, not ready`, and every packet after the UPF MAC resolves
+  correctly flips to `HIT, READY`.
+
 This is the honest boundary of what exists today. None of the following
 is implemented yet:
 
-1. **MAC resolution toward the UPF.** The existing DU-MAC-refresh thread
-   only resolves `DU_IP`. `ul_session_map`'s `dst_mac`/`src_mac`/
-   `egress_ifindex` are still zero. Needs a generalized version of that
-   ARP-refresh mechanism (or a direct extension of it) targeting the
-   UPF's address instead of/in addition to the DU's.
-
-2. **The actual uplink rewrite + redirect ("construct the N3 packet from
+1. **The actual uplink rewrite + redirect ("construct the N3 packet from
    the F1 info").** This is structurally different from the existing
    downlink rewrite, not a mirror-image reuse of it:
    - Downlink *shrinks* the packet (removes a variable-length N3
@@ -177,14 +189,11 @@ is implemented yet:
    - Outer L2/L3/L4 rewrite (dst MAC/IP/port toward the UPF, checksum
      recompute) follows the same pattern as the existing downlink
      rewrite once the above is in place.
+   - This rewrite must only fire when the matched `ul_session_map` entry
+     has `ready == 1` (see above) — the gate already exists and is
+     confirmed correct; the rewrite itself just needs to check it.
 
-3. **Offload gating on map completeness.** Once the rewrite exists, it
-   must only fire for `ul_session_map` entries that are actually
-   complete (non-zero `dst_ip`/`peer_teid`/MAC/egress interface) — not
-   for the placeholder entries this stage already creates as soon as
-   the F1-U TEID alone is known.
-
-4. **Multi-bearer / multi-UE correctness.** Both the F1AP and NGAP
+2. **Multi-bearer / multi-UE correctness.** Both the F1AP and NGAP
    watchers currently track only a single, most-recently-announced
    endpoint each (`f1u_dl_teid`, `f1u_ul_teid`, `n3_ul_teid`/`n3_ul_ip`
    are bare globals, not tables). This is adequate for the current
@@ -192,14 +201,14 @@ is implemented yet:
    specific UEs/PDU sessions/DRBs before it can handle more than one
    concurrent session.
 
-5. **Field-name/version portability.** The NGAP field names and filter
+3. **Field-name/version portability.** The NGAP field names and filter
    syntax used here were confirmed only against one specific tshark
    build via a manual capture. If this is ever run against a different
    tshark/Wireshark version, re-verify with `tshark -T json` before
    trusting the watchers — the same way both NGAP bugs in this stage
    were actually found.
 
-6. **`FORCE_SKB_MODE` is still an easy-to-forget environment variable**
+4. **`FORCE_SKB_MODE` is still an easy-to-forget environment variable**
    guarding a workaround for a real, unresolved kernel/veth bug. Given it
    has already caused two separate debugging sessions when forgotten,
    it's worth considering hardcoding SKB mode directly rather than

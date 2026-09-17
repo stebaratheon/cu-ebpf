@@ -9,20 +9,6 @@ gcc -O2 -g \
   -o xdp_gtp_inner_parser_user \
   -lbpf -lelf -lz
 
-==================isolate test=================
 
-clang -O2 -g -target bpf \
-  -D__TARGET_ARCH_x86 \
-  -I/usr/include/x86_64-linux-gnu \
-  -c isolate_test.bpf.c \
-  -o isolate_test.bpf.o
-
-gcc -O2 -g \
-  isolate_test.c \
-  -o isolate_test \
-  -lbpf -lelf -lz
-
-
-ToDo:
-Just print and see pdu type 1 (UL traffic) also
-and what are th exact fileds in the pdu type 0
+# tshark command to capture ngap messages in cu:
+tshark -i eth0 -f sctp -Y ngap -T json

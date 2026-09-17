@@ -100,7 +100,12 @@ struct gtp_event {
                                     * it never triggers a rewrite/redirect.
                                     * Uplink offload is not implemented yet. */
     __u8 ul_map_lookup_hit;
-    __u8 pad4[2];
+    __u8 ul_map_ready;    /* mirrors session_ctx.ready for the matched
+                           * ul_session_map entry (only meaningful when
+                           * ul_map_lookup_hit is set) -- the actual gate
+                           * a future uplink rewrite will check before
+                           * touching a packet. */
+    __u8 pad4;
     __u64 gtpu_count;
     __u64 udp_non_gtpu_count;
 };
@@ -149,6 +154,16 @@ struct session_ctx {
     __u32 next_dl_pdcp_sn; /* per-bearer PDCP DL sequence number counter (18-bit
                             * wraparound), incremented by the kernel program on
                             * every offloaded packet for this TEID */
+    __u8 ready;            /* 1 once this entry is fully populated and safe to
+                            * offload from. session_map (downlink) entries are
+                            * always inserted complete in one shot, so this is
+                            * always 1 there. ul_session_map (uplink) entries
+                            * start at 0 (placeholder, MAC/egress still zero)
+                            * and flip to 1 only once userspace has also
+                            * resolved the UPF's MAC -- this is the field a
+                            * future uplink rewrite must check before
+                            * touching a packet. */
+    __u8 pad2[3];
 };
 
 struct {
@@ -633,10 +648,14 @@ offload_skip:
     /*
      * Uplink (F1-U) side: informational-only mapping check. We look the
      * inbound TEID up in ul_session_map -- populated by userspace once it
-     * learns the CU's own UL F1-U TEID via F1AP -- and report HIT/MISS so
-     * this can be confirmed against real DU traffic. Deliberately no
+     * learns the CU's own UL F1-U TEID via F1AP -- and report HIT/MISS,
+     * plus whether the matched entry is actually READY (sess->ready == 1,
+     * i.e. the UPF's MAC has also been resolved -- see struct
+     * session_ctx's comment on that field), so this can be confirmed
+     * against real DU traffic before any rewrite exists. Deliberately no
      * rewrite, no bpf_xdp_adjust_tail(), no bpf_redirect() here: uplink
-     * offload is a later step.
+     * offload is a later step, and when it's added, sess->ready is
+     * exactly the condition it will gate on.
      */
     if (event->is_gtpu && event->is_f1u) {
         __u32 ul_key = event->teid;
@@ -644,8 +663,10 @@ offload_skip:
 
         event->ul_map_lookup_attempted = 1;
         ul_sess = bpf_map_lookup_elem(&ul_session_map, &ul_key);
-        if (ul_sess)
+        if (ul_sess) {
             event->ul_map_lookup_hit = 1;
+            event->ul_map_ready = ul_sess->ready;
+        }
     }
 
     bpf_ringbuf_submit(event, 0);
