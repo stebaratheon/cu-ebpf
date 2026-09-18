@@ -1,0 +1,50 @@
+1. In CU container, run the user space program as before, 
+with a DISABLE_OFFLOAD flag (for disabling) at the front like this 
+```
+DISABLE_OFFLOAD=1 FORCE_SKB_MODE=1 ./xdp_gtp_inner_parser_user eth0 | tee loader.log
+```
+===================================================================================================
+===================================================================================================
+===================================================================================================
+2. Finding out CU-UP process. 
+```
+sudo ss -tulnp | grep -E '2152|2153'
+```
+
+That'll print a line like:
+```
+udp   UNCONN  0  0  0.0.0.0:2152  0.0.0.0:*  users:(("nr-softmodem",pid=1234,fd=27))
+```
+
+3. Run the cu benchmark script:
+```
+./cu_benchmark_run.sh live <oai_cuup_process_id> loader.log
+```
+
+
+4. Run the UE script for generating the iperf3 traffic and so on:
+```
+./ue_benchmark_matrix.sh 192.168.72.135 12.1.1.2 baseline 3
+```
+for offload, just offload instead of baseline
+
+===================================================================================================
+===================================================================================================
+===================================================================================================
+2. just run
+```
+./run_benchmark_pass.sh baseline
+```
+for offload just put offload instead of baseline
+
+
+5. Download the log results:
+```
+docker cp <cu_container>:/path/to/bench_results ./results/cu
+docker cp <ue_container>:/path/to/ue_bench_results ./results/ue
+```
+
+6. Run the python script to generate plots:
+```
+python3 plot_benchmark_results.py ./results/baseline ./results/offload ./plots
+```
